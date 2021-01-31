@@ -66,6 +66,7 @@ countBlack (R _ lef rig)
     where Just lefCount = countBlack lef
           Just rigCount = countBlack rig
 
+-- Comprobar si todos los rojos tienen hijos negros
 allRedHasBlackChilds :: (Eq a, Ord a) => RBTree a -> Bool
 allRedHasBlackChilds (L) = True
 allRedHasBlackChilds (B _ lef rig) = allRedHasBlackChilds lef && allRedHasBlackChilds rig
@@ -97,6 +98,21 @@ isRBT (R _ _ _) = False
 isRBT t = allRedHasBlackChilds t && isBST_RBT t && sameBlackPath
     where sameBlackPath = if countBlack t == Nothing then False else True
 
--------------------------------
---Insertar, Eliminar y Buscar--
--------------------------------
+-----------
+--Queries--
+-----------
+-- Da la profundidad de un elemento, si no está da -1
+depthRBTOf :: (Eq a, Ord a) => a -> RBTree a -> Int
+depthRBTOf _ L = -1
+depthRBTOf v (B n izq der)
+    | n == v = 0
+    | otherwise = if v < n then 1 + (depthRBTOf v izq) else 1 + (depthRBTOf v der)
+depthRBTOf v (R n izq der)
+    | n == v = 0
+    | otherwise = if v < n then 1 + (depthRBTOf v izq) else 1 + (depthRBTOf v der)
+
+
+
+-----------
+--Updates--
+-----------
