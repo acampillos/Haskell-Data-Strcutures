@@ -120,19 +120,25 @@ contains v H = False
 contains v (N izq der n) = v == n || contains v izq || contains v der
 
 -- Encontrar el minimo
-{--
 minBST :: (Eq a, Ord a) => BSTree a -> Maybe a
 minBST (H) = Nothing
 minBST (N (H) _ n) = Just n
-minBST (N izq _ _) = minBST izq--}
-
-minBST :: (Eq a, Ord a) => BSTree a -> a
-minBST (N (H) _ n) = n
 minBST (N izq _ _) = minBST izq
 
+{--
+minBST :: (Eq a, Ord a) => BSTree a -> a
+minBST (N (H) _ n) = n
+minBST (N izq _ _) = minBST izq--}
+
 -- Encontrar el maximo
+{--
 maxBST :: (Eq a, Ord a) => BSTree a -> a
 maxBST (N _ (H) n) = n
+maxBST (N _ der _) = maxBST der--}
+
+maxBST :: (Eq a, Ord a) => BSTree a -> a
+maxBST (H) = Nothing
+maxBST (N (H) _ n) = Just n
 maxBST (N _ der _) = maxBST der
 
 -- agregar elemento
@@ -146,6 +152,18 @@ insert v (N izq der n)
     | otherwise = (N izq der n)
 
 -- delete elemento
+delete :: (Eq a, Ord a) => a -> BSTree a -> BSTree a
+delete _ (H) = (H)
+delete v (N izq der n)
+    | v == n && (esHoja izq) && (esHoja der) = (H)  -- Caso donde no tiene hijos
+    | v == n && (esHoja izq) = der                  -- Caso donde tiene un hijo
+    | v == n && (esHoja der) = izq                  -- Caso donde tiene un hijo
+    | v == n = (N izq (delete minimo der) minimo)  -- Caso donde tiene dos hijos -> encontrar el minimo del der
+    | v < n = (N (delete v izq) der n)
+    | v > n = (N izq (delete v der) n)
+    where
+        Just minimo = minBST der
+
 {--
 delete :: (Eq a, Ord a) => a -> BSTree a -> BSTree a
 delete _ (H) = (H)
@@ -157,19 +175,7 @@ delete v (N izq der n)
     | v < n = (N (delete v izq) der n)
     | v > n = (N izq (delete v der) n)
     where
-        Just minimo = minBST der--}
-
-delete :: (Eq a, Ord a) => a -> BSTree a -> BSTree a
-delete _ (H) = (H)
-delete v (N izq der n)
-    | v == n && (esHoja izq) && (esHoja der) = (H)  -- Caso donde no tiene hijos
-    | v == n && (esHoja izq) = der                  -- Caso donde tiene un hijo
-    | v == n && (esHoja der) = izq                  -- Caso donde tiene un hijo
-    | v == n = (N izq (delete minimo der) minimo)  -- Caso donde tiene dos hijos -> encontrar el minimo del der
-    | v < n = (N (delete v izq) der n)
-    | v > n = (N izq (delete v der) n)
-    where
-        minimo = minBST der
+        minimo = minBST der--}
 
 
 merge :: (Eq a, Ord a) => BSTree a -> BSTree a -> BSTree a

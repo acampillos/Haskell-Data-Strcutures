@@ -1,0 +1,6 @@
+-- avl2list
+-- list2avl
+-- minAVL
+-- maxAVL
+-- delete
+-- merge
