@@ -122,6 +122,14 @@ maxRBT (N _ _ _ rig) = maxRBT rig
 -----------
 --Updates--
 -----------
+-- Insertar elemento en Red Black Tree
+insertRBT :: (Eq a, Ord a) => a -> RBTree a -> RBTree a
+insertRBT v t = makeBlack (ins t)                       -- La raiz es negra
+  where ins (L) = N R v (L) (L)                         -- Introduce el nuevo valor si está en hoja
+        ins (N color n lef rig)
+          | v < n = balanceRBT color n (ins lef) rig
+          | v == n = N color n lef rig
+          | v > n = balanceRBT color n lef (ins rig)
 
 ------------
 --Auxiliar--
@@ -133,21 +141,59 @@ rotation :: (Eq a, Ord a) => a -> Side -> RBTree a -> RBTree a
 rotation v LEFT t = undefined
 rotation v RIGHT t = undefined
 
--- Insertar elemento en Red Black Tree
-insertRBT :: (Eq a, Ord a) => a -> RBTree a -> RBTree a
-insertRBT x s = makeBlack $ ins s
-  where ins (L) = N R x (L) (L)
-        ins (N color y a b)
-          | x < y  = balanceRBT color y (ins a) b
-          | x == y = N color y a b
-          | x > y  = balanceRBT color y a (ins b)
+
 
 -- Hace las rotaciones del Red Black Tree
 balanceRBT :: Color -> a -> RBTree a -> RBTree a -> RBTree a
+-- Hay 4 posible situaciones de colores que infrigen las reglas a la hora de insertar un valor
+{-
+1)
+        Bz          |           Ry
+      /   \         |          /  \
+     Ry    d        |        Bx    Bz
+   /   \            |       /  \  /  \
+  Rx    c           |      a   b  c   d
+ /  \               |
+a    b              |
+
+2)
+        Bz          |           Ry
+      /   \         |          /  \
+     Ry    d        |        Bx    Bz
+   /   \            |       /  \  /  \
+  c    Rx           |      a   b  c   d
+      /  \          |
+     a    b         |
+
+3)
+        Bx          |           Ry
+       /  \         |          /  \
+      a    Rz       |        Bx    Bz
+          /  \      |       /  \  /  \
+         Ry   b     |      a   b  c   d
+        /  \        |
+       c    d       |
+
+4)
+        Bx          |           Ry
+       /  \         |          /  \
+      a    Rz       |        Bx    Bz
+          /  \      |       /  \  /  \
+         b    Ry    |      a   b  c   d
+             /  \   |
+            c    d  |
+
+
+-}
+--1)
 balanceRBT B z (N R y (N R x a b) c) d = N R y (N B x a b) (N B z c d)
+--2)
 balanceRBT B z (N R x a (N R y b c)) d = N R y (N B x a b) (N B z c d)
+--3)
 balanceRBT B x a (N R z (N R y b c) d) = N R y (N B x a b) (N B z c d)
+--4)
 balanceRBT B x a (N R y b (N R z c d)) = N R y (N B x a b) (N B z c d)
+-- En otro caso se deja como esta y se subira al siguiente nodo si no se ha terminado
 balanceRBT color x a b = N color x a b
 
 -- Da el nodo padre de un nodo
