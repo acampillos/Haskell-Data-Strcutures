@@ -7,7 +7,10 @@ module DataStructures.RedBlackTree(
     countBlack,
     allRedHasBlackChilds,
     isBST_RBT,
-    isRBT
+    isRBT,
+    depthRBTOf,
+    minRBT,
+    maxRBT
 ) where
 
 data RBTree a = B a (RBTree a) (RBTree a)
@@ -66,6 +69,7 @@ countBlack (R _ lef rig)
     where Just lefCount = countBlack lef
           Just rigCount = countBlack rig
 
+-- Comprobar si todos los rojos tienen hijos negros
 allRedHasBlackChilds :: (Eq a, Ord a) => RBTree a -> Bool
 allRedHasBlackChilds (L) = True
 allRedHasBlackChilds (B _ lef rig) = allRedHasBlackChilds lef && allRedHasBlackChilds rig
@@ -91,12 +95,60 @@ isBST_RBT (R n izq der)
         Just valD = getKeyRBT der
 isBST_RBT (L) = True
 
+-- Comprueba si cumple las propiedades de un RBT
 isRBT :: (Eq a, Ord a) => RBTree a -> Bool
 isRBT L = True
 isRBT (R _ _ _) = False
 isRBT t = allRedHasBlackChilds t && isBST_RBT t && sameBlackPath
     where sameBlackPath = if countBlack t == Nothing then False else True
 
--------------------------------
---Insertar, Eliminar y Buscar--
--------------------------------
+-----------
+--Queries--
+-----------
+-- Da la profundidad de un elemento, si no está da -1
+depthRBTOf :: (Eq a, Ord a) => a -> RBTree a -> Int
+depthRBTOf _ L = -1
+depthRBTOf v (B n izq der)
+    | n == v = 0
+    | otherwise = if v < n then 1 + valueOfDepthLef else 1 + valueOfDepthRig
+    where depthLef = (depthRBTOf v izq) 
+          depthRig = (depthRBTOf v der)
+          valueOfDepthLef = if 0 > depthLef then -2 else depthLef
+          valueOfDepthRig = if 0 > depthRig then -2 else depthRig
+depthRBTOf v (R n izq der)
+    | n == v = 0
+    | otherwise = if v < n then 1 + valueOfDepthLef else 1 + valueOfDepthRig
+    where depthLef = (depthRBTOf v izq) 
+          depthRig = (depthRBTOf v der)
+          valueOfDepthLef = if 0 > depthLef then -2 else depthLef
+          valueOfDepthRig = if 0 > depthRig then -2 else depthRig
+
+-- Elemento minimo del arbol
+minRBT :: (Eq a, Ord a) => RBTree a -> Maybe a
+minRBT (L) = Nothing
+minRBT (B n (L) _) = Just n
+minRBT (B _ lef _) = minRBT lef
+minRBT (R n (L) _) = Just n
+minRBT (R _ lef _) = minRBT lef 
+
+-- Elemento maximo del arbol
+maxRBT :: (Eq a, Ord a) => RBTree a -> Maybe a
+maxRBT (L) = Nothing
+maxRBT (B n _ (L)) = Just n
+maxRBT (B _ _ rig) = maxRBT rig
+maxRBT (R n _ (L)) = Just n
+maxRBT (R _ _ rig) = maxRBT rig 
+
+-----------
+--Updates--
+-----------
+
+------------
+--Auxiliar--
+------------
+data Side = LEFT | RIGHT
+
+-- Rotacion de un arbol dado un elemento, un lado al que rotar y el arbol.
+rotation :: (Eq a, Ord a) => a -> Side -> RBTree a -> RBTree a
+rotation v LEFT t = undefined
+rotation v RIGHT t = undefined
