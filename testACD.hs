@@ -30,6 +30,19 @@ data AVLTree a = N a (AVLTree a) (AVLTree a)
               | H
               deriving (Show, Eq)
 
+isLeaf :: (Eq a, Ord a) => AVLTree a -> Bool
+isLeaf (H) = True
+isLeaf _ = False
+
+minAVL :: (Eq a, Ord a) => AVLTree a -> a
+minAVL (N v (H) _) = v
+minAVL (N _ l _) = minAVL l
+
+avlMax :: AVLTree e -> Maybe e
+avlMax H = Nothing
+avlMax (N v _ H) = Just v
+avlMax (N v _ r) = avlMax r
+
 left :: AVLTree a -> AVLTree a
 left H = H
 left (N _ l _) = l
@@ -78,6 +91,22 @@ rotate (N v l r) | not (balanced l) = N v (rotate l) r
                  | (depth l) + 1 < (depth r) && (depth (left r)) > (depth (right r)) = N (value (left r)) (N v l (left (left r))) (N (value r) (right (left r)) (right r))
                  | otherwise = N v l r
 
+delete :: (Eq a, Ord a) => AVLTree a -> a -> AVLTree a
+delete H _ = H
+delete (N v l r) a = rotate(del)
+    where del = delete' (N v l r) a
+
+delete' :: (Eq a, Ord a) => AVLTree a -> a -> AVLTree a
+delete' H _ = H
+delete' (N v l r) a
+    | v==a && isLeaf l && isLeaf r = H
+    | v==a && isLeaf l = r
+    | v==a && isLeaf r = l
+    | v==a = rotate(N minimo l (delete' r minimo))
+    | v > a = rotate(N v (delete' l a) r)
+    | v < a = rotate(N v l (delete' r a))
+    where minimo = minAVL r
+
 contains :: (Eq a, Ord a) => a -> AVLTree a -> Bool
 contains _ H = False
 contains x (N v l r) = v == x || contains v l || contains v r
@@ -107,11 +136,11 @@ equals (N _ _ _) H = False
 equals H (N _ _ _) = False
 equals H H = True
 
-test1, test2, test3 :: AVLTree Int
+test1, test2, test3, test4 :: AVLTree Int
 test1 = (N 3 (N 2 (N 1 H H) H) H)
-test2 = (N 4 (N 7 (N 21 H H) (N 12 H H)) (N 15 H H))
-test3 = H
-
+test2 = (N 20 (N 10 (N 7 H H) (N 15 H H)) (N 25 H (N 32 H H)))
+test3 = (N 44 (N 17 H (N 32 H H)) (N 62 (N 50 (N 48 H H) (N 54 H H)) (N 78 H (N 88 H H))))
+test4 = (N 44 (N 17 H H) (N 62 (N 50 (N 48 H H) (N 54 H H)) (N 78 H (N 88 H H))))
 
 ------------------------
 ------------------------
@@ -119,4 +148,4 @@ test3 = H
 ------------------------
 ------------------------
 
-quicksort :: (Ord a)= > 
+-- quicksort :: (Ord a)= > 
