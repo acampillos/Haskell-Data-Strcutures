@@ -17,9 +17,9 @@ module DataStructures.RedBlackTree(
     balanceRBT,
     getColor,
     deleteRBT,
-    fuse,
-    balR,
-    balL
+    --fuse,
+    --balR,
+    --balL
 ) where
 data Color = R | B deriving (Show, Eq)
 data RBTree a = N Color a (RBTree a) (RBTree a)
@@ -60,6 +60,10 @@ changeColor (N B n l r) = (N R n l r)
 makeBlack :: (Eq a, Ord a) => RBTree a -> RBTree a
 makeBlack (N _ n lef rig) = (N B n lef rig)
 makeBlack (L) = (L)
+
+makeRed :: (Eq a, Ord a) => RBTree a -> RBTree a
+makeRed (N _ n lef rig) = (N R n lef rig)
+makeRed (L) = (L)
 --------------------------------------
 -- Comprobando si se trata de un RBT--
 --------------------------------------
@@ -214,6 +218,10 @@ balanceRBT color x a b = N color x a b
 -- Da el nodo padre de un nodo
 {-parent :: (Eq a, Ord a) => RBTree -> RBTree a -> -}
 
+
+
+
+
 {-
 Casos posibles al eliminar un valor:
 
@@ -224,11 +232,83 @@ Eliminar un elemento que tiene dos hijos hoja y ademas es rojo
 Eliminar un elemento rojo que solo tiene un hijo hoja y su otro hijo es negro,
 se sustituye por su hijo hoja.
 
+-}
+-- Hay que comprobar antes si el nodo raiz es el que se quiere eliminar
+deleteRBT :: (Eq a, Ord a) => a -> RBTree a -> RBTree a
+deleteRBT x t@(N B y lef rig) = if x == y then makeBlack (replacement t) else makeBlack (delRBT x t)
+--deleteRBT x t = makeBlack (delRBT x t)          -- El nodo raiz debe ser negro
+
+delRootRBT :: (Eq a, Ord a) => a -> RBTree a -> RBTree a
+delRootRBT _ (L) = (L)
+delRootRBT x t@(N color y lef rig)
+  | x == y = replacementRoot t
+  | x < y = (N color y (delRBT x t lef) rig)
+  | x > y = (N color y lef (delRBT x t rig))
+
+replacementRoot :: (Eq a, Ord a) => RBTree a -> RBTree a
+replacementRoot (N col _ (L) (L)) = makeBlack L
+replacementRoot (N col _ t1@(N _ _ _ _) (L)) = makeBlack t1
+replacementRoot (N col _ (L) t2@(N _ _ _ _)) = makeBlack t2
+-- if the node deleted has 2 non nil children, set x to the replacement's 
+-- right child before the replacement is spliced out
+replacementRoot (N col x t1 t2@(N col2 y _ _)) = makeBlack (N col2 y t1 (replacement t2))
 
 
+-- Se pasa el elemento a eliminar y el PADRE del nodo que se está estudiando
+--                        elem   padre       
+delRBT :: (Eq a, Ord a) => a -> RBTree a -> RBTree a
+delRBT x t@(N _ _ (L) (L)) = t
 
+delRBT x t@(N col p t1@(N col1 y lef1 rig1) t2@(N col2 z lef2 rig2))
+  | x == y = (N col p (replacement x t) t2)
+  | x == z = (N col p t1 (replacement x t))
+  | x < p = (N col p (delRBT x t1) t2)
+  | x > p = (N col p t1 (delRBT x t2))
+
+delRBT x t@(N col p t1@(L) t2@(N col2 z lef2 rig2))
+  | x == z = (N col p t1 (replacement x t))
+  | otherwise = (N col p t1 (delRBT x t2))
+
+delRBT x t@(N col p t1@(N col1 y lef1 rig1) t2@(L))
+  | x == y = (N col p (replacement x t) t2)
+  | otherwise = (N col p (delRBT x t1) t2)
+
+-- Se le pasa el elemento a eliminar y el nodo PADRE del nodo a eliminar
+replacement :: (Eq a, Ord a) => a -> RBTree a -> RBTree a
+-- Si el elemento a eliminar tiene dos hijos hoja
+replacement x t@(N _ p t1 t2)
+  | x < p = rep t1
+  | x > p = rep t2
+
+rep (N _ _ (L) (L)) = (L)
+rep (N _ _ t1@(N _ _ _ _) (L)) = t1
+rep (N _ _ (L) t2@(N _ _ _ _)) = t2
+--rep (N _ _ t1@(N _ y _ _) t2@(N _ z _ _)) = 
+
+{-
+replacement x (N col _ t1@(N _ _ _ _) (L)) = recoloring col t1
+replacement x (N col _ (L) t2@(N _ _ _ _)) = recoloring col t2
+-- if the node deleted has 2 non nil children, set x to the replacement's 
+-- right child before the replacement is spliced out
+replacement x (N col p t1 t2@(N col2 y _ _)) = recoloring col (N col2 y t1 (replacement t2))
 -}
 
+-- Se le pasa el color que tenia antes y el nodo padre del reemplazo y se devuelve el 
+-- nodo con el color que le corresponde
+
+
+
+{-recoloring :: (Eq a, Ord a) => Color -> RBTree a -> RBTree a
+recoloring R t@(N R _ _ _) = t
+recoloring R (L) = (L)
+recoloring R t@(N B _ _ _) = recoloringCases (makeRed t)
+recoloring B t@(N R _ _ _) = makeBlack t
+recoloring B t@(N B _ _ _) = recoloringCases t
+recoloring B t@(L) = recoloringCases t-}
+
+--recoloringCases :: 
+
+{-
 balanceRBT' :: (Eq a, Ord a) => RBTree a -> RBTree a
 --1)
 balanceRBT' (N B z (N R y (N R x a b) c) d) = N R y (N B x a b) (N B z c d)
@@ -239,7 +319,7 @@ balanceRBT' (N B x a (N R z (N R y b c) d)) = N R y (N B x a b) (N B z c d)
 --4)
 balanceRBT' (N B x a (N R y b (N R z c d))) = N R y (N B x a b) (N B z c d)
 
-balanceRBT' (N color x a b) = N color x a b
+balanceRBT' t = t
 
 
 
@@ -272,10 +352,7 @@ delRBT x (N B y (N R z (L) (L)) (L))
   | x == y = (N R z (L) (L))
   | otherwise = (N B y (N R z (L) (L)) (L))
 {-
-      AQUIINFEAIOGHESIHGKSRG
-      EIOHKRUHGKSRNGKLRSGOIS
-      grSHLIGJRLKHJPOJHRSNLK
-      grspjgKLHGRSKNHSHrsoph
+      a
 
 -}
 {-delRBT x (N B y (N B u t1 t2) (N R v t3 t4))
@@ -316,7 +393,7 @@ delL x (L) = (L)
 -}
 
 delL :: (Eq a, Ord a) => a -> RBTree a -> RBTree a
-delL x t@(N B y t1 t2) = if deletedColor == R && R == newColor then (N R y (changeColor deleted) t2) else balL (N B y deleted t2)
+delL x t@(N B y t1 t2) = if deletedColor == R && R == newColor then (N R y deleted t2) else balL (N B y deleted t2)
   where 
     deleted = (delRBT x t1)
     newColor = getColor deleted
@@ -331,7 +408,7 @@ delL x (L) = (L)
 -- Si se ha borrado, es el de la izquierda
 balL :: (Eq a, Ord a) => RBTree a -> RBTree a
 balL (N B y (N R x t1 t2) t3) = N R y (N B x t1 t2) t3
-balL (N B y t1 (N B z t2 t3)) = balanceRBT' (N B y t1 (N R z t2 t3))
+--balL (N B y t1 (N B z t2 t3)) = balanceRBT' (N B y t1 (N R z t2 t3))
 balL (N B y t1 (N R z (N B u t2 t3) t4@(N B value l r))) =
   N R u (N B y t1 t2) (balanceRBT' (N B z t3 (N R value l r)))
 balL t = t  -- MOD para que no pete
@@ -366,7 +443,7 @@ delR x (L) = (L)
 
 balR :: (Eq a, Ord a) => RBTree a -> RBTree a
 balR (N B y t1 (N R x t2 t3)) = N R y t1 (N B x t2 t3)
-balR (N B y (N B z t1 t2) t3) = balanceRBT' (N B y (N R z t1 t2) t3)
+--balR (N B y (N B z t1 t2) t3) = balanceRBT' (N B y (N R z t1 t2) t3)
 balR (N B y (N R z t1@(N B value l r) (N B u t2 t3)) t4) =
   N R u (balanceRBT' (N B z (N R value l r) t2)) (N B y t3 t4)
 balR t = t  -- MOD
@@ -374,10 +451,10 @@ balR t = t  -- MOD
 fuse :: (Eq a, Ord a) => RBTree a -> RBTree a -> RBTree a
 fuse L t = t                -- Fusionar una rama con una hoja es la rama
 fuse t L = t
---fuse t1@(N B _ _ _) (N R y t3 t4) = N R y (fuse t1 t3) t4
-fuse (N B x t1 t2) (N R y t3 t4) = N R y (N B x t1 (fuse t2 t3)) t4  -- NO HACE BIEN EL FUSE CON COLORES DISTINTOS
---fuse (N R x t1 t2) t3@(N B _ _ _) = N R x t1 (fuse t2 t3)
-fuse (N R x t1 t2) (N B y t3 t4) = N R x t1 (N B y (fuse t2 t3) t4)
+fuse t1@(N B _ _ _) (N R y t3 t4) = N R y (fuse t1 t3) t4
+--fuse (N B x t1 t2) (N R y t3 t4) = N R y (N B x t1 (fuse t2 t3)) t4  -- NO HACE BIEN EL FUSE CON COLORES DISTINTOS
+fuse (N R x t1 t2) t3@(N B _ _ _) = N R x t1 (fuse t2 t3)
+--fuse (N R x t1 t2) (N B y t3 t4) = N R x t1 (N B y (fuse t2 t3) t4)
 -- Cuando hay fusion entre dos nodos que son del mismo color hay problema de muchos casos base:
 -- Hay 4 tipos de casos base:
 -- Con 0 hijos entre los dos ---------------------------------------------------------
@@ -461,9 +538,33 @@ fuse (N _ x (L) (N _ u (L) (L))) (N _ y (L) (N _ v (L) (L))) = (N R y (N B x (L)
       /    \      /   \         |        /   \
      (L)   _u    _v   _w        |       Bu    By
             |     |    |        |     /   \     \
-           (L)   (L)  (L)       |   Rx    (L)
+           (L)   (L)  (L)       |   Rx    (L)   Rw
 -}
-
+fuse (N _ x (L) (N _ u (L) (L))) (N _ y (N _ v (L) (L)) (N _ w (L) (L))) = (N R v (N B u (N R x (L) (L)) (L)) (N B y (L) (N R w (L) (L))))
+{-
+        _x          _y          |          Rv        
+      /    \      /   \         |        /   \
+     _u    _v   _w    (L)       |       Bx    Bw
+      |     |    |              |     /   \     \
+     (L)   (L)  (L)             |   Ru    (L)   Ry       
+-}
+fuse (N _ x (N _ u (L) (L)) (N _ v (L) (L))) (N _ y (N _ w (L) (L)) (L)) = (N R v (N B x (N R u (L) (L)) (L)) (N B w (L) (N R y (L) (L))))
+{-
+        _x          _y          |          Rv        
+      /    \      /   \         |        /   \
+     _u    _v   (L)   _w        |       Bx    By
+      |     |          |        |     /   \     \
+     (L)   (L)        (L)       |   Ru    (L)   Rw       
+-}
+fuse (N _ x (N _ u (L) (L)) (N _ v (L) (L))) (N _ y (L) (N _ w (L) (L))) = (N R v (N B x (N R u (L) (L)) (L)) (N B y (L) (N R w (L) (L))))
+{-
+        _x          _y          |          Rv        
+      /    \      /   \         |        /   \
+     _u    (L)   _v   _w        |       Bx    By
+      |           |    |        |     /   \     \
+     (L)         (L)  (L)       |   Ru    (L)   Rw       
+-}
+fuse (N _ x (N _ u (L) (L)) (L)) (N _ y (N _ v (L) (L)) (N _ w (L) (L))) = (N R v (N B x (N R u (L) (L)) (L)) (N B y (L) (N R w (L) (L))))
 
 fuse (N R x t1 t2) (N R y t3 t4)  =
   let s = fuse t2 t3
@@ -475,3 +576,4 @@ fuse (N B x t1 t2) (N B y t3 t4)  =
   in case s of
        (N R z s1 s2) -> (N R z (N B x t1 s1) (N B y s2 t4))
        (N B z s1 s2) -> balL (N B x t1 (N B y s t4))
+-}

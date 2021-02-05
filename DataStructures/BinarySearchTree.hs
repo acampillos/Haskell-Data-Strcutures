@@ -23,8 +23,9 @@ module DataStructures.BinarySearchTree(
     isBST,
     equals,
     minBST,
-    maxBST,
+    --maxBST,
     merge,
+    given,
     inorder,
     preorder,
     postorder,
@@ -79,6 +80,11 @@ bst2list :: (Eq a, Ord a) => BSTree a -> [a]
 bst2list H = []
 bst2list (N izq der n) = n : (bst2list izq ++ bst2list der)
 
+-- Lista de elementos que cumplen una propiedad
+given :: (Eq a, Ord a) => (a -> Bool) -> BSTree a -> [a]
+given _ H = []
+given p (N lef rig n) = if p n then n : (given p lef ++ given p rig) else (given p lef ++ given p rig)
+
 -- Lista a BST (ha de estar ordenada)
 list2bst :: (Eq a, Ord a) => [a] -> BSTree a
 list2bst xs
@@ -125,6 +131,8 @@ minBST (H) = Nothing
 minBST (N (H) _ n) = Just n
 minBST (N izq _ _) = minBST izq
 
+
+
 {--
 minBST :: (Eq a, Ord a) => BSTree a -> a
 minBST (N (H) _ n) = n
@@ -136,10 +144,11 @@ maxBST :: (Eq a, Ord a) => BSTree a -> a
 maxBST (N _ (H) n) = n
 maxBST (N _ der _) = maxBST der--}
 
-maxBST :: (Eq a, Ord a) => BSTree a -> a
+{-maxBST :: (Eq a, Ord a) => BSTree a -> a
 maxBST (H) = Nothing
-maxBST (N (H) _ n) = Just n
-maxBST (N _ der _) = maxBST der
+maxBST (N _ (H) n) = Just n
+maxBST (N _ der _) = maxBST der-}
+
 
 -- agregar elemento
 insert :: (Eq a, Ord a) => a -> BSTree a -> BSTree a
