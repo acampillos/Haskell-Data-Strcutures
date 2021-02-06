@@ -83,9 +83,17 @@ dstVertex (P _ _ v) = v
 pathsOf :: (Eq a, Ord a) => Graph a -> Vertex a -> Set (Path a)
 pathsOf g v = Set.filter (\x -> srcVertex x == v || dstVertex x == v) (snd g)
 
+-- Lista de aristas que salen del vertice v
+pathsFrom :: (Eq a, Ord a) => Graph a -> Vertex a -> Set (Path a)
+pathsFrom g v = Set.filter (\x -> srcVertex x == v) (snd g)
+
+-- Lista de aristas que llegan al vertice v
+pathsTo :: (Eq a, Ord a) => Graph a -> Vertex a -> Set (Path a)
+pathsTo g v = Set.filter (\x -> dstVertex x == v) (snd g)
+
 -- Lista de vertices adyacentes a uno dado
 adjacents :: (Eq a, Ord a) => Graph a -> Vertex a -> Set (Vertex a)
-adjacents g v = Set.map dstVertex $ (pathsOf g v ) 
+adjacents g v = Set.map dstVertex (pathsFrom g v) `Set.union` Set.map srcVertex (pathsTo g v)
 
 
 -- Recorrido en profundidad
@@ -162,7 +170,6 @@ kruskal' (p:pathsList) treeSol compConexas
     | otherwise = kruskal' pathsList agregandoArista (compConexas-1)
         where
             agregandoArista = (addPath treeSol p)
-
 
 
     
