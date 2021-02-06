@@ -59,3 +59,4 @@ preorder (Node l v r) = [v] ++ (preorder l) ++ (preorder r)
 preorder Nil = []
 
 --Node (Node (Node (Node Nil 0 Nil) 2 Nil) 1 (Node (Node Nil 3 Nil) 6 (Node Nil 7 Nil))) 10 (Node Nil 11 (Node Nil 12 Nil))
+
