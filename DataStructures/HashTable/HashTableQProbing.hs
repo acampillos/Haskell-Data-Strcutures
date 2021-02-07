@@ -34,7 +34,7 @@ put (k, v) t@(HashTable arr) = if containsKey k t
         
 
 entries :: HashTable a b -> [(a,b)]
-entries (HashTable arr) = concat [arr!i | i<-[1..n-1]]
+entries (HashTable arr) = concat [arr!i | i<-[0..n-1]]
     where n = length arr
 
 keys :: HashTable a b -> [a]
