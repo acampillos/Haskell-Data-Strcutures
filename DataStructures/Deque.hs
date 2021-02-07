@@ -11,7 +11,7 @@ isEmpty :: Deque a -> Bool
 isEmpty (Deque sf f sr r) = sf + sr == 0
 
 c :: Int
-c = 2
+c = 4
 
 -- FUNCIONES FRENTE
 -- cons     insert

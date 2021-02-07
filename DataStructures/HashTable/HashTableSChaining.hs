@@ -4,7 +4,7 @@ import Data.Hashable
 import Data.Maybe
 
 --  Tipos de hashing comunes
---      Separate chaining       X
+--      Separate chaining       <
 --      Open adressing          
 --          Linear probing      
 --          Quadratic probing   

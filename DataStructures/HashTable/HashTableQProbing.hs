@@ -4,11 +4,14 @@ import Data.Hashable
 import Data.Maybe
 
 --  Tipos de hashing comunes
---      Separate chaining       X
+--      Separate chaining       
 --      Open adressing          
 --          Linear probing      
---          Quadratic probing   
---          Double hashing      
+--          Quadratic probing   <
+--          Double hashing   
+
+
+--  Modificar las funciones para el nuevo hashing
 
 data HashTable a b = HashTable (Array Int [(a, b)])
   deriving (Show, Eq)
@@ -23,12 +26,12 @@ isEmpty :: (Eq a, Eq b) => HashTable a b -> Bool
 isEmpty t@(HashTable arr) = t == empty (length arr)
 
 put :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTable a b -> HashTable a b
-put (k, v) (HashTable arr) = if containsKey k (HashTable arr) 
-                                then let removedKey = getTable (removeKey k (HashTable arr))
+put (k, v) t@(HashTable arr) = if containsKey k t 
+                                then let removedKey = getTable (removeKey k t)
                                      in (HashTable (removedKey // [(i, (k,v) : (removedKey ! i))])) 
                                 else (HashTable (arr // [(i, (k,v) : (arr ! i))]))
-  where i = hashSChaining (List.length arr) k 
-        --xs = (k,v) : (arr ! i)
+  where i = hashQProbing t k 
+        
 
 entries :: HashTable a b -> [(a,b)]
 entries (HashTable arr) = concat [arr!i | i<-[1..n-1]]
@@ -49,11 +52,11 @@ containsValue :: Eq b => b -> HashTable a b -> Bool
 containsValue v t@(HashTable arr) = any (==v) (values t)
     
 getValue :: (Hashable k, Eq k) => k -> HashTable k v -> Maybe (k, v)
-getValue key (HashTable table) =
-  List.find (\(k,v) -> k == key) bucket
-  where
-    position = hashSChaining (List.length table) key
-    bucket = table ! position
+getValue key t@(HashTable table) = if null result then Nothing else head result
+  where position = hashQProbing t key
+        result = filter (not . isNothing) 
+          (map (List.find (\(k,v) -> k == key)) 
+            ([bucket | i<-[position..(length table)-1], let bucket = table!i] ++ [bucket | i<-[0..position-1], let bucket = table!i]))
 
 clear :: Eq a => HashTable a b -> HashTable a b
 clear t@(HashTable arr) = empty (length arr)
@@ -71,19 +74,31 @@ replace :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTable a b -> HashTable a b
 replace (k, v) t = put (k, v) t
 
 removeKey :: (Hashable a, Eq a, Eq b) => a -> HashTable a b -> HashTable a b
-removeKey key (HashTable arr) = 
-  case getValue key (HashTable arr) of
-    Nothing -> (HashTable arr)
-    Just (k,v) -> 
-      HashTable (arr // [(i, newxs)])
-      where
-        i = hashSChaining (List.length arr) key
-        xs = arr ! i
-        newxs = List.delete (k,v) xs
+removeKey key t@(HashTable table) = 
+  case getValue key t of
+    Nothing -> t
+    Just (k,v) -> HashTable (table // [(position', bucket')])
+      where position = hashSChaining (List.length table) key
+            buckets = [(i,bucket) | i<-[position..(length table)-1], let bucket = table!i] ++ [(i,bucket) | i<-[0..position-1], let bucket = table!i]
+            indexedBucket = filter (\(i,xs) -> any (\(ke, val) -> ke==key) xs) buckets
+            position' = fst (head indexedBucket)
+            bucket = table ! position'
+            bucket' = List.delete (k,v) bucket
 
 hashSChaining :: Hashable a => Int -> a -> Int
 hashSChaining n = (`mod` n) . hash
 
-t1, t2 :: HashTable String [Int]
-t1 = HashTable (array (0,9) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[("Paco",[1,2])]),(8,[]),(9,[])])
-t2 = HashTable (array (0,9) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[])])
+--                              tabla          v    posicion en la tabla
+hashQProbing :: Hashable a => HashTable a b -> a -> Int
+hashQProbing t@(HashTable arr) v
+    | null (arr ! i) = i
+    | otherwise = fst (head (filter (\(_, b) -> null b) ([(j,arr!j) | j<-[(i+1*1),(i+2*2)..n-1]])))
+    where n = length arr
+          i = hashSChaining n v
+
+--  From Linear Probing:
+--      No se si la parte concatenada es necesaria en este metodo
+--    | otherwise = fst (head (filter (\(_, b) -> null b) ([(j,arr!j) | j<-[i..n-1]] ++ [(j,arr!j) | j<-[0..i]])))
+
+t1 :: HashTable Int Int
+t1 = HashTable (array (0,6) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[])])
