@@ -2,6 +2,7 @@ import Data.List as L
 import DataStructures.BinarySearchTree as BST
 import Data.Set as Set
 import DataStructures.Graph as G
+import DataStructures.VEB as VEB
 --import Data.Map as Map
 --import DataStructures.RedBlackTree as RBT
 -- Zona de tests para marespecue1
@@ -154,3 +155,6 @@ gTest3 = (Set.fromList [(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7),(V 8),(V 9),(V
                     |               2               |
                     10 ---------------------------> 11
 -}
+
+
+------------------- van Emde Boas ----------------------------------------------------------------

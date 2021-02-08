@@ -172,19 +172,104 @@ kruskal' (p:pathsList) treeSol compConexas
             agregandoArista = (addPath treeSol p)
 
 
-    
 {-
-kruskal :: (Eq a, Ord a) => Grafo a -> [(p,v,v)]
-kruskal g = kruskal’ cola           -- Cola de prioridad
-        (tabla [(x,x) | x <- nodos g])  -- Tabla de raices
-        []                              -- Árbol de expansión
-        ((length (nodos g)) - 1)        -- Aristas por
-                                    -- colocar
-    where cola = sort [(p,x,y) | (x,y,p) <- aristas g]
+--                  El grafo, vertice de salida, vertice de destino
+dijkstra :: (Eq a, Ord a) => Graph a -> Vertex a -> Vertex a -> [Path a]
+dijkstra g@(vertex,path) vSrc vDst = getShortestPath (dijkstra' (,empty) path) vSrc vDst
+    where 
+        getShortestPath g vSrc vDst
+            | 
 
-kruskal’ ((p,x,y):as) t ae n
-    | n==0 = ae
-    | actualizado = kruskal’ as t’ ((p,x,y):ae) (n-1)
-    | otherwise = kruskal’ as t ae n
-    where (actualizado,t’) = buscaActualiza (x,y) t
+--                  (Grafo con el vertices anteriores, distancia recorrida desde origen, Maybe vertice anterior)
+dijkstra' :: (Eq a, Ord a) => Graph (a, Int, Maybe a) -> Vertex a -> Vertex a -> Graph (a, Int, Maybe a)
+dijkstra' g@(vertex,path) vSrc vDst
+-}
+
+
+{-
+--    El vertice del grafo anterior, (La distancia desde el orignen, Vertice anterior)
+type DNode a = (Vertex a, (Float, Vertex a))
+
+-- Given a graph and a start node
+dijkstra :: Graph a -> Vertex a -> [DNode a]
+dijkstra g start = 
+  let dnodes = initD g start
+      unchecked = L.map fst dnodes
+  in  dijkstra' g dnodes unchecked
+
+  -- Given a graph and a start node, construct an initial list of Dnodes
+initD :: Graph a -> Vertex a -> [DNode a]
+initD g start =
+  let initDist (n, es) = 
+        if n == start 
+        then 0 
+        else if start `elem` connectedNodes es
+             then weightFor start es
+             else 1.0/0.0
+  in L.map (\pr@(n, _) -> (n, ((initDist pr), start))) g
+
+-- Dijkstra's algorithm (recursive)
+-- get a list of Dnodes that haven't been checked yet
+-- select the one with minimal distance and add it to the checked list. Call it current.
+-- update each Dnode that connects to current by comparing 
+-- the Dnode's current distance to the sum: (weight of the connecting edge + current's distance)
+-- the algorithm terminates when all nodes have been checked.
+dijkstra' :: Graph a -> [DNode a] -> [Vertex a] -> [DNode a]
+dijkstra' g dnodes [] = dnodes
+dijkstra' g dnodes unchecked = 
+  let dunchecked = L.filter (\dn -> (fst dn) `elem` unchecked) dnodes
+      current = head . sortBy (\(_,(d1,_)) (_,(d2,_)) -> compare d1 d2) $ dunchecked
+      c = fst current
+      unchecked' = L.delete c unchecked
+      edges = edgesFor g c
+      cnodes = intersect (connectedNodes edges) unchecked'
+      dnodes' = L.map (\dn -> update dn current cnodes edges) dnodes
+  in dijkstra' g dnodes' unchecked' 
+
+-- given a Dnode to update, the current Dnode, the Nodes connected to current 
+-- and current's edges, return a (possibly) updated Dnode
+update :: DNode a -> DNode a -> [Vertex a] -> [Path a] -> DNode a
+update dn@(n, (nd, p)) (c, (cd, _)) cnodes edges =
+  let wt = weightFor n edges
+  in  if n `notElem` cnodes then dn
+      else if cd+wt < nd then (n, (cd+wt, c)) else dn
+
+-- given a Dijkstra solution and a destination node, return the path to it.
+pathToNode :: [DNode a] -> Vertex a -> [Vertex a]
+pathToNode dnodes dest = 
+  let dn@(n, (d, p)) = dnodeForNode dnodes dest
+  in if n == p then [n] else pathToNode dnodes p ++ [n]
+
+
+------------------------
+
+appendReversed :: [((String, String), Float)] -> [((String, String), Float)]
+appendReversed es = es ++ L.map (\((n1,n2),w) -> ((n2,n1),w)) es
+
+{-
+-- Takes a list of pairs where the first element is a two-member list 
+-- of nodes in any order and the second element is the weight for the edge connecting them.
+fromList :: [((String, String), Float)] -> Graph a
+fromList es =
+  let nodes = nub . L.map (fst . fst) $ es
+      edgesFor es node = 
+        let connected = L.filter (\((n,_),_) -> node == n) $ es
+        in L.map (\((_,n),wt) -> Edge n wt) connected 
+  in L.map (\n -> (n, edgesFor es n)) nodes
+-}
+
+-- Given a weighted graph and a node, return the edges incident on the node
+edgesFor :: Graph a -> Vertex a -> [Path a]
+edgesFor g n = snd . head . L.filter (\(nd, _) -> nd == n) $ g
+
+-- Given a node and a list of edges, one of which is incident on the node, return the weight
+weightFor :: Vertex a -> [Path a] -> Float
+weightFor n = weight . head . L.filter (\e -> n == node e)
+
+-- Given a list of edges, return their nodes
+connectedNodes :: [Path a] -> [Vertex a]
+connectedNodes = L.map node
+
+dnodeForNode :: [DNode a] -> Vertex a -> DNode a
+dnodeForNode dnodes n = head . L.filter (\(x, _) -> x == n) $ dnodes
 -}
