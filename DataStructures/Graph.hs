@@ -159,7 +159,7 @@ conectividad' g porVisitar num visitados
 
 
 -- Considerando el grafo no dirigido
-kruskal :: (Eq a, Ord a) => (Eq a, Ord a) => Graph a -> Graph a                                
+kruskal :: (Eq a, Ord a) => (Eq a, Ord a) => Graph a -> Graph a 
 kruskal g@(vertex,_) = kruskal' (orderedPaths g) (vertex,empty) (vertexNum g)
 
 --                 aristas que quedan , arbol de salida, componenetesConexas, conjunto de vertices
