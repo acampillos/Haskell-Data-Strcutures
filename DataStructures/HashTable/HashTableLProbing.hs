@@ -62,6 +62,9 @@ getValue key t@(HashTable _ table) = if null result then Nothing else head resul
         result = filter (not . isNothing) 
           (map (List.find (\(k,v) -> k == key)) 
             ([bucket | i<-[position..(length table)-1], let bucket = table!i] ++ [bucket | i<-[0..position-1], let bucket = table!i]))
+-- La posicion puede que sea mejor que tenga -1 porque si no te da el primer bucket vacio a partir del hash normal.
+-- Si ponemos menos 1 favorece que el get sea al ultimo porque sale en O(1) pero si no recorre toda la tabla.
+-- Para cualquier otro caso puede llegar a recorrer toda la tabla.
 
 clear :: Eq a => HashTable a b -> HashTable a b
 clear t@(HashTable _ arr) = empty (length arr)

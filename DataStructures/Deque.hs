@@ -50,7 +50,6 @@ init (Deque 0 [] 0 []) = error "Empty queue"
 init (Deque sf [x] 0 []) = empty
 init (Deque sf f sr r) = queue (Deque sf f (sr-1) (Prelude.tail r))
 
-
 queue :: Deque a -> Deque a
 queue q@(Deque sf f sr r)
     | sf > c*sr + 1 = 
@@ -64,6 +63,9 @@ queue q@(Deque sf f sr r)
     | otherwise = q
     where i = div (sf+sr) 2
           j = sf + sr - i
+
+printDeque :: (Show a) => Deque a -> String
+printDeque (Deque sf f sr r) = show (f ++ (reverse r))
 
 q1, q2, q3 :: Deque Int
 q1 = Deque 3 [1,2,3] 2 [4,5]

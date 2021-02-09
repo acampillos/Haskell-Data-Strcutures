@@ -105,6 +105,24 @@ putAll :: (Hashable a, Eq a, Eq b) => HashTable a b -> HashTable a b -> HashTabl
 putAll t1 t2 = foldr (\(k,v) ac -> put (k,v) ac) t1 entrySet
     where entrySet = entries t2
 
+printHT :: (Show a, Show b) => HashTable a b -> String
+printHT t@(HashTable pairs table) = linea ++ header ++ linea ++ contenido ++ linea
+    where n = length table
+          width = 90
+          linea = (concat ["-" | i<-[0..width]]) ++ "\n"
+          header = "| Bucket    | Entries (key-value pairs)                                                   |\n"
+          leftPad = 11
+          rightPad = 77
+          contenido = concat ["| " ++ (show i) ++ (concat [" " | j<-[0..difLeft-1]]) ++ "| " ++ (procesaEntradas (show (table!i))) ++ " |\n" 
+            | i<-[0..n-1], let difLeft = leftPad - (length (show i))-1]
+          procesaEntradas cadena | nc > rightPad = (take (rightPad-2) cadena) ++ " |\n" ++ "|           | " ++ (procesaEntradas ((drop rightPad cadena) ++ (concat [" " | j<-[0..(rightPad - length (drop 36 cadena))]])))
+                                 | otherwise = cadena ++ (concat [" " | j<-[0..difRight-3]])
+                                 where nc = length cadena
+                                       difRight = rightPad - nc
+
+main :: IO ()
+main = do
+  putStr (printHT t6)
 
 t1 :: HashTable String [Int]
 t1 = HashTable 1 (array (0,9) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[("Paco",[1,2])]),(8,[]),(9,[])])
@@ -114,3 +132,14 @@ t2 = HashTable 3 (array (0,5) [(0,[(1,0)]),(1,[(2,0)]),(2,[(3,0)]),(3,[]),(4,[])
 -- test halving sive by removing pair
 t3 :: HashTable Int Int
 t3 = HashTable 1 (array (0,9) [(0,[(1,0)]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[])])
+
+t4 :: HashTable Int Int
+t4 = HashTable 0 (array (0,11) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[]),(10,[]),(11,[])])
+
+t5 :: HashTable Int Int
+t5 = HashTable 3 (array (0,5) [(0,[(1,0),(1,0),(1,0),(1,0),(1,0),(1,0),(1,0),(1,0)]),(1,[(2,0)]),(2,[(3,0)]),(3,[]),(4,[]),(5,[])])
+
+t6 :: HashTable Int String
+t6 = HashTable 0 (array (0,11) [(0,[(1,"Alvaro Campillos Delgado Perez Espejo Benitez"), (2,"Pepe PAco Pedro Benito MAnuel"),
+  (3,"Antonio Antonio Antonio Antonio Antonio Antonio Antonio Antonio ")]),(1,[]),(2,[]),(3,[(1,"Alvaro Campillos Delgado Perez Espejo Benitez"), (2,"Pepe PAco Pedro Benito MAnuel"),
+  (3,"Antonio Antonio Antonio Antonio Antonio Antonio Antonio Antonio ")]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[]),(10,[]),(11,[])])

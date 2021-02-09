@@ -92,7 +92,7 @@ hashSChaining n = (`mod` n) . hash
 
 --  Revisar: Problema con los numeros aleatorios para coseguir un primo aleatorio menor que el tamaño de la tabla
 hash' :: Hashable a => Int -> a -> Int
-hash' n v = prime - (mod v' prime)
+hash' n v = mod (prime - (mod v' prime)) n
     where primes = wheelSieve 6
           v' = hash v
           prime = snd (minimum [(abs(v'-p), p) | p<-primes, p<n])
