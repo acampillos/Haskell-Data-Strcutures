@@ -250,7 +250,7 @@ fuse (N B x a b) (N B y c d) =
   case fuse b c of
     N R z b' c' -> N R z (N B x a b') (N B y c' d)
     bc -> balanceLeft x a (N B y bc d)
--- Casos base
+
 fuse a (N R x b c) = N R x (fuse a b) c
 fuse (N R x a b) c = N R x a (fuse b c)
 
