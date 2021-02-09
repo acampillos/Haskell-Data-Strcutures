@@ -153,7 +153,9 @@ insertRBT v t = makeBlack (ins t)                       -- La raiz es negra
 -- en esos casos se hace un tratamiento simetrico para el rebalanceo del arbol
 deleteRBT :: (Eq a, Ord a) => a -> RBTree a -> RBTree a
 deleteRBT x t =
-  case del t of {N _ y a b -> N B y a b; _ -> L} -- en cualquier salida de eliminacion, raiz debe ser B
+  case del t of -- en cualquier salida de eliminacion, raiz debe ser B
+    N _ y a b -> N B y a b
+    _ -> L 
   where
     del L = L
     del (N _ y a b)
