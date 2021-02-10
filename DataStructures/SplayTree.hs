@@ -1,176 +1,46 @@
-{--import Data.List hiding (insert,find)
+-----------------------
+-- CONSTRUCTORES
+-----------------------
 
--- Holds either nothing (leaf) or a node with its left and right subtrees
-data Tree a = Leaf | Node (Tree a) a (Tree a) deriving (Show)
-
--- Holds data about the p of node in focus (direction taken & p itself)
-data Path a = L a (Tree a) | R a (Tree a) deriving (Show)
-
--- Initialize empty tree
-singleton :: a -> Tree a
-singleton x = Node (Leaf) x (Leaf)
-
--- Initialize splay tree
-splay :: Tree a -> [Path a] -> Tree a
-splay tree [] = tree -- tree with no path to it is a new tree
-
-{------------ Depth = 1 (single rotation over root) cases: ----------------}
-
--- Node splayed is a LEFT child: ZIG
-splay (Node left x right) [L p p_rightChild] = Node left x (Node right p p_rightChild)
-
--- Node splayed is a RIGHT child: ZAG
-splay (Node left x right) [R p p_leftChild] = Node (Node p_leftChild p left) x right
-
-{--------- Depth >= 2 (double rotation over p/gp) ZIGZIG cases: ----------}
-
-{-- Node splayed is a LEFT child of a LEFT child: --}
-splay (Node left x right) (L p p_rightChild : L gp gp_rightChild : path) = splay (Node left x (Node right p (Node p_rightChild gp gp_rightChild))) path
-
-{-- Node splayed is a RIGHT child of a RIGHT child: --}
-splay (Node left x right) (R p p_leftChild : R gp gp_leftChild : path) = splay (Node (Node (Node gp_leftChild gp p_leftChild) p left) x right) path
-
-{---- Depth >= 2 (double rotation over p/gp) ZIGZAG cases: --------}
-
-{-- Node splayed is a RIGHT child of a LEFT child: --}
-splay (Node left x right) (R p p_leftChild : L gp gp_rightchild : path) = splay (Node (Node p_leftChild p left) x (Node right gp gp_rightchild)) path
-
-{-- Node splayed is a LEFT child of a RIGHT child: --}
-splay (Node left x right) (L p p_rightChild : R gp gp_leftChild : path) = splay (Node (Node gp_leftChild gp left) x (Node right p p_rightChild)) path
-
-{------------------------- Insertion into tree ---------------------------}
-
--- Insert value ’a’ into tree and return updated tree
-insert :: (Ord a) => a -> Tree a -> Tree a
-insert a tree = extendPath a [] tree
-
--- Insert element and extend path
-extendPath :: (Ord a) => a -> [Path a] -> Tree a -> Tree a
-
--- If tree is empty or we reached a leaf node
-extendPath a path Leaf = splay (Node Leaf a Leaf) path
-
--- If tree isn’t empty: start traversing downwards
-extendPath a path (Node left x right)
-    | x < a = extendPath a ((R x left) : path) right
-    | x > a = extendPath a ((L x right) : path) left
-    | otherwise = error "Value already exists in the tree."
-
-{-------------------------- Splay (find) element --------------------------}
-
-find :: (Ord a) => a -> Tree a -> Tree a
-find _ Leaf = Leaf
-
--- Call helper function with empty path
-find a tree = findPath a [] tree
-findPath :: (Ord a) => a -> [Path a] -> Tree a -> Tree a
-
--- If x has no children, splay x regardless
-findPath a path (Node Leaf x Leaf) = splay (Node Leaf x Leaf) path
-
--- If x has no bigger children
-findPath a path (Node left x Leaf)
-    | a > x = splay (Node left x Leaf) path
-    | a < x = findPath a ((L x Leaf) : path) left
-    | otherwise = splay (Node left x Leaf) path
-
--- If x has no smaller children
-findPath a path (Node Leaf x right)
-    | a < x = splay (Node Leaf x right) path
-    | a > x = findPath a ((R x Leaf) : path) right
-    | otherwise = splay (Node Leaf x right) path
-
--- If x has both children
-findPath a path (Node left x right)
-    | a < x = findPath a ((L x right) : path) left
-    | a > x = findPath a ((R x left) : path) right
-    | otherwise = splay (Node left x right) path
-
-{--------------------------- Deletion from tree ---------------------------}
-
--- helper function
-deleteNode :: (Ord a) => a -> Tree a -> Tree a
-deleteNode _ Leaf = Leaf
-deleteNode a (Node left x right) = deleteWithPath a [] (Node left x right)
-deleteWithPath :: (Ord a) => a -> [Path a] -> Tree a -> Tree a
-
--- node in focus has no children
-deleteWithPath a path (Node Leaf x Leaf)
-    | a == x = splayParent path Leaf
-    | otherwise = splay (Node Leaf x Leaf) path
-
--- node in focus has only smaller children
-deleteWithPath a path (Node left x Leaf)
-    | a < x = deleteWithPath a (L x Leaf : path) left
-    | a == x = splayParent path left
-    | otherwise = splay (Node left x Leaf) path
-
--- node in focus has only bigger children
-deleteWithPath a path (Node Leaf x right)
-    | a > x = deleteWithPath a (R x Leaf : path) right
-    | a == x = splayParent path right
-    | otherwise = splay (Node Leaf x right) path
-
--- node in focus has both smaller and bigger children
-deleteWithPath a path (Node left x right)
-    | a < x = deleteWithPath a (L x right : path) left
-    | a > x = deleteWithPath a (R x left : path) right
-    | otherwise = splayParent path (Node (deleteMax left) (findMax left) right)
-
-splayParent :: (Ord a) => [Path a] -> Tree a -> Tree a
-splayParent ((L parent p_oC) : path) child = splay (Node child parent p_oC) path
-splayParent ((R parent p_oC) : path) child = splay (Node child parent p_oC) path
-
--- returns max value from a tree
-findMax :: (Ord a) => Tree a -> a
-findMax (Node left x Leaf) = x
-findMax (Node _ x right) = findMax right
-
--- deletes the biggest element from a tree
-deleteMax :: (Ord a) => Tree a -> Tree a
-deleteMax (Node left x Leaf) = left
-deleteMax (Node left x right) = Node left x (deleteMax right)
-
-
-t1, t2 :: Tree Int
-t1 = Node (Node (Node (Node (Node Leaf 20 Leaf) 30 Leaf) 40 Leaf) 50 Leaf) 100 (Node Leaf 200 Leaf)
-t2 = Node (Node (Node (Node (Node Leaf 20 Leaf) 30 Leaf) 40 Leaf) 50 Leaf) 100 (Node Leaf 200 Leaf)--}
-
-
-
-data Tree a = Empty | Node a (Tree a) (Tree a)
+-- Árbol biselado/splay tree.
+data SplayTree a = Leaf | Node a (SplayTree a) (SplayTree a)
     deriving (Eq, Show)
 
+-- Dirección tomada en el recorrido del árbol.
 data Direction = LH | RH
     deriving (Eq, Show)
 
---search :: (Ord a) => a -> Tree a -> Tree a
-search v Empty = error "The tree does not contain the value"
-search v t@(Node x l r) = splay (getValue grandparent') t
-    where ps = path v t []
-          nps = if null ps then error "E" else length ps
-          grandparent = ps !! (nps-2)
-          grandparent' = snd grandparent
+-----------------------
+-- FUNCIONES
+-----------------------
 
-getValue Empty = error "E"
-getValue (Node x l r) = x
+path :: (Ord a) => a -> SplayTree a -> [(Direction, SplayTree a)] -> [(Direction, SplayTree a)]
+-- Obtiene el camino en el árbol hasta el valor dado. Si no existe, su último valor será la hoja donde se insertaría un nuevo nodo 
+-- Parámetros: Valor hasta el que queremos obtener el camino
+--             Árbol en el que realizamos la búsqueda
+--             Acumulador dónde guardamos la dirección que tomamos en cada nodo junto al subárbol en el que nos introducimos
+-- Devuelve:   Lista con la con las direcciones tomadas y los subárboles correspondientes, desde la raíz al nodo con el valor.
+path a Leaf ps = ps
+path a (Node x l r) ps
+    | a < x = path a l ((LH, l):ps)     -- Tomamos la rama izquierda
+    | a > x = path a r ((RH, r):ps)     -- Tomamos la rama derecha
+    | otherwise = ps                    -- Hemos alcanzado el valor a
 
-path :: (Ord a) => a -> Tree a -> [(Direction, Tree a)] -> [(Direction, Tree a)]
-path a Empty ps = ps
-path a n@(Node x l r) ps =
-    case compare a x of
-        EQ -> ps
-        LT -> path a l $ (LH, l) : ps
-        GT -> path a r $ (RH, r) : ps
+path2tree :: (Ord a) => [(Direction,SplayTree a)] -> SplayTree a
+-- Reconstruye el árbol correspondiente a partir de una lista de direcciones tomadas en un árbol y los subárboles que le corresponden a cada dirección tomada.
+-- Parámetros: Lista con las direcciones tomadas en un árbol y los subárboles que le corresponden a cada decisión.
+-- Devuelve:   Árbol reconstruido a partir del parámetro anterior.
+path2tree ((_,n):[]) = n
+path2tree ((LH,x):(_,p):[]) = zigL x p
+path2tree ((RH,x):(_,p):[]) = zigR x p
+path2tree ((LH,x):(LH,p):(z,g):ps) = path2tree $ (z, zigzigL x p g):ps
+path2tree ((LH,x):(RH,p):(z,g):ps) = path2tree $ (z, zigzagR x p g):ps
+path2tree ((RH,x):(LH,p):(z,g):ps) = path2tree $ (z, zigzagL x p g):ps
+path2tree ((RH,x):(RH,p):(z,g):ps) = path2tree $ (z, zigzigR x p g):ps
 
-rebuild :: (Ord a) => [(Direction,Tree a)] -> Tree a
-rebuild ((_,n):[]) = n
-rebuild ((LH,x):(_,p):[]) = zigL x p
-rebuild ((RH,x):(_,p):[]) = zigR x p
-rebuild ((LH,x):(LH,p):(z,g):ps) = rebuild $ (z, zigzigL x p g):ps
-rebuild ((RH,x):(RH,p):(z,g):ps) = rebuild $ (z, zigzigR x p g):ps
-rebuild ((RH,x):(LH,p):(z,g):ps) = rebuild $ (z, zigzagL x p g):ps
-rebuild ((LH,x):(RH,p):(z,g):ps) = rebuild $ (z, zigzagR x p g):ps
+
+
+--  EXPLICAR TIPOS DE ROTACIONES
 
 zigL (Node x a b) (Node p _ c) = Node x a (Node p b c)
 zigR (Node x a b) (Node p c _) = Node x (Node p c a) b
@@ -187,10 +57,106 @@ zigzagL (Node x b c) (Node p a _) (Node g _ d) =
 zigzagR (Node x b c) (Node p _ a) (Node g d _) =
     Node x (Node g d b) (Node p c a)
 
-splay :: (Ord a) => a -> Tree a -> Tree a
-splay a t = rebuild $ path a t [(undefined,t)]
+splay :: (Ord a) => a -> SplayTree a -> SplayTree a
+splay a t = path2tree $ path a t [(undefined,t)]
 
-t :: Tree Int
-t = Node 100 (Node 50 (Node 40 (Node 30 (Node 20 Empty Empty) Empty) Empty) Empty) (Node 200 Empty Empty) 
+search :: (Ord a) => a -> SplayTree a -> SplayTree a
+-- Busca un valor en el árbol correspondiente y aplica la operación de splay
+-- Parámetros: Valor a buscar en el árbol.
+--             Árbol en el que buscamos el valor.
+-- Devuelve:   Árbol tras la operación de splay.
+search v Leaf = error "The tree does not contain the value"
+search v t@(Node x l r) = splay (getValue (snd v')) t
+    where ps = path v t []                              -- Camino hasta el valor que buscamos
+          contained = snd (ps !! 0) /= Leaf            -- Comprobamos si el nodo esta contenido en el árbol
+          v' = if contained then ps!!0 else ps!!1
+          -- Si está contenido, tomamos el último elemento del camino hasta este (será él mismo).
+          -- En otro caso, tomamos el penúltimo elemento del camino hasta este (último elemento en el árbol 
+          --    antes de la posición donde se encontraría el que buscamos).
+          
+insert :: (Ord a) => a -> SplayTree a -> SplayTree a
+-- Inserta un valor en el árbol y aplica la operación de splay
+-- Parámetros: Valor que introducimos.
+--             Árbol en el que introducimos el valor.
+-- Devuelve:   Árbol con el nuevo valor introducido tras la operación de splay.
+insert v Leaf = Node v Leaf Leaf
+insert v t@(Node x l r) = splay v' t'
+    where ps = path v t []                                      -- Camino hasta el valor que insertamos (comprobamos así si está contenido para no insertarlo)
+          contained = snd (ps !! 0) /= Leaf
+          temp = if contained then (getValue (snd (ps!!0)), t) -- Si el valor está contenido solo aplicamos la operación de splay
+                else (v, insert' v t)                          --   En otro caso, insertamos el valor en el árbol y aplicamos splay sobre el nuevo nodo
+          v' = fst temp
+          t' = snd temp
 
--- ESTE CASI
+insert' :: (Eq a, Ord a) => a -> SplayTree a -> SplayTree a
+-- Inserta el valor en el árbol recibido
+-- Parámetros: Valor a insertar.
+--             Árbol en el que insertamos el valor.
+-- Devuelve:   Árbol con el valor insertado.
+insert' v Leaf = Node v Leaf Leaf 
+insert' v (Node n l r)
+    | v < n && (isLeaf l) = Node n (Node v Leaf Leaf) r
+    | v > n && (isLeaf r) = Node n l (Node v Leaf Leaf)
+    | v < n = Node n (insert' v l) r
+    | v > n = Node n l (insert' v r)
+    | otherwise = Node n l r
+
+delete :: (Eq a, Ord a) => a -> SplayTree a -> SplayTree a
+-- Elimina el valor dado en el árbol y aplica splay sobre el padre del mismo.
+-- Parámetros: Valor a eliminar.
+--             Árbol en el que lo eliminamos.
+-- Devuelve:   Árbol con el valor eliminado y splay aplicado sobre el padre de este
+delete _ Leaf = Leaf
+delete v t@(Node x l r) = splay parent removed
+    where removed = delete' v t                                                 -- Eliminamos el valor del árbol
+          ps = path v t []                                                      -- Camino hasta el nodo a eliminar
+          contained = snd (ps !! 0) /= Leaf                                    -- Si está contenido, obtenemos el padre del mismo a partir del camino
+          parent = if contained then getValue (snd (ps!!1))                     --  y aplicamos splay sobre este
+                   else error "Cannot delete a node that isnt in the tree"
+
+delete' :: (Eq a, Ord a) => a -> SplayTree a -> SplayTree a
+-- Elmina el valor en el árbol dado como en un BST.
+delete' _ Leaf = Leaf
+delete' v (Node n l r)
+    | v == n && (isLeaf l) && (isLeaf r) = Leaf  -- Caso donde no tiene hijos
+    | v == n && (isLeaf l) = r                    -- Caso donde tiene un hijo
+    | v == n && (isLeaf r) = l                    -- Caso donde tiene un hijo
+    | v == n = Node maximo (delete' maximo l) r   -- Caso donde tiene dos hijos -> encontrar el maximo del izq
+    | v < n = Node n (delete' v l) r
+    | v > n = Node n l (delete' v r)
+    | otherwise = error "Value not in the tree"
+    where
+        Just maximo = maxST l
+    -- Tomamos el máximo valor en el subarbol izquierdo como nueva raíz para sustituir al nodo que hemos eliminado
+
+maxST :: (Eq a, Ord a) => SplayTree a -> Maybe a
+maxST Leaf = Nothing
+maxST (Node n _ Leaf) = Just n
+maxST (Node _ _ r) = maxST r
+
+isLeaf Leaf = True
+isLeaf (Node _ _ _) = False
+
+contains v Leaf = False
+contains v t@(Node x l r)
+    | v < x = contains v l
+    | v > x = contains v r
+    | otherwise = True
+
+getValue Leaf = error "E"
+getValue (Node x l r) = x
+
+
+t :: SplayTree Int
+t = Node 100 (Node 50 (Node 40 (Node 30 (Node 20 Leaf Leaf) Leaf) Leaf) Leaf) (Node 200 Leaf Leaf) 
+
+t2 :: SplayTree Int
+t2 = Node 50 (Node 30 (Node 10 Leaf (Node 20 (Node 15 Leaf Leaf) Leaf)) (Node 40 Leaf Leaf)) (Node 60 Leaf (Node 90 (Node 70 Leaf Leaf) (Node 100 Leaf Leaf)))
+
+t3 :: SplayTree Int
+t3 = Node 80 (Node 60 (Node 50 (Node 30 (Node 10 Leaf (Node 20 (Node 15 Leaf Leaf) Leaf)) (Node 40 Leaf Leaf)) Leaf) (Node 70 Leaf Leaf)) (Node 90 Leaf (Node 100 Leaf Leaf))
+
+t4 :: SplayTree Int
+t4 = Node 80 (Node 60 (Node 50 (Node 20 (Node 10 Leaf (Node 15 Leaf Leaf)) (Node 40 Leaf Leaf)) Leaf) (Node 70 Leaf Leaf)) (Node 90 Leaf (Node 100 Leaf Leaf))
+
+--Node 80 (Node 60 (Node 50 (Node 20 (Node 10 Leaf (Node 15 Leaf Leaf)) (Node 40 Leaf Leaf)) Leaf) (Node 70 Leaf Leaf)) (Node 90 Leaf (Node 100 Leaf Leaf))
