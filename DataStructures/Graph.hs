@@ -16,6 +16,9 @@ module DataStructures.Graph(
     dstVertex,
     pathsOf,
     adjacents,
+    addListVertex,
+    addListPath,
+    fromTuple,
     dfs,
     bfs,
     orderedPaths,
@@ -95,12 +98,24 @@ pathsTo g v = Set.filter (\x -> dstVertex x == v) (snd g)
 adjacents :: (Eq a, Ord a) => Graph a -> Vertex a -> Set (Vertex a)
 adjacents g v = Set.map dstVertex (pathsFrom g v) `Set.union` Set.map srcVertex (pathsTo g v)
 
+-- Añadir todos los vertices de una lista
+addListVertex :: (Eq a, Ord a) => [Vertex a] -> Graph a -> Graph a
+addListVertex xs g = L.foldl addVertex g xs
+
+-- Añadir todas las aristas de una lista
+addListPath :: (Eq a, Ord a) => [Path a] -> Graph a -> Graph a
+addListPath xs g = L.foldl addPath g xs
+
+-- Nuevo grafo a partir de un par de listas de vertices y aristas
+fromTuple :: (Eq a, Ord a) => ([Vertex a],[Path a]) -> Graph a
+fromTuple (vert, path) = (Set.fromList vert, Set.fromList path)
 
 -- Recorrido en profundidad
 dfs :: (Eq a, Ord a) => Graph a -> Vertex a -> [Vertex a]
 dfs g v = dfsAux g (Set.toList (adjacents g v)) [v]
 
 {-
+Actual      Pila        Recorrido
 [1]         [2,3]       [1]
 [2]       [7,5,3]       [1,2]
 [7]         [5,3]       [1,2,7]
@@ -114,7 +129,7 @@ dfs g v = dfsAux g (Set.toList (adjacents g v)) [v]
 --                          Grafo     a recorrer     recorridos      Sol
 dfsAux :: (Eq a, Ord a) => Graph a -> [Vertex a] -> [Vertex a] -> [Vertex a]
 dfsAux g [] ys = ys
-dfsAux g (x:xs) ys = dfsAux g (newPaths++xs) (ys++[x]) 
+dfsAux g (x:xs) ys = if elem x ys then dfsAux g xs ys else dfsAux g (newPaths++xs) (ys++[x]) -- Hay que tener cuidado por si se ha añadido ya
     where
         adjToX = (adjacents g x)
         newPaths = Set.toList $ Set.difference adjToX (Set.fromList (ys++[x]))
@@ -128,7 +143,7 @@ bfs g v = bfsAux g (Set.toList (adjacents g v)) [v]
 
 bfsAux :: (Eq a, Ord a) => Graph a -> [Vertex a] -> [Vertex a] -> [Vertex a]
 bfsAux g [] ys = ys
-bfsAux g (x:xs) ys = bfsAux g (xs++newPaths) (ys++[x]) 
+bfsAux g (x:xs) ys = if elem x ys then bfsAux g xs ys else bfsAux g (xs++newPaths) (ys++[x]) 
     where
         adjToX = (adjacents g x)
         newPaths = Set.toList $ Set.difference adjToX (Set.fromList (ys++[x]))
