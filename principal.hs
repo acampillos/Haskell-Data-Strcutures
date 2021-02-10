@@ -8,31 +8,75 @@ import DataStructures.BinarySearchTree as BST
 import Data.Set as Set
 import DataStructures.Graph as G
 
-menuBST = do
+{-import System.Console.ANSI
 
+limpiar = clearScreen-}
+import System.Process
+limpiar = system "cls"
+
+menuBST = do
+    limpiar
+    putStrLn "Menú Arbol de Búsqueda Binaria:\n"
+    putStrLn "Un arbol de busqueda binaria es..."
+    putStrLn "Tenemos algunos de estos arboles para hacer pruebas"
+    putStrLn ""
     return ()
 
 menuMinHeap = do
-
+    limpiar
     return ()
 
 menuMaxHeap = do
-
+    limpiar
     return ()
 
 menuGrafo = do
+    limpiar
     putStrLn "Menú de grafos:\n"
     putStrLn "Aquí se pueden encontrar los siguientes grafos: "
     putStrLn "\n"
     putStrLn "Ejemplos"
     putStrLn "\n"
     putStrLn "Utilidades de grafos: "
-    putStrLn "1. Tenemos un grafo que representa la distribución de carreteras\n en un mapa, los pesos de las aristas son los km de carretera que\n separan los vertices que son ciudades"
+    putStrLn "1. Tenemos un grafo que representa la distribución de carreteras"
+    putStrLn "en un mapa, los pesos de las aristas son los km de carretera que"
+    putStrLn "separan los vertices que son ciudades"
     putStrLn "\n"
-    putStrLn "2. Tenemos un laberinto representado como un grafo, el laberito\n es resuelto por bfs y dfs."
+    putStrLn "2. Tenemos un laberinto representado como un grafo, el laberito"
+    putStrLn "es resuelto por bfs y dfs."
+    putStrLn "\n"
+    putStrLn "3. Podemos hacer pruebas con la conectividad."
+    putStrLn "\n"
+    o <- getChar
+    getChar
+    if o == '1' then do
+        menuCosteMinimo
+    else if o == '2' then do
+        menuLaberinto
+    else if o == '3' then do
+        menuConectividad
+    else do
+        putChar '\n'
+        putStrLn "No se ha seleccionado ninguna opción válida."
     return ()
 
+----Submenus grafos ---------
+menuCosteMinimo = do
+    limpiar
+    return ()
+
+menuLaberinto = do
+    limpiar
+    return ()
+
+menuConectividad = do
+    limpiar
+    return ()
+------------------------------
+
+
 menuHashTable = do
+    limpiar
     -- Introducción
     putStrLn "Una tabla hash es una estructura de datos que implementa el ADT de un array asociativo o diccionario."
     putStrLn "Utiliza una función de hash para calcular un índice o código hash que identifica posición de la casilla o cubeta (bucket o slot) donde se localiza el valor."
@@ -57,6 +101,7 @@ menuHashTable = do
     return ()
 
 menuHTSeparateChaining = do
+    limpiar
     putStrLn "En este método, cada cubo es independiente y en ellos se almacenan un conjunto de pares clave-valor en una lista."
     putStrLn "En la mayoría de implementaciones cada bucket tendrá pocas entradas si la función de hash es adecuada."
     putStrLn "La complejidad de las operaciones es O(1) para la búsqueda del bucket correspondiente y O(n) para la búsqueda en la lista (en nuestro caso listas enlazadas)."
@@ -64,24 +109,27 @@ menuHTSeparateChaining = do
     return ()
 
 menuHTLinearProbing = do
+    limpiar
     return ()
 
 menuHTQuadraticProbing = do
+    limpiar
     return ()
 
 menuDeque = do
-
+    limpiar
     return ()
 
 menuAVL = do
-
+    limpiar
     return ()
 
 menuRBT = do
-
+    limpiar
     return ()
 
 nuevoMenu = do
+    limpiar
     putStrLn "A continuación se presentan una serie de estructuras de datos \nde los cuales se pueden ver ejemplos de su uso."
     putStrLn "1. Deque"
     putStrLn "2. Grafos"
