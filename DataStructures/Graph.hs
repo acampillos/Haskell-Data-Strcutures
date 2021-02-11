@@ -94,6 +94,15 @@ pathsFrom g v = Set.filter (\x -> srcVertex x == v) (snd g)
 pathsTo :: (Eq a, Ord a) => Graph a -> Vertex a -> Set (Path a)
 pathsTo g v = Set.filter (\x -> dstVertex x == v) (snd g)
 
+getWeight :: (Eq a, Ord a) => Path a -> Float
+getWeight (P w src dst) = w
+
+getSource :: (Eq a, Ord a) => Path a -> Vertex a
+getSource (P w src dst) = src
+
+getDest :: (Eq a, Ord a) => Path a -> Vertex a
+getDest (P w src dst) = dst
+
 -- Lista de vertices adyacentes a uno dado
 adjacents :: (Eq a, Ord a) => Graph a -> Vertex a -> Set (Vertex a)
 adjacents g v = Set.map dstVertex (pathsFrom g v) `Set.union` Set.map srcVertex (pathsTo g v)
