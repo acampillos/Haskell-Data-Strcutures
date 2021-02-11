@@ -7,6 +7,7 @@ import Data.List as L
 import DataStructures.BinarySearchTree as BST
 import Data.Set as Set
 import DataStructures.Graph as G
+import DataStructures.RedBlackTree as RBT
 
 {-import System.Console.ANSI
 
@@ -96,9 +97,9 @@ solBFSGrafo = bfs grafo (V 1)
 
 -- EJEMPLOS BST #############################################################################################
 ejbst1 :: BSTree Int
-ejbst1 = (N (N (H) (H) 5) (N (N (N (H) (H) 9) (N (H) (H) 13) 12) (N (H) (N (H) (H) 23) 19) 15) 8)
+ejbst1 = (BST.N (BST.N (H) (H) 5) (BST.N (BST.N (BST.N (H) (H) 9) (BST.N (H) (H) 13) 12) (BST.N (H) (BST.N (H) (H) 23) 19) 15) 8)
 
-ejbst1StrF = putStrLn "ejbst1 = (N (N (H) (H) 5) (N (N (N (H) (H) 9) (N (H) (H) 13) 12) (N (H) (N (H) (H) 23) 19) 15) 8)"
+ejbst1StrF = putStrLn "ejbst1 = (BST.N (BST.N (H) (H) 5) (BST.N (BST.N (BST.N (H) (H) 9) (BST.N (H) (H) 13) 12) (BST.N (H) (BST.N (H) (H) 23) 19) 15) 8)"
 ejbst1Str = putStrLn "            8\n          /   \\\n         5     15\n              /   \\\n             12     19\n           /   \\   /   \\\n          9    13  H     23\n        /   \\\n       H     H"
 {-
             8
@@ -139,9 +140,9 @@ ejbst1DeleteStr = putStrLn "            8\n          /   \\\n         5     15\n
 -}
 
 -- EJEMPLO RBT #######################################################################################
-ejbrt1 = (N B 7 (N B 3 (L) (L)) (N R 18 (N B 10 (N R 8 (L) (L)) (N R 11 (L) (L))) (N B 22 (L) (N R 26 (L) (L)))))
-ejbrt1StrF = putStrLn "ejbrt1 = (N B 7 (N B 3 (L) (L)) (N R 18 (N B 10 (N R 8 (L) (L)) (N R 11 (L) (L))) (N B 22 (L) (N R 26 (L) (L)))))"
-ejbrt1Str = putStrLn "             B7\n           /    \\\n        B3       R18 \n       / \\      /    \\\n      L   L   B10     B22\n             /  \\     /   \\\n           R8   R11  L    R26\n           / \\            / \\\n          L   L           L  L"
+ejrbt1 = (RBT.N B 7 (RBT.N B 3 (L) (L)) (RBT.N R 18 (RBT.N B 10 (RBT.N R 8 (L) (L)) (RBT.N R 11 (L) (L))) (RBT.N B 22 (L) (RBT.N R 26 (L) (L)))))
+ejrbt1StrF = putStrLn "ejrbt1 = (RBT.N B 7 (RBT.N B 3 (L) (L)) (RBT.N R 18 (RBT.N B 10 (RBT.N R 8 (L) (L)) (RBT.N R 11 (L) (L))) (RBT.N B 22 (L) (RBT.N R 26 (L) (L)))))"
+ejrbt1Str = putStrLn "             B7\n           /    \\\n        B3       R18 \n       / \\      /    \\\n      L   L   B10     B22\n             /  \\     /   \\\n           R8   R11  L    R26\n           / \\            / \\\n          L   L           L  L"
 {-
              B7
            /    \
@@ -153,7 +154,28 @@ ejbrt1Str = putStrLn "             B7\n           /    \\\n        B3       R18 
            / \            / \
           L   L           L  L
 -}
-
+ejrbt1InsertStr = putStrLn "             B18\n           /     \\\n        B7        R26 \n       /  \\       /  \\\n      B3  B10   B22   B200\n          /  \\\n         R8  R11"
+{-
+             B18
+           /     \
+        B7        R26 
+       /  \       /  \
+      B3  B10   B22   B200
+          /  \
+         R8  R11
+-}
+ejrbt1DeleteStr = putStrLn "             B18\n           /     \\\n        R8        B22 \n       /  \\       /  \\\n      B3  B10     L   R26\n          /  \\\n         L   R11\n            /  \\\n            L   L"
+{-
+             B18
+           /     \
+        R8        B22 
+       /  \       /  \
+      B3  B10     L   R26
+          /  \
+         L   R11
+            /  \
+            L   L
+-}
 
 -- MENU DE ARBOL DE BUSQUEDA BINARIA -----------------------------------------------------
 {-
@@ -445,10 +467,9 @@ menuCosteMinimo = do
     putStrLn ""
     putStrLn "Escribe 2 para volver al menú anterior."
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
-    if o == '1' then do
+    if o == "1" then do
         limpiar
         putStrLn "Salida aplicando kruskal"
         putStrLn (show (kruskal carreteras))
@@ -472,7 +493,7 @@ menuCosteMinimo = do
 
         menuGrafo
 
-    else if o == '2' then do
+    else if o == "2" then do
         menuGrafo
     else do
         menuGrafo
@@ -506,12 +527,12 @@ menuRecorrido = do
 
     o <- getLine
 
-    if o == '1' then do
+    if o == "1" then do
         menuSalidaBFSDFS
 
         -- Hacer que pueda probar con sus propios grafos
 
-    else if o == '2' then do
+    else if o == "2" then do
         menuGrafo
     else do
         menuGrafo
@@ -534,12 +555,12 @@ menuSalidaBFSDFS = do
 
     o <- getLine
 
-    if o == 'q' then do
+    if o == "q" then do
         limpiar
 
         -- Hacer que pueda probar con sus propios grafos
 
-    else if o == '2' then do
+    else if o == "2" then do
         limpiar
     else do
         limpiar
@@ -559,7 +580,7 @@ menuConectividad = do
     putStrLn "Para vovler al menú anterior escribe 2."
     o <- getLine
 
-    if o == '1' then do
+    if o == "1" then do
         menuEjemplosConectividad
     else do
         menuGrafo
@@ -650,9 +671,9 @@ menuEjemplosConectividad = do
 
     t <- getLine
 
-    if t == '1' then do
+    if t == "1" then do
         menuGrafo
-    else if t == '2' then do
+    else if t == "2" then do
         nuevoMenu
     else do
         nuevoMenu   -- AQUI HAY QUE CAMBIAR ESTO
@@ -677,11 +698,11 @@ menuHashTable = do
     
     o <- getLine
 
-    if o == 'a' then do
+    if o == "a" then do
         menuHTSeparateChaining
-    else if o == 'b' then do
+    else if o == "b" then do
         menuHTLinearProbing
-    else if o == 'c' then do
+    else if o == "c" then do
         menuHTQuadraticProbing
     else do
         putChar '\n'
@@ -745,14 +766,69 @@ menuRBT = do
     o <- getLine
 
     limpiar
-    ejbrt1StrF
+    ejrbt1StrF
     putStrLn ""
-    ejbrt1Str
+    ejrbt1Str
     putStrLn ""
     putStrLn "Las pruebas que realizaremos son sobre las funciones de insert"
     putStrLn ", delete y search."
     putStrLn "Comenzando con la función de búsqueda, se ha definido como"
+    putStrLn "\"depthRBTOf\" que toma como entrada el elemento buscado y"
+    putStrLn "el RBT en el que se busca, se retorna la profundidad en la que"
+    putStrLn "se encuentra el elemento, en caso de no estar en el arbol se"
+    putStrLn "retorna -1."
     putStrLn ""
+    putStrLn "Es muy similar a la función de busqueda de un arbol de búsqueda"
+    putStrLn "binaria."
+    putStrLn "Escribe un caracter para ejecutar \"depthRBTOf 18 ejrbt1\""
+
+    o <- getLine
+
+    putStrLn ""
+    putStrLn "Salida (depthRBTOf 18 ejrbt1)"
+    putStrLn $ show $ depthRBTOf 18 ejrbt1
+    putStrLn ""
+    putStrLn "Como se ve la profundidad del elemento 18 es 1 y en efecto se"
+    putStrLn "encuentra en el arbol."
+    putStrLn ""
+    putStrLn "La función de inserción está definida como \"insertRBT\" y toma"
+    putStrLn "como valores de entrada un elemento que se quiere introducir y"
+    putStrLn "el RBT en el que se quiere introducir."
+    putStrLn ""
+    putStrLn "Escribe un carácter para ejecutar \"insertRBT 200 ejrbt1\""
+
+    o <- getLine
+
+    putStrLn "Salida (insertRBT 200 ejrbt1):"
+    putStrLn $ show $ insertRBT 200 ejrbt1
+    putStrLn ""
+    putStrLn "(En la representación gráfica no se muestran las hojas por falta"
+    putStrLn "de espacio."
+    ejrbt1InsertStr
+    putStrLn ""
+    putStrLn "Como se ve, el arbol ha tenido que ser rebalanceado ya que al"
+    putStrLn "añadir directamente el 200 en el mismo, se incumplen algunas"
+    putStrLn "restricciones, también hay que recolorear algunos nodos."
+    putStrLn ""
+    putStrLn "Por último tenemos la función de eliminar a la que llamamos"
+    putStrLn "\"deleteRBT\", con los mismos parámetros de entrada que la "
+    putStrLn "función de insert, y su salida es un RBT sin el elemento que"
+    putStrLn "se desea eliminar."
+    putStrLn ""
+    putStrLn "Escribe un carácter para ejecutar \"deleteRBT 7 ejrbt1\""
+
+    o <- getLine
+
+    putStrLn ""
+    putStrLn "Salida (deleteRBT 7 ejrbt1):"
+    putStrLn $ show $ deleteRBT 7 ejrbt1
+    putStrLn ""
+    ejrbt1DeleteStr
+    putStrLn ""
+    putStrLn "En este caso también hay que hacer un rebalanceo del arbol."
+    putStrLn ""
+
+    o <- getLine
 
     putStrLn "\n"
     return ()
