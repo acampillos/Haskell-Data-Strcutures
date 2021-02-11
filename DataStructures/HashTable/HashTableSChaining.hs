@@ -3,107 +3,148 @@ import qualified Data.List as List (find, length, delete)
 import Data.Hashable
 import Data.Maybe
 
---  Tipos de hashing comunes
---      Separate chaining       <
---      Open adressing          
---          Linear probing      
---          Quadratic probing   
---          Double hashing      
+-- SEPARATE CHAINING:
+-- Trata de evitar las colisiones entre elementos que se insertan a la tabla con
+-- posibles valores para la función de hash iguales mediante el uso de listas enlazadas
+-- asociadas a cada valor de la función de hash que utilizamos.
 
---                           |pares|, tabla
+-----------------------
+-- CONSTRUCTORES
+-----------------------
+-- Lo implemenntamos mediante un array que contendrá para cada indice del mismo
+-- una lista enlazada con los pares que se inserten y tengan como valor de hash
+-- el índice del array.
+-- Llamaermos a cada una de estas listas enlazadas buckets.
+-- Igualmente guardaremos el número de pares contenidos en la tabla con el fin 
+-- de hacer más eficientes los cálculos asociados al aumento/disminución del
+-- tamaño de la tabla.
+--
+--        HashTable = |pares contenidos| [indice bucket, [pares en el bucket]]
+--
 data HashTable a b = HashTable Int (Array Int [(a, b)])
   deriving (Show, Eq)
 
+
+-----------------------
+-- FUNCIONES
+-----------------------
+
 getTable :: HashTable a b -> Array Int [(a,b)]
-getTable (HashTable _ arr) = arr
+getTable (HashTable _ table) = table
 
 empty :: Eq a => Int -> HashTable a b
 empty n = HashTable 0 (array (0, n-1) [(i,[]) | i <- [0..n-1]])
 
 isEmpty :: (Eq a, Eq b) => HashTable a b -> Bool
-isEmpty t@(HashTable _ arr) = t == empty (length arr)
+isEmpty t@(HashTable _ table) = t == empty (length table)
+
 
 -- // double table size if 50% full
 -- (n >= m/2)
+
 put :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTable a b -> HashTable a b
-put (k, v) t@(HashTable pairs arr) = if pairs >= (div buckets 2) 
+-- Inserta el par (a, b) en la tabla.
+-- Parámetros: Par clave-valor
+--             Tabla en la que se inserta
+-- Devuelve:   Tabla con el par insertado
+
+-- Se encarga de hacer un aumento/disminución de la tabla y posteriormente realiza la inserción.
+put (k, v) t@(HashTable pairs table) = if pairs >= (div buckets 2) 
                                      then let resized = resize (2*buckets) t 
                                           in put' (k,v) resized 
                                      else put' (k, v) t
-    where buckets = length arr
+    where buckets = length table
 
-put' (k, v) t@(HashTable pairs arr) = if containsKey k t
-                                    then let removedKey = getTable (removeKey k t)
-                                         in (HashTable pairs (removedKey // [(i, (k,v) : (removedKey ! i))])) 
-                                    else (HashTable (pairs+1) (arr // [(i, (k,v) : (arr ! i))]))
-  where i = hashSChaining (List.length arr) k 
+-- Inserta el par en la tabla
+put' (k, v) t@(HashTable pairs table) = 
+  if containsKey k t                                                          -- Comprobamos si la tabla ya contiene el par y lo reemplazamos si es así
+  then let removedKey = getTable (removeKey k t)                              --    Eliminamos el par en la tabla
+        in (HashTable pairs (removedKey // [(i, (k,v) : (removedKey ! i))]))
+  else (HashTable (pairs+1) (table // [(i, (k,v) : (table ! i))]))            -- En otro caso, insertamos el par en el array de la tabla
+  where i = hashSChaining (List.length table) k
+        -- índice del bucket en el que se inserta el par
 
-entries :: HashTable a b -> [(a,b)]
-entries (HashTable _ arr) = concat [arr!i | i<-[0..n-1]]
-    where n = length arr
-
-keys :: HashTable a b -> [a]
-keys (HashTable _ arr) = concat [map fst entries | i<-[1..(length arr)-1], let entries = arr!i]
-    where n = length arr
-
-values :: HashTable a b -> [b]
-values (HashTable _ arr) = concat [map snd entries | i<-[1..(length arr)-1], let entries = arr!i]
-    where n = length arr
-
-containsKey :: (Hashable a, Eq a) => a -> HashTable a b-> Bool
-containsKey k t@(HashTable _ arr) = if isNothing (getValue k t) then False else True
-
-containsValue :: Eq b => b -> HashTable a b -> Bool
-containsValue v t = any (==v) (values t)
-    
 getValue :: (Hashable k, Eq k) => k -> HashTable k v -> Maybe (k, v)
-getValue key (HashTable _ table) =
-  List.find (\(k,v) -> k == key) bucket
-  where
-    position = hashSChaining (List.length table) key
-    bucket = table ! position
-
-clear :: Eq a => HashTable a b -> HashTable a b
-clear t@(HashTable _ arr) = empty (length arr)
-
-size :: HashTable a b -> Int
-size t@(HashTable _ arr) = length arr
-
--- merge?
+-- Obtiene el valor asociado a la clave que recibe en la tabla correspondiente.
+-- Parámetros: Clave de la que queremos obtener el valor.
+--             Tabla de la que lo obtenemos.
+-- Devuelve:   Par clave-valor
+getValue key (HashTable _ table) = List.find (\(k,v) -> k == key) bucket    -- Buscamos en el bucket un par con clave igual a la buscada
+  where position = hashSChaining (List.length table) keys                   -- si no se enceuntra, devuelve Nothing.
+        bucket = table ! position
 
 replace :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTable a b -> HashTable a b
 replace (k, v) t = put (k, v) t
 
 -- // halves size of array if it's 12.5% full or less
 -- (n > 0 && n <= m/8) 
+
 removeKey :: (Hashable a, Eq a, Eq b) => a -> HashTable a b -> HashTable a b
-removeKey key t@(HashTable _ arr) = if pairs > 0 && pairs <= (div buckets 8) then resize (div buckets 2) removed else removed
+-- Elimina el par asociado a la clave en la tabla.
+-- Parámetros: Clave.
+--             Tabla.
+-- Devuevle:   Tabla con el par eliminado.
+
+-- Se encarga de hacer un aumento/disminución de la tabla tras la eliminación del par
+removeKey key t@(HashTable _ table) = if pairs > 0 && pairs <= (div buckets 8) then resize (div buckets 2) removed else removed
     where removed = removeKey' key t
           pairs = getNumPairs removed
           buckets = length (getTable removed)
 
-getNumPairs :: HashTable a b -> Int
-getNumPairs (HashTable pairs table) = pairs
-
-removeKey' key t@(HashTable pairs arr) = 
+-- Elimina el par de la tabla si este existe
+removeKey' key t@(HashTable pairs table) = 
   case getValue key t of
     Nothing -> t
-    Just (k,v) -> (HashTable (pairs-1) (arr // [(i, newxs)]))
-      where
-        i = hashSChaining (List.length arr) key
-        xs = arr ! i
-        newxs = List.delete (k,v) xs
-
-hashSChaining :: Hashable a => Int -> a -> Int
-hashSChaining n = (`mod` n) . hash
-
---  newSize, oldHT, (numKeys, numValues) {no se si lo puedo sacar por dentro y ya}
-resize :: (Hashable a, Eq a, Eq b) => Int -> HashTable a b -> HashTable a b
-resize capacity t = putAll (empty capacity) t
+    Just (k,v) -> (HashTable (pairs-1) (table // [(i, newxs)]))
+      where i = hashSChaining (List.length table) key
+            xs = table ! i
+            newxs = List.delete (k,v) xs
 
 putAll :: (Hashable a, Eq a, Eq b) => HashTable a b -> HashTable a b -> HashTable a b
+-- Inserta todos los pares de la segunda tabla recibida en la primera
+-- Parámetros: Tabla 1
+--             Tabla 2
+-- Devuelve:   Tabla 1 con los nuevos pares
 putAll t1 t2 = foldr (\(k,v) ac -> put (k,v) ac) t1 entrySet
     where entrySet = entries t2
+
+hashSChaining :: Hashable a => Int -> a -> Int
+-- Calcula la función de hash a partir de n (longitud de la tabla)
+hashSChaining n = (`mod` n) . hash
+
+resize :: (Hashable a, Eq a, Eq b) => Int -> HashTable a b -> HashTable a b
+-- Cambia el tamaño de la tabla insertando todos los elementos en una vacía con la capacidad indicada
+resize capacity t = putAll (empty capacity) t
+
+entries :: HashTable a b -> [(a,b)]
+entries (HashTable _ table) = concat [table!i | i<-[0..n-1]]
+    where n = length table
+
+keys :: HashTable a b -> [a]
+keys (HashTable _ table) = concat [map fst entries | i<-[1..(length table)-1], let entries = table!i]
+    where n = length table
+
+values :: HashTable a b -> [b]
+values (HashTable _ table) = concat [map snd entries | i<-[1..(length table)-1], let entries = table!i]
+    where n = length table
+
+containsKey :: (Hashable a, Eq a) => a -> HashTable a b-> Bool
+containsKey k t@(HashTable _ table) = if isNothing (getValue k t) then False else True
+
+containsValue :: Eq b => b -> HashTable a b -> Bool
+containsValue v t = any (==v) (values t)
+
+getNumPairs :: HashTable a b -> Int
+getNumPairs (HashTable pairs table) = pairs
+    
+clear :: Eq a => HashTable a b -> HashTable a b
+clear t@(HashTable _ table) = empty (length table)
+
+size :: HashTable a b -> Int
+size t@(HashTable _ table) = length table
+
+-- merge?
+
 
 printHT :: (Show a, Show b) => HashTable a b -> String
 printHT t@(HashTable pairs table) = linea ++ header ++ linea ++ contenido ++ linea
