@@ -8,7 +8,7 @@
 --  min          X
 --  max          X
 --  isBST        X
---  equals        X
+--  equals       X
 --  inorder      X
 --  preorder     X
 --  postorder    X
@@ -104,9 +104,6 @@ equals (N _ _ _) H = False
 equals H (N _ _ _) = False
 equals H H = True
 
-------------------------
--- METODOS
-------------------------
 
 -- Comprobar depth
 depth :: (Eq a, Ord a) => BSTree a -> Int

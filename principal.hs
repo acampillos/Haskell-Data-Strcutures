@@ -138,6 +138,22 @@ ejbst1DeleteStr = putStrLn "            8\n          /   \\\n         5     15\n
        H     H
 -}
 
+-- EJEMPLO RBT #######################################################################################
+ejbrt1 = (N B 7 (N B 3 (L) (L)) (N R 18 (N B 10 (N R 8 (L) (L)) (N R 11 (L) (L))) (N B 22 (L) (N R 26 (L) (L)))))
+ejbrt1StrF = putStrLn "ejbrt1 = (N B 7 (N B 3 (L) (L)) (N R 18 (N B 10 (N R 8 (L) (L)) (N R 11 (L) (L))) (N B 22 (L) (N R 26 (L) (L)))))"
+ejbrt1Str = putStrLn "             B7\n           /    \\\n        B3       R18 \n       / \\      /    \\\n      L   L   B10     B22\n             /  \\     /   \\\n           R8   R11  L    R26\n           / \\            / \\\n          L   L           L  L"
+{-
+             B7
+           /    \
+        B3       R18 
+       / \      /    \
+      L   L   B10     B22
+             /  \     /   \
+           R8   R11  L    R26
+           / \            / \
+          L   L           L  L
+-}
+
 
 -- MENU DE ARBOL DE BUSQUEDA BINARIA -----------------------------------------------------
 {-
@@ -172,10 +188,12 @@ menuBST = do
     putStrLn "2. Recorridos del arbol."
     putStrLn ""
     putStrLn "Escribe el número de la prueba a la que quieres entrar."
-    o <- getChar
-    if o == '1' then do
+    
+    o <- getLine
+
+    if o == "1" then do
         menuFuncionesBST
-    else if o == '2' then do
+    else if o == "2" then do
         menuRecorridoBST
     else do
         putChar '\n'
@@ -204,8 +222,7 @@ menuFuncionesBST = do
     putStrLn "para ejecutar las dos funciones que hemos nombrado antes"
     putStrLn "escribe un carácter."
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn ""
     putStrLn "Salida de (depthOf 19 ejbst1):"
@@ -219,8 +236,7 @@ menuFuncionesBST = do
 
     putStrLn "Escribe un carácter para continuar."
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     limpiar
     putStrLn "Ahora podemos probar la función de insercion, está definida"
@@ -230,8 +246,7 @@ menuFuncionesBST = do
     putStrLn "Para ejecutar la función \"insert 2000 ejbst1\", que deberia"
     putStrLn "insertar en nustro BST de prueba el elemento 2000."
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn "Salida de (BST.insert 2000 ejbst1)"
     putStrLn $ show $ BST.insert 2000 ejbst1
@@ -243,8 +258,7 @@ menuFuncionesBST = do
     putStrLn ""
     putStrLn "Escribe un carácter para continuar."
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     limpiar
     putStrLn "Por último probamos la función de borrado a la que llamamos"
@@ -254,8 +268,7 @@ menuFuncionesBST = do
     putStrLn "Escriber un carácter para ejecutar la siguiente función:"
     putStrLn "\"delete 19 ejbst1\""
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn "Salida de (BST.delete 19 ejbst1)"
     putStrLn $ show $ BST.delete 19 ejbst1
@@ -270,8 +283,7 @@ menuFuncionesBST = do
     putStrLn "\t3) si tiene 2 hijos se sustituye por el menor hijo de la rama"
     putStrLn "\tderecha"
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     limpiar
     putStrLn "Para volver al menú de BST escribe 1"
@@ -280,12 +292,11 @@ menuFuncionesBST = do
     putStrLn ""
     putStrLn "Para salir escribe q"
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
-    if o == '1' then do
+    if o == "1" then do
         menuBST
-    else if o == '2' then do
+    else if o == "2" then do
         nuevoMenu
     else do
         putChar '\n'
@@ -312,8 +323,7 @@ menuRecorridoBST = do
     putStrLn "Escribe un carácter para ver el ejemplo sobre el que se"
     putStrLn "realizarán los recorridos:"
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
     
     limpiar
     putStrLn ""
@@ -322,8 +332,7 @@ menuRecorridoBST = do
     putStrLn "Escribe un carácter para ver el recorrido inorder del arbol."
     putStrLn ""
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn "inorder ejbst1"
     putStrLn $ show $ inorder ejbst1
@@ -331,8 +340,7 @@ menuRecorridoBST = do
     putStrLn "Escribe un carácter para ver el recorrido preorder del arbol."
     putStrLn ""
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn "preorder ejbst1"
     putStrLn $ show $ preorder ejbst1
@@ -340,8 +348,7 @@ menuRecorridoBST = do
     putStrLn "Escribe un carácter para ver el recorrido postorder del arbol."
     putStrLn ""
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn "postorder ejbst1"
     putStrLn $ show $ postorder ejbst1
@@ -353,12 +360,11 @@ menuRecorridoBST = do
     putStrLn ""
     putStrLn "Para salir escribe q"
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
-    if o == '1' then do
+    if o == "1" then do
         menuBST
-    else if o == '2' then do
+    else if o == "2" then do
         nuevoMenu
     else do
         putChar '\n'
@@ -396,12 +402,14 @@ menuGrafo = do
     putStrLn "3. Podemos hacer pruebas con la conectividad."
     putStrLn ""
     putStrLn "Escribe el número de la prueba a la que se quiere entrar."
-    o <- getChar
-    if o == '1' then do
+
+    o <- getLine
+
+    if o == "1" then do
         menuCosteMinimo
-    else if o == '2' then do
+    else if o == "2" then do
         menuRecorrido
-    else if o == '3' then do
+    else if o == "3" then do
         menuConectividad
     else do
         putChar '\n'
@@ -434,10 +442,12 @@ menuCosteMinimo = do
     putStrLn ""
     putStrLn "Escribe 1 para ejecutar la siguiente instrucción:"
     putStrLn "kruskal carreteras"
+    putStrLn ""
     putStrLn "Escribe 2 para volver al menú anterior."
 
     o <- getChar
-    getChar
+    o <- getChar
+
     if o == '1' then do
         limpiar
         putStrLn "Salida aplicando kruskal"
@@ -457,8 +467,10 @@ menuCosteMinimo = do
         putStrLn ""
         putStrLn "Salida grafica:"
         carreterasKruskalString
-        
-        -- Hacer que pueda probar con sus propios grafos
+
+        o <- getLine
+
+        menuGrafo
 
     else if o == '2' then do
         menuGrafo
@@ -492,8 +504,7 @@ menuRecorrido = do
     putStrLn ""
     putStrLn "Para volver al menú anterior escribe 2:"
 
-    o <- getChar
-    getChar
+    o <- getLine
 
     if o == '1' then do
         menuSalidaBFSDFS
@@ -521,8 +532,7 @@ menuSalidaBFSDFS = do
     putStrLn "Para salir escribe q, escribe otra cosa para volver al inicio."
     putStrLn ""
 
-    o <- getChar
-    getChar
+    o <- getLine
 
     if o == 'q' then do
         limpiar
@@ -547,8 +557,7 @@ menuConectividad = do
     putStrLn "Para ver algunos ejemplos con las funciones de conectividad escribe 1"
     putStrLn ""
     putStrLn "Para vovler al menú anterior escribe 2."
-    o <- getChar
-    getChar
+    o <- getLine
 
     if o == '1' then do
         menuEjemplosConectividad
@@ -570,8 +579,7 @@ menuEjemplosConectividad = do
     putStrLn ""
     putStrLn "Escribe un caracter para ejecutar \"conexo grafo\"."
     
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn "Salida:"
     putStrLn (show (conexo grafo))
@@ -579,8 +587,7 @@ menuEjemplosConectividad = do
     putStrLn ""
     putStrLn "Escribe un caracter para ejecutar \"conectividad grafo\""
     
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn ""
     putStrLn "Salida:"
@@ -600,8 +607,7 @@ menuEjemplosConectividad = do
     putStrLn "let grafo' = addVertex grafo (V 100)"
     putStrLn "vertexSet grafo'"
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn ""
     let grafo' = addVertex grafo (V 100)
@@ -613,8 +619,7 @@ menuEjemplosConectividad = do
     putStrLn "conectividad grafo'"
     putStrLn (show (conectividad grafo'))
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn ""
     putStrLn "Podemos ver también los conjuntos de adyacencias de un vertice."
@@ -631,8 +636,7 @@ menuEjemplosConectividad = do
     putStrLn "adjacents grafo' (V 1)"
     putStrLn ""
 
-    o <- getChar
-    o <- getChar
+    o <- getLine
 
     putStrLn "Salida (adjacents grafo' (V 100)):"
     putStrLn (show (adjacents grafo' (V 100)))
@@ -644,8 +648,7 @@ menuEjemplosConectividad = do
     putStrLn "Para volver al menu principal escribe 2."
     putStrLn "Para salir escribe q"
 
-    t <- getChar
-    t <- getChar
+    t <- getLine
 
     if t == '1' then do
         menuGrafo
@@ -671,8 +674,9 @@ menuHashTable = do
     putStrLn "\tb. Linear probing."
     putStrLn "\tc. Quadratic probing.\n"
     putStr "Elija una opción: "
-    o <- getChar
-    getChar
+    
+    o <- getLine
+
     if o == 'a' then do
         menuHTSeparateChaining
     else if o == 'b' then do
@@ -710,9 +714,47 @@ menuAVL = do
 
 
 -- MENU DE RED BLACK TREE -----------------------------------------------------
+
+rbtStrF = putStrLn "data Color = R | B deriving (Show, Eq)\ndata RBTree a = N Color a (RBTree a) (RBTree a)\n              | L\n              deriving (Show, Eq)"
+
 menuRBT = do
     limpiar
-    
+    putStrLn "Menú de Red-Black Tree:\n"
+    putStrLn ""
+    putStrLn "La estructura del arbol es la siguiente"
+    putStrLn ""
+    rbtStrF
+    putStrLn ""
+    putStrLn "Un Red-Black Tree es una estructura de datos basada en un"
+    putStrLn "arbol binario en el cual sus nodos son pintados de rojo o"
+    putStrLn "negro, esta información es representada con un bit extra"
+    putStrLn "de información en cada nodo."
+    putStrLn "Todo Red-Black Tree cumple estas reglas:"
+    putStrLn ""
+    putStrLn "\t1) El nodo raiz es negro."
+    putStrLn "\t2) Las hojas son negras."
+    putStrLn "\t3) Un nodo rojo no tiene ningún hijo negro."
+    putStrLn "\t4) El arbol debe tener la misma altura negra desde el nodo"
+    putStrLn "\t   raiz a cada hoja, es decir, la suma de los nodos negros"
+    putStrLn "\t   encontrados en el recorrido desde el nodo raiz a cada"
+    putStrLn "\t   hoja, debe ser siempre el mismo."
+    putStrLn ""
+    putStrLn "Para hacer tests podemos probar con el siguiente ejemplo."
+    putStrLn "Escribe un carácter para continuar:"
+
+    o <- getLine
+
+    limpiar
+    ejbrt1StrF
+    putStrLn ""
+    ejbrt1Str
+    putStrLn ""
+    putStrLn "Las pruebas que realizaremos son sobre las funciones de insert"
+    putStrLn ", delete y search."
+    putStrLn "Comenzando con la función de búsqueda, se ha definido como"
+    putStrLn ""
+
+    putStrLn "\n"
     return ()
 
 -------------------------------------------------------------------------------
@@ -729,21 +771,21 @@ nuevoMenu = do
     putStrLn "7. Red-Black Tree"
     putStrLn "\n"
     putStr "Elija una opción: "
-    o <- getChar
-    getChar
-    if o == '1' then do
+    o <- getLine
+    
+    if o == "1" then do
         menuDeque
-    else if o == '2' then do
+    else if o == "2" then do
         menuGrafo               ----- > Casi terminado
-    else if o == '3' then do
+    else if o == "3" then do
         menuHashTable           ----- > En prograso
-    else if o == '4' then do
+    else if o == "4" then do
         menuMaxHeap
-    else if o == '5' then do
+    else if o == "5" then do
         menuBST                 ----- > Hecho
-    else if o == '6' then do
+    else if o == "6" then do
         menuAVL
-    else if o == '7' then do
+    else if o == "7" then do
         menuRBT                 ----- > En prograso
     else do
         putChar '\n'
