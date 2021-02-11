@@ -16,10 +16,8 @@ module DataStructures.RedBlackTree(
     insertRBT,
     getColor,
     deleteRBT,
-    --fuse,
-    --balR,
-    --balL
 ) where
+  
 data Color = R | B deriving (Show, Eq)
 data RBTree a = N Color a (RBTree a) (RBTree a)
               | L
