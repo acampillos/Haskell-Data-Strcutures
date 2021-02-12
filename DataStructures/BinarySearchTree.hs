@@ -13,9 +13,7 @@ module DataStructures.BinarySearchTree(
     given,
     inorder,
     preorder,
-    postorder,
-    --bst2list,   NO
-    --list2bst    NO
+    postorder
 ) where
 
 import Data.Maybe

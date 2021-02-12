@@ -679,28 +679,43 @@ menuEjemplosConectividad = do
     return ()
 
 ------------------------------
-
+-- MENU HASH TABLE -----------------------------------------------------------
+--        HashTable = |pares contenidos| [indice bucket, [pares en el bucket]]
+--
+data HashTable a b = HashTable Int (Array Int [(a, b)])
+  deriving (Show, Eq)
+hashTableF = putStrLn "HashTable = |pares contenidos| [indice bucket, [pares en el bucket]]\n\n\ndata HashTable a b = HashTable Int (Array Int [(a, b)])\n  deriving (Show, Eq)"
 
 menuHashTable = do
     limpiar
     -- Introducción
-    putStrLn "Una tabla hash es una estructura de datos que implementa el ADT de un array asociativo o diccionario."
-    putStrLn "Utiliza una función de hash para calcular un índice o código hash que identifica posición de la casilla o cubeta (bucket o slot) donde se localiza el valor."
+    putStrLn "Una tabla hash es una estructura de datos que"
+    putStrLn "implementa el ADT de un array asociativo o diccionario."
+    putStrLn "Utiliza una función de hash para calcular un índice o"
+    putStrLn "código hash que identifica posición de la casilla o cubeta"
+    putStrLn "(bucket o slot) donde se localiza el valor."
+    putStrLn ""
+    putStrLn "La estructura es la siguiente:"
+    hashTableF
+    putStrLn ""
     -- Tipos de hash table implementadas según el tratamiento de colisiones
-    putStrLn "Idealmente, la función de hash asignará cada clave a un único bucket pero la mayoría de hash tables emplean una función de hash imperfecta que puede causar colisiones."
+    putStrLn "Idealmente, la función de hash asignará cada clave a un"
+    putStrLn "único bucket pero la mayoría de hash tables emplean una"
+    putStrLn "función de hash imperfecta que puede causar colisiones."
+    putStrLn ""
     -- Ajuste del tamaño de la tabla (load factor)    
-    putStrLn "\n\ta. Separate chaining."
-    putStrLn "\tb. Linear probing."
-    putStrLn "\tc. Quadratic probing.\n"
+    putStrLn "\n\t1. Separate chaining."
+    putStrLn "\t2. Linear probing."
+    putStrLn "\t3. Quadratic probing.\n"
     putStr "Elija una opción: "
     
     o <- getLine
 
-    if o == "a" then do
+    if o == "1" then do
         menuHTSeparateChaining
-    else if o == "b" then do
+    else if o == "2" then do
         menuHTLinearProbing
-    else if o == "c" then do
+    else if o == "3" then do
         menuHTQuadraticProbing
     else do
         putChar '\n'
@@ -709,9 +724,16 @@ menuHashTable = do
 
 menuHTSeparateChaining = do
     limpiar
-    putStrLn "En este método, cada cubo es independiente y en ellos se almacenan un conjunto de pares clave-valor en una lista."
-    putStrLn "En la mayoría de implementaciones cada bucket tendrá pocas entradas si la función de hash es adecuada."
-    putStrLn "La complejidad de las operaciones es O(1) para la búsqueda del bucket correspondiente y O(n) para la búsqueda en la lista (en nuestro caso listas enlazadas)."
+    putStrLn "En este método, cada cubo es independiente y en ellos se"
+    putStrLn "almacenan un conjunto de pares clave-valor en una lista."
+    putStrLn "En la mayoría de implementaciones cada bucket tendrá pocas"
+    putStrLn "entradas si la función de hash es adecuada."
+    putStrLn ""
+    putStrLn "La complejidad de las operaciones es O(1) para la búsqueda"
+    putStrLn "del bucket correspondiente y O(n) para la búsqueda en la"
+    putStrLn "lista (en nuestro caso listas enlazadas)."
+    putStrLn ""
+    putStrLn ""
     
     return ()
 
@@ -821,11 +843,16 @@ menuEliminacionesEInserciones = do
     putStrLn "Vamos a probar las dos funciones de inserción, la de insertar"
     putStrLn "por delante \"cons\", y por detras \"snoc\"."
     putStrLn ""
+    putStrLn "Escribe un carácter para ejecutar las funciones."
+
+    o <- getLine
+
+    putStrLn ""
     putStrLn "Salida (cons 10 dequeTest):"
-    putStrLn $ show $ cons 10 dequeTest
+    putStrLn $ show $ cons dequeTest 10
     putStrLn ""
     putStrLn "Salida (snoc 10 dequeTest):"
-    putStrLn $ show $ snoc 10 dequeTest
+    putStrLn $ show $ snoc dequeTest 10
     putStrLn ""
     putStrLn "Nos queda por probar la eliminación de elementos, la función"
     putStrLn "de eliminar el elemento del inicio es \"tailDeque\", y la de"
@@ -842,9 +869,6 @@ menuEliminacionesEInserciones = do
     putStrLn "Salida (initDeque dequeTest)"
     putStrLn $ show $ initDeque dequeTest
     putStrLn ""
-
-    o <- getLine
-
     putStrLn "Estas son las funciones principales de las Deque."
     putStrLn ""
     putStrLn "Para volver al menú de Deque escribe 1."
@@ -870,7 +894,53 @@ menuEliminacionesEInserciones = do
 
 menuRebalanceo = do
     limpiar
+    putStrLn "Para que la Deque siga siendo eficiente en cualquier caso"
+    putStrLn "tiene que haber una función que rebalancee las dos listas."
+    putStrLn "En este caso la función se llama \"queue\", se le pasa"
+    putStrLn "como parámetro una Deque y retorna otra que ya está"
+    putStrLn "balanceada en función de la constante c definida (en"
+    putStrLn "este caso su valor es 4) y la fórmula que se usa para decidir"
+    putStrLn "si debe ser realizado el rebalanceo es la siguiente:"
     putStrLn ""
+    putStrLn "          |F| <= c|R|+1 y |R| <= c|F|+1"
+    putStrLn ""
+    putStrLn "El ejemplo que vamos a usar para hacer la prueba es el"
+    putStrLn "siguiente, (teniendo en cuenta que es incorrecto ya que"
+    putStrLn "no está balanceado):"
+    putStrLn ""
+    putStrLn $ show $ Deque 7 [1,2,3,4,5,6,7] 1 [8]
+    let dequeTest = Deque 7 [1,2,3,4,5,6,7] 1 [8]
+    putStrLn ""
+    putStrLn "Escribe un carácter para ejecutar \"queue dequeTest\"."
+    
+    o <- getLine
+    
+    putStrLn ""
+    putStrLn "Salida (queue dequeTest):"
+    putStrLn $ show $ queue dequeTest
+    putStrLn ""
+    putStrLn "Como podemos ver, ahora si está balanceado."
+    putStrLn ""
+    putStrLn "Para volver al menú de Deque escribe 1."
+    putStrLn ""
+    putStrLn "Para volver al menú principal escribe 2."
+    putStrLn ""
+    putStrLn "Para salir escribe q"
+    
+    o <- getLine
+
+    if o == "1" then do
+        menuDeque
+    else if o == "2" then do
+        nuevoMenu
+    else if o == "q" then do
+        limpiar
+        putChar '\n'
+    else do
+        putChar '\n'
+        putStrLn "No se ha seleccionado ninguna opción válida."
+
+
     return ()
 ---------------------------------------------------------------------------------
 
@@ -1011,13 +1081,13 @@ nuevoMenu = do
     o <- getLine
     
     if o == "1" then do
-        menuDeque               ----- > Empezado
+        menuDeque               ----- > Hecho
     else if o == "2" then do
-        menuGrafo               ----- > Casi terminado
+        menuGrafo               ----- > Hecho
     else if o == "3" then do
         menuHashTable           ----- > En prograso
     else if o == "4" then do
-        menuMaxHeap
+        menuMaxHeap             ----- > Por hacer
     else if o == "5" then do
         menuBST                 ----- > Hecho
     else if o == "6" then do
