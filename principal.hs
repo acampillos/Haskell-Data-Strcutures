@@ -8,6 +8,7 @@ import DataStructures.BinarySearchTree as BST
 import Data.Set as Set
 import DataStructures.Graph as G
 import DataStructures.RedBlackTree as RBT
+import DataStructures.Deque as D
 
 {-import System.Console.ANSI
 
@@ -394,10 +395,6 @@ menuRecorridoBST = do
 
 --------------------------------------
 
-menuMinHeap = do
-    limpiar
-    return ()
-
 menuMaxHeap = do
     limpiar
     return ()
@@ -439,6 +436,7 @@ menuGrafo = do
     return ()
 
 ----Submenus grafos ---------
+menuCosteMinimo :: IO ()
 menuCosteMinimo = do
     limpiar
     carreterasString
@@ -725,9 +723,39 @@ menuHTQuadraticProbing = do
     limpiar
     return ()
 
+-- MENU DE DEQUE ---------------------------------------------------------------
+dequeStr = putStrLn "data Deque a = Deque Int [a] Int [a]\n    deriving (Show)"
+
 menuDeque = do
     limpiar
+    putStrLn "Menu de Deque\n"
+    putStrLn ""
+    putStrLn "ADT que generaliza una cola, permitiendo la inserción y"
+    putStrLn "eliminación de elementos del principio y final de la cola."
+    putStrLn ""
+    putStrLn "La estructura implementada es la siguiente:"
+    putStrLn ""
+    dequeStr
+    putStrLn ""
+    putStrLn "El balance perfecto se da cuando el conjunto de elementos"
+    putStrLn "está dividido en partes iguales para las dos listas que "
+    putStrLn "componen la deque."
+    putStrLn ""
+    putStrLn "Para mejorar la eficiencia, restauramos este balance mediante"
+    putStrLn "un invariante que nos permite no tener que restaurarlo con"
+    putStrLn "cada operación:"
+    putStrLn ""
+    putStrLn "          |F| <= c|R|+1 y |R| <= c|F|+1"
+    putStrLn ""
+    putStrLn "Podemos hacer las siguientes pruebas:"
+    putStrLn ""
+    putStrLn ""
+
+    o <- getLine
+
     return ()
+
+---------------------------------------------------------------------------------
 
 menuAVL = do
     limpiar
@@ -750,6 +778,12 @@ menuRBT = do
     putStrLn "arbol binario en el cual sus nodos son pintados de rojo o"
     putStrLn "negro, esta información es representada con un bit extra"
     putStrLn "de información en cada nodo."
+    putStrLn ""
+    putStrLn "Lo bueno de esta estructura de datos es que su complejidad"
+    putStrLn "en busqueda, insercion y borrado es log(n), muy bueno en"
+    putStrLn "comparación con otras estructuras (aunque van Embde Boas"
+    putStrLn "es aun mejor ya que llega a la complejidad de log(log(n)))."
+    putStrLn ""
     putStrLn "Todo Red-Black Tree cumple estas reglas:"
     putStrLn ""
     putStrLn "\t1) El nodo raiz es negro."
@@ -825,8 +859,18 @@ menuRBT = do
     putStrLn ""
     ejrbt1DeleteStr
     putStrLn ""
-    putStrLn "En este caso también hay que hacer un rebalanceo del arbol."
+    putStrLn "En este caso también hay que hacer un rebalanceo del arbol y"
+    putStrLn "recolorear algunos nodos."
     putStrLn ""
+    putStrLn "Para volver al menu principal escribe 1."
+    putStrLn "Para salir escribe q"
+
+    t <- getLine
+
+    if t == "1" then do
+        nuevoMenu
+    else do
+        nuevoMenu   -- AQUI HAY QUE CAMBIAR ESTO
 
     o <- getLine
 
@@ -850,7 +894,7 @@ nuevoMenu = do
     o <- getLine
     
     if o == "1" then do
-        menuDeque
+        menuDeque               ----- > Empezado
     else if o == "2" then do
         menuGrafo               ----- > Casi terminado
     else if o == "3" then do
@@ -862,7 +906,7 @@ nuevoMenu = do
     else if o == "6" then do
         menuAVL
     else if o == "7" then do
-        menuRBT                 ----- > En prograso
+        menuRBT                 ----- > Hecho 
     else do
         putChar '\n'
         putStrLn "No se ha seleccionado ninguna opción válida."

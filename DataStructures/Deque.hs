@@ -1,3 +1,22 @@
+
+module DataStructures.Deque(
+    Deque(..),
+    c,
+    empty,
+    isEmpty,
+    queue,
+    cons,
+    headDeque,
+    tailDeque,
+    snoc,
+    lastDeque,
+    initDeque,
+    printDeque,
+    list2Deque,
+    newDeque,
+    deque2List
+) where
+
 -- COLA DOBLEMENTE TERMINADA/DOUBLE-ENDED QUEUE:
 -- ADT que generaliza una cola, permitiendo la inserción y eliminación de elementos 
 -- del principio y final de la cola.
@@ -66,22 +85,22 @@ cons :: Deque a -> a -> Deque a
 -- Devuelve:   Deque con el nuevo elemento en el frente.
 cons (Deque sf f sr r) x = queue (Deque (sf+1) (x:f) sr r)
 
-head :: Deque a -> a
+headDeque :: Deque a -> a
 -- Inspecciona el elemento del frente.
 -- Parámetros: Deque.
 -- Devuelve:   Elemento del frente.
-head (Deque 0 [] 0 []) = error "Empty deque"
+headDeque (Deque 0 [] 0 []) = error "Empty deque"
 -- no se si r es solo un elemento [x] o (x:r), igual en el resto de casos
-head (Deque 0 [] sr r) = Prelude.head r
-head (Deque sf (x:f) _ _) = x
+headDeque (Deque 0 [] sr r) = Prelude.head r
+headDeque (Deque sf (x:f) _ _) = x
 
-tail :: Deque a -> Deque a
+tailDeque :: Deque a -> Deque a
 -- Elimina el elemento en el frente.
 -- Parámetros: Deque.
 -- Devuelve:   Deque.
-tail (Deque 0 [] 0 []) = error "Empty deque"
-tail (Deque 0 [] sr [x]) = empty
-tail (Deque sf f sr r) = queue (Deque (sf-1) (Prelude.tail f) sr r)
+tailDeque (Deque 0 [] 0 []) = error "Empty deque"
+tailDeque (Deque 0 [] sr [x]) = empty
+tailDeque (Deque sf f sr r) = queue (Deque (sf-1) (Prelude.tail f) sr r)
 
 
 -- FUNCIONES ASOCIADAS AL FINAL (REAR)
@@ -93,24 +112,37 @@ snoc :: Deque a -> a -> Deque a
 -- Devuelve:   Deque con el nuevo elemento en el final.
 snoc (Deque sf f sr r) x = queue (Deque sf f (sr+1) (x:r))
 
-last :: Deque a -> a
+lastDeque :: Deque a -> a
 -- Inspecciona el elemento del final.
 -- Parámetros: Deque.
 -- Devuelve:   Elemento del final.
-last (Deque 0 [] 0 []) = error "Empty deque"
-last (Deque sf [x] 0 []) = x
-last (Deque _ _ sr (x:r)) = x
+lastDeque (Deque 0 [] 0 []) = error "Empty deque"
+lastDeque (Deque sf [x] 0 []) = x
+lastDeque (Deque _ _ sr (x:r)) = x
 
-init :: Deque a -> Deque a
+initDeque :: Deque a -> Deque a
 -- Elimina el elemento en el final.
 -- Parámetros: Deque.
 -- Devuelve:   Deque.
-init (Deque 0 [] 0 []) = error "Empty queue"
-init (Deque sf [x] 0 []) = empty
-init (Deque sf f sr r) = queue (Deque sf f (sr-1) (Prelude.tail r))
+initDeque (Deque 0 [] 0 []) = error "Empty queue"
+initDeque (Deque sf [x] 0 []) = empty
+initDeque (Deque sf f sr r) = queue (Deque sf f (sr-1) (Prelude.tail r))
 
 printDeque :: (Show a) => Deque a -> String
 printDeque (Deque sf f sr r) = show (f ++ (reverse r))
+
+--- Experimental ----------------------------
+
+list2Deque :: [a] -> Deque a
+list2Deque l = newDeque f (reverse r)
+    where (f,r) = splitAt (((length l) + 1) `div` 2) l
+
+newDeque :: [a] -> [a] -> Deque a
+newDeque f r = queue (Deque (length f) f (length r) r)
+
+deque2List :: Deque a -> [a]
+deque2List (Deque _ f _ r) = f ++ (reverse r)
+
 
 q1, q2, q3 :: Deque Int
 q1 = Deque 3 [1,2,3] 2 [4,5]

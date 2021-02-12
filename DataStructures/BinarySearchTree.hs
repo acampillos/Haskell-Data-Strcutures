@@ -1,6 +1,4 @@
-import Data.Maybe
-
-{--module DataStructures.BinarySearchTree(
+module DataStructures.BinarySearchTree(
     BSTree(..),
     insert,
     delete,
@@ -16,9 +14,11 @@ import Data.Maybe
     inorder,
     preorder,
     postorder,
-    bst2list,   NO
-    list2bst    NO
-) where--}
+    --bst2list,   NO
+    --list2bst    NO
+) where
+
+import Data.Maybe
 
 -- ÁRBOL DE BÚSQUEDA BINARIO/BINARY SEARCH TREE (BST):
 -- Árbol binario cuyos nodos contienen un valor mayor que todos los del subárbol izquierdo y 
@@ -57,7 +57,7 @@ tieneDer _ = True
 isBST :: (Eq a, Ord a) => BSTree a -> Bool
 isBST (H) = True
 isBST (N izq der n)
-    | valor izq == valor der && valor der == Nothing = True
+    | valor izq == Nothing && valor der == Nothing = True
     | valor izq == Nothing = (valD > n) && isBST der
     | valor der == Nothing = (valI < n) && isBST izq
     | otherwise = (valD > n) && (valI < n) && isBST der && isBST izq
@@ -137,23 +137,7 @@ delete v (N izq der n)
     where
         Just minimo = minBST der
 
-{-delete _ (H) = (H)
-delete v (N izq der n)
-    | v == n && (esHoja izq) && (esHoja der) = (H)  -- Caso donde no tiene hijos
-    | v == n && (esHoja izq) = der                  -- Caso donde tiene un hijo
-    | v == n && (esHoja der) = izq                  -- Caso donde tiene un hijo
-    | v == n =                                      -- Caso donde tiene dos hijos -> encontrar el minimo del derecho (para reemplazar el eliminado)
-        if isNothing minimo then let maximo = maxBST izq in 
-            if isNothing maximo then H
-            else (N (delete (Just maximo) izq) der (Just maximo))
-        else (N izq (delete (Just minimo) der) (Just minimo))
-    | v < n = (N (delete v izq) der n)
-    | v > n = (N izq (delete v der) n)
-    where
-        minimo = minBST der-}
-
-
-{--merge :: (Eq a, Ord a) => BSTree a -> BSTree a -> BSTree a
+merge :: (Eq a, Ord a) => BSTree a -> BSTree a -> BSTree a
 merge a b = list2bst merged
     where inorder1 = inorder a
           inorder2 = inorder b
@@ -175,7 +159,7 @@ list2bst xs
 
 splitMid :: [a] -> ([a], a, [a])
 splitMid xs = (take indiceMid xs, xs!!indiceMid, drop (indiceMid+1) xs)
-   where indiceMid = div (length xs) 2-}
+   where indiceMid = div (length xs) 2
 
 -- RECORRIDOS
 inorder :: BSTree a -> [a]
@@ -190,12 +174,14 @@ postorder :: BSTree a -> [a]
 postorder (N l r v) = (postorder l) ++ (postorder r) ++ [v]
 postorder H = []
 
-{-- BST a lista
+-- BST a lista
 bst2list :: (Eq a, Ord a) => BSTree a -> [a]
 -- Obtiene un BST y devuelve sus nodos en una lista (preorder)
 -- Parámetros: BST
 -- Devuelve:   Lista de a
-bst2list t = preorder t-}
+bst2list t = preorder t
+
+
 
 {-inorder2bst :: (Eq a, Ord a) => [a] -> BSTree a
 inorder2bst xs = undefined
