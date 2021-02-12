@@ -10,6 +10,7 @@ import DataStructures.Graph as G
 import DataStructures.RedBlackTree as RBT
 import DataStructures.Deque as D
 import DataStructures.HashTable.HashTableSChaining as HTS
+import DataStructures.HashTable.HashTableQProbing as HTQ
 
 {-import System.Console.ANSI
 
@@ -708,6 +709,11 @@ menuHashTable = do
     putStrLn "hashing de cada elemento, los pares caen en indices"
     putStrLn "distintos."
     putStrLn ""
+    putStrLn "(Sabiendo que la diferencia principal se enceuntra en el"
+    putStrLn "tratamiento de colisiones durante el insert, solo la"
+    putStrLn "versión de Separate Chaining contiene ejemplos de delete"
+    putStrLn "y get)"
+    putStrLn ""
     -- Ajuste del tamaño de la tabla (load factor)   
     putStrLn "\t0. Explicación de técnica para reajustar tamaño." 
     putStrLn "\t1. Separate chaining."
@@ -770,7 +776,7 @@ menuExplicacionReajuste = do
     putStrLn ""
     putStrLn "Que tiene el siguiente aspecto"
     putStrLn ""
-    putStrLn $ printHT $ put (85,"E") htsExperimento
+    putStrLn $ HTS.printHT $ HTS.put (85,"E") htsExperimento
     putStrLn ""
     putStrLn "Si añadimos un elemento más vamos a poder comporbar"
     putStrLn "directamente el reescalado de la tabla."
@@ -781,11 +787,11 @@ menuExplicacionReajuste = do
 
     putStrLn ""
     putStrLn "Salida (put (20,\"G\") htsExperimento):"
-    putStrLn $ show $ put (20,"G") (put (85,"E") htsExperimento)
+    putStrLn $ show $ HTS.put (20,"G") (HTS.put (85,"E") htsExperimento)
     putStrLn ""
     putStrLn "Y tiene el siguiente aspecto:"
     putStrLn ""
-    putStrLn $ printHT $ put (20,"G") (put (85,"E") htsExperimento)
+    putStrLn $ HTS.printHT $ HTS.put (20,"G") (HTS.put (85,"E") htsExperimento)
     putStrLn ""
     putStrLn "Como se ve, la tabla ha sido reescalada."
     putStrLn ""
@@ -829,7 +835,7 @@ menuHTSeparateChaining = do
     putStrLn ""
     putStrLn "Que representamos como:"
     putStrLn ""
-    putStrLn (printHT (htsExperimento))
+    putStrLn (HTS.printHT (htsExperimento))
     putStrLn ""
     putStrLn "La primera prueba va a ser con la función de insert a la"
     putStrLn "que llamamos \"put\" y toma como valores de entrada un par"
@@ -850,10 +856,10 @@ menuHTSeparateChaining = do
     
     putStrLn ""
     putStrLn "Salida (put (85,\"E\") htsExperimento):"
-    putStrLn $ show $ put (85,"E") htsExperimento
+    putStrLn $ show $ HTS.put (85,"E") htsExperimento
     putStrLn ""
     putStrLn "Salida (printHT $ put (85,\"E\") htsExperimento):"
-    putStrLn $ printHT $ put (85,"E") htsExperimento
+    putStrLn $ HTS.printHT $ HTS.put (85,"E") htsExperimento
     putStrLn ""
     putStrLn "Como podemos ver la tabla, el nuevo valor ha coincidido al hacer el"
     putStrLn "hash con otro valor, por tanto en ese valor de hash, ahora tendremos"
@@ -873,11 +879,11 @@ menuHTSeparateChaining = do
     putStrLn "carácter."
     putStrLn ""
     putStrLn "Salida (removeKey 85 htsExperimento):"
-    putStrLn $ removeKey 85 $ put (85,"E") htsExperimento
+--    putStrLn $ HTS.removeKey 85 $ HTS.put (85,"E") htsExperimento <--- SOLUCIONAR
     putStrLn ""
     putStrLn "Y este sería el aspecto de la tabla:"
     putStrLn ""
-    putStrLn $ printHT $ removeKey 85 $ put (85,"E") htsExperimento
+    putStrLn $ HTS.printHT $ HTS.removeKey 85 $ HTS.put (85,"E") htsExperimento
     putStrLn ""
     putStrLn "Escribe un carácter para continuar."
 
@@ -891,7 +897,7 @@ menuHTSeparateChaining = do
     putStrLn "Escribe un carácter para ejecutar \"getValue 700 htsExperimento\""
     putStrLn ""
     putStrLn "Salida (getValue 700 htsExperimento):"
-    putStrLn $ show $ getValue 700 htsExperimento
+    putStrLn $ show $ HTS.getValue 700 htsExperimento
     putStrLn ""
     putStrLn "Para volver al menu de HashTable escribe 1."
     putStrLn "Para volver al menu principal escribe 2."
@@ -907,11 +913,35 @@ menuHTSeparateChaining = do
         putChar '\n'  
         putStrLn "Saliendo..."
     return ()
-
-    return ()
+    
+htqExperimento :: HashTableQP Int String
+htqExperimento = L.foldr (HTQ.put) (HTQ.empty 7) [(50,"M"),(700,"C"),(76,"D")]
 
 menuHTLinearProbing = do
     limpiar
+    putStrLn "Como hemos dicho en el menú anterior, en este apartado"
+    putStrLn "solo se hara una prueba con el metodo de insert para"
+    putStrLn "ver el tratamiento de la colisión."
+    putStrLn ""
+    putStrLn "El ejemplo sobre el que vamos a probar es el siguiente:"
+    putStrLn ""
+    putStrLn $ show $ htqExperimento
+    putStrLn ""
+    putStrLn "Con el siguiente aspecto de tabla:"
+    putStrLn ""
+    putStrLn (HTQ.printHT (htqExperimento))
+    putStrLn ""
+    putStrLn "Ahora procedemos a insertar el elemento (85,\"E\") en"
+    putStrLn "la tabla."
+    putStrLn "Escribe un carácter para continuar:"
+
+    o <- getLine
+
+    putStrLn ""
+    putStrLn "Salida (HTQ.put (85,\"E\") htqExperimento):"
+    putStrLn $ show $ HTQ.put (85,"E") htqExperimento
+    putStrLn ""
+
     return ()
 
 menuHTQuadraticProbing = do
