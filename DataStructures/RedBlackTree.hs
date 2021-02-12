@@ -16,6 +16,7 @@ module DataStructures.RedBlackTree(
     insertRBT,
     getColor,
     deleteRBT,
+    helpRBT
 ) where
   
 data Color = R | B deriving (Show, Eq)
@@ -23,6 +24,8 @@ data RBTree a = N Color a (RBTree a) (RBTree a)
               | L
               deriving (Show, Eq)
 
+helpRBT :: IO ()
+helpRBT = putStrLn "\ndata RBTree a = N Color a (RBTree a) (RBTree a)\n              | L\n              deriving (Show, Eq)\n\ndata Color = R | B deriving (Show, Eq)\n\ndepthRBT :: (Eq a, Ord a) => RBTree a -> Int\n\nblackDepth :: (Eq a, Ord a) => RBTree a -> Int\n\ngetKeyRBT :: (Eq a, Ord a) => RBTree a -> Maybe a\n\nisBlackRBT :: (Eq a, Ord a) => RBTree a -> Bool\n\ngetColor :: (Eq a, Ord a) => RBTree a -> Color\n\nchangeColor :: (Eq a, Ord a) => RBTree a -> RBTree a\n\nmakeBlack :: (Eq a, Ord a) => RBTree a -> RBTree a\n\nmakeRed :: (Eq a, Ord a) => RBTree a -> RBTree a\n\ncountBlack :: (Eq a, Ord a) => RBTree a -> Maybe Int\n\nallRedHasBlackChilds :: (Eq a, Ord a) => RBTree a -> Bool\n\nisBST_RBT :: (Eq a, Ord a) => RBTree a -> Bool\n\nisRBT :: (Eq a, Ord a) => RBTree a -> Bool\n\ndepthRBTOf :: (Eq a, Ord a) => a -> RBTree a -> Int\n\nminRBT :: (Eq a, Ord a) => RBTree a -> Maybe a\n\nmaxRBT :: (Eq a, Ord a) => RBTree a -> Maybe a\n\ninsertRBT :: (Eq a, Ord a) => a -> RBTree a -> RBTree a\n\ndeleteRBT :: (Eq a, Ord a) => a -> RBTree a -> RBTree a"
 
 -- Comprobar depth
 depthRBT :: (Eq a, Ord a) => RBTree a -> Int
