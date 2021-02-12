@@ -49,7 +49,7 @@ put :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTable a b -> HashTable a b
 -- Devuelve:   Tabla con el par insertado
 
 -- Se encarga de hacer un aumento/disminución de la tabla y posteriormente realiza la inserción.
-put (k, v) t@(HashTable pairs arr) = if pairs >= (div buckets 2) 
+put (k, v) t@(HashTable pairs arr) = if (fromIntegral pairs) >= ((fromIntegral buckets) / 2)
                                      then let resized = resize (2*buckets) t 
                                           in put' (k,v) resized 
                                      else put' (k, v) t
@@ -87,7 +87,7 @@ removeKey :: (Hashable a, Eq a, Eq b) => a -> HashTable a b -> HashTable a b
 -- Devuevle:   Tabla con el par eliminado.
 
 -- Se encarga de hacer un aumento/disminución de la tabla tras la eliminación del par
-removeKey key t@(HashTable _ table) = if pairs > 0 && pairs <= (div buckets 8) then resize (div buckets 2) removed else removed
+removeKey key t@(HashTable _ table) = if pairs > 0 && (fromIntegral pairs) <= (fromIntegral buckets / 8) then resize (div buckets 2) removed else removed
     where removed = removeKey' key t
           pairs = getNumPairs removed
           buckets = length (getTable removed)

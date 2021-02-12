@@ -10,6 +10,7 @@ import DataStructures.Graph as G
 import DataStructures.RedBlackTree as RBT
 import DataStructures.Deque as D
 import DataStructures.HashTable.HashTableSChaining as HTS
+import DataStructures.HashTable.HashTableQProbing as HTQ
 
 {-import System.Console.ANSI
 
@@ -685,6 +686,8 @@ hashTableF = putStrLn "HashTable = |pares contenidos| [indice bucket, [pares en 
 
 menuHashTable = do
     limpiar
+    putStrLn "Menú de HashTable"
+    putStrLn ""
     -- Introducción
     putStrLn "Una tabla hash es una estructura de datos que"
     putStrLn "implementa el ADT de un array asociativo o diccionario."
@@ -706,7 +709,13 @@ menuHashTable = do
     putStrLn "hashing de cada elemento, los pares caen en indices"
     putStrLn "distintos."
     putStrLn ""
-    -- Ajuste del tamaño de la tabla (load factor)    
+    putStrLn "(Sabiendo que la diferencia principal se enceuntra en el"
+    putStrLn "tratamiento de colisiones durante el insert, solo la"
+    putStrLn "versión de Separate Chaining contiene ejemplos de delete"
+    putStrLn "y get)"
+    putStrLn ""
+    -- Ajuste del tamaño de la tabla (load factor)   
+    putStrLn "\t0. Explicación de técnica para reajustar tamaño." 
     putStrLn "\t1. Separate chaining."
     putStrLn "\t2. Linear probing."
     putStrLn "\t3. Quadratic probing.\n"
@@ -714,7 +723,9 @@ menuHashTable = do
     
     o <- getLine
 
-    if o == "1" then do
+    if o == "0" then do
+        menuExplicacionReajuste
+    else if o == "1" then do
         menuHTSeparateChaining
     else if o == "2" then do
         menuHTLinearProbing
@@ -726,6 +737,79 @@ menuHashTable = do
     return ()
 
 -- Submenus HT --------------------------------
+menuExplicacionReajuste = do
+    limpiar 
+    putStrLn "Para todas las implementaciones de los distintos"
+    putStrLn "métodos de tratamiento de colisiones utilizamos"
+    putStrLn "una estrategia de reajuste del tamaño de las"
+    putStrLn "tablas con el fin de optimizar el espacio ocupado"
+    putStrLn "en la misma y disminuir las coincidencias de bucket."
+    putStrLn ""
+    putStrLn "Cuando realizamos la operación de put en la tabla, si"
+    putStrLn "está ocupada a un 50% antes de la inserción reajustamos"
+    putStrLn "la tabla para que duplique su tamaño. Tras ello," 
+    putStrLn "insertamos el par correspondiente."
+    putStrLn ""
+    putStrLn "Cuando realizamos al operación de delete en la tabla,"
+    putStrLn "tras la eliminación del par asociado a la clave que" 
+    putStrLn "recibe reducimos el tamaño de la tabla a la mitad si"
+    putStrLn "está llena menos de un 12'5%."
+    putStrLn ""
+    putStrLn "Los reajustes los realizamos a partir del factor de"
+    putStrLn "carga de la tabla, determinado por el número de "
+    putStrLn "entradas en la tabla partido de el número de buckets"
+    putStrLn "(tamaño) de la misma."
+    putStrLn ""
+    putStrLn "Los valores que hemos dado para la reducción o aumento"
+    putStrLn "son arbitrarios en nuestro caso y se pueden variar en"
+    putStrLn "el código según se quiera."
+    putStrLn ""
+    putStrLn "Escribe un carácter para continuar."
+    putStrLn ""
+
+    o <- getLine
+
+    limpiar
+    putStrLn ""
+    putStrLn "Tomamos como ejemplo la siguiente tabla:"
+    putStrLn "let htsExperimento = L.foldr (HTS.put) (HTS.empty 7) [(50,\"M\"),(700,\"C\"),(76,\"D\"),(85,\"E\")]"
+    putStrLn ""
+    putStrLn "Que tiene el siguiente aspecto"
+    putStrLn ""
+    putStrLn $ HTS.printHT $ HTS.put (85,"E") htsExperimento
+    putStrLn ""
+    putStrLn "Si añadimos un elemento más vamos a poder comporbar"
+    putStrLn "directamente el reescalado de la tabla."
+    putStrLn ""
+    putStrLn "Escribe un carácter para añadir un elemento."
+
+    o <- getLine
+
+    putStrLn ""
+    putStrLn "Salida (put (20,\"G\") htsExperimento):"
+    putStrLn $ show $ HTS.put (20,"G") (HTS.put (85,"E") htsExperimento)
+    putStrLn ""
+    putStrLn "Y tiene el siguiente aspecto:"
+    putStrLn ""
+    putStrLn $ HTS.printHT $ HTS.put (20,"G") (HTS.put (85,"E") htsExperimento)
+    putStrLn ""
+    putStrLn "Como se ve, la tabla ha sido reescalada."
+    putStrLn ""
+    putStrLn "Para volver al menu de HashTable escribe 1."
+    putStrLn "Para volver al menu principal escribe 2."
+    putStrLn "Para salir escribe q"
+
+    t <- getLine
+
+    if t == "1" then do
+        menuHashTable
+    else if t == "2" then do
+        nuevoMenu
+    else do
+        putChar '\n'  
+        putStrLn "Saliendo..."
+    return ()
+
 htsExperimento :: HashTableSC Int String
 htsExperimento = L.foldr (HTS.put) (HTS.empty 7) [(50,"M"),(700,"C"),(76,"D")]
 
@@ -751,7 +835,7 @@ menuHTSeparateChaining = do
     putStrLn ""
     putStrLn "Que representamos como:"
     putStrLn ""
-    putStrLn (printHT (htsExperimento))
+    putStrLn (HTS.printHT (htsExperimento))
     putStrLn ""
     putStrLn "La primera prueba va a ser con la función de insert a la"
     putStrLn "que llamamos \"put\" y toma como valores de entrada un par"
@@ -764,10 +848,100 @@ menuHTSeparateChaining = do
     limpiar
     putStrLn ""
     putStrLn "Vamos a insertar en la tabla anterior el par (85,\"E\") y"
+    putStrLn "para ello:"
+    putStrLn ""
+    putStrLn "Escribe un carácter para ejecutar \"put (85,\"E\") htsExperimento\":"
+    
+    o <- getLine
+    
+    putStrLn ""
+    putStrLn "Salida (put (85,\"E\") htsExperimento):"
+    putStrLn $ show $ HTS.put (85,"E") htsExperimento
+    putStrLn ""
+    putStrLn "Salida (printHT $ put (85,\"E\") htsExperimento):"
+    putStrLn $ HTS.printHT $ HTS.put (85,"E") htsExperimento
+    putStrLn ""
+    putStrLn "Como podemos ver la tabla, el nuevo valor ha coincidido al hacer el"
+    putStrLn "hash con otro valor, por tanto en ese valor de hash, ahora tendremos"
+    putStrLn "dos elementos."
+    putStrLn ""
+    putStrLn "Para continuar al siguiente ejemplo escribe un carácter."
+
+    o <- getLine
+
+    limpiar
+    putStrLn ""
+    putStrLn "También es posible eliminar valores de la tabla con la función "
+    putStrLn "\"removeKey\" pasandole la clave a eliminar y la tabla de la que"
+    putStrLn "se pretende eliminar."
+    putStrLn ""
+    putStrLn "Para ejecutar \"removeKey 85 htsExperimento\" escribe un"
+    putStrLn "carácter."
+    putStrLn ""
+    putStrLn "Salida (removeKey 85 htsExperimento):"
+--    putStrLn $ HTS.removeKey 85 $ HTS.put (85,"E") htsExperimento <--- SOLUCIONAR
+    putStrLn ""
+    putStrLn "Y este sería el aspecto de la tabla:"
+    putStrLn ""
+    putStrLn $ HTS.printHT $ HTS.removeKey 85 $ HTS.put (85,"E") htsExperimento
+    putStrLn ""
+    putStrLn "Escribe un carácter para continuar."
+
+    o <- getLine
+
+    limpiar
+    putStrLn "Como última prueba podemos testear la función \"getValue\""
+    putStrLn "que toma la clave del valor que se busca y la tabla en la"
+    putStrLn "cual se busca y se retorna un Maybe valor."
+    putStrLn ""
+    putStrLn "Escribe un carácter para ejecutar \"getValue 700 htsExperimento\""
+    putStrLn ""
+    putStrLn "Salida (getValue 700 htsExperimento):"
+    putStrLn $ show $ HTS.getValue 700 htsExperimento
+    putStrLn ""
+    putStrLn "Para volver al menu de HashTable escribe 1."
+    putStrLn "Para volver al menu principal escribe 2."
+    putStrLn "Para salir escribe q"
+
+    t <- getLine
+
+    if t == "1" then do
+        menuHashTable
+    else if t == "2" then do
+        nuevoMenu
+    else do
+        putChar '\n'  
+        putStrLn "Saliendo..."
     return ()
+    
+htqExperimento :: HashTableQP Int String
+htqExperimento = L.foldr (HTQ.put) (HTQ.empty 7) [(50,"M"),(700,"C"),(76,"D")]
 
 menuHTLinearProbing = do
     limpiar
+    putStrLn "Como hemos dicho en el menú anterior, en este apartado"
+    putStrLn "solo se hara una prueba con el metodo de insert para"
+    putStrLn "ver el tratamiento de la colisión."
+    putStrLn ""
+    putStrLn "El ejemplo sobre el que vamos a probar es el siguiente:"
+    putStrLn ""
+    putStrLn $ show $ htqExperimento
+    putStrLn ""
+    putStrLn "Con el siguiente aspecto de tabla:"
+    putStrLn ""
+    putStrLn (HTQ.printHT (htqExperimento))
+    putStrLn ""
+    putStrLn "Ahora procedemos a insertar el elemento (85,\"E\") en"
+    putStrLn "la tabla."
+    putStrLn "Escribe un carácter para continuar:"
+
+    o <- getLine
+
+    putStrLn ""
+    putStrLn "Salida (HTQ.put (85,\"E\") htqExperimento):"
+    putStrLn $ show $ HTQ.put (85,"E") htqExperimento
+    putStrLn ""
+
     return ()
 
 menuHTQuadraticProbing = do
