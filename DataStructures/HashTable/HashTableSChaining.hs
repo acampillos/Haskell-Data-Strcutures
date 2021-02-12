@@ -1,4 +1,4 @@
-module DataStructures.HashTableSCSCHaining(
+module DataStructures.HashTable.HashTableSChaining(
     HashTableSC(..),
     getTable,
     empty,
@@ -56,7 +56,7 @@ data HashTableSC a b = HashTableSC Int (Array Int [(a, b)])
 getTable :: HashTableSC a b -> Array Int [(a,b)]
 getTable (HashTableSC _ table) = table
 
-empty :: Eq a => Int -> HashTableSC a b
+empty :: Int -> HashTableSC a b
 empty n = HashTableSC 0 (array (0, n-1) [(i,[]) | i <- [0..n-1]])
 
 isEmpty :: (Eq a, Eq b) => HashTableSC a b -> Bool
@@ -65,6 +65,8 @@ isEmpty t@(HashTableSC _ table) = t == empty (length table)
 
 -- // double table size if 50% full
 -- (n >= m/2)
+
+--foldr [("Marcos",664894942),("Maria",654876472)]
 
 put :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableSC a b -> HashTableSC a b
 -- Inserta el par (a, b) en la tabla.
@@ -94,7 +96,7 @@ getValue :: (Hashable k, Eq k) => k -> HashTableSC k v -> Maybe (k, v)
 --             Tabla de la que lo obtenemos.
 -- Devuelve:   Par clave-valor
 getValue key (HashTableSC _ table) = List.find (\(k,v) -> k == key) bucket    -- Buscamos en el bucket un par con clave igual a la buscada
-  where position = hashSChaining (List.length table) keys                   -- si no se enceuntra, devuelve Nothing.
+  where position = hashSChaining (List.length table) key                   -- si no se enceuntra, devuelve Nothing.
         bucket = table ! position
 
 replace :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableSC a b -> HashTableSC a b
@@ -161,7 +163,7 @@ containsValue v t = any (==v) (values t)
 getNumPairs :: HashTableSC a b -> Int
 getNumPairs (HashTableSC pairs table) = pairs
     
-clear :: Eq a => HashTableSC a b -> HashTableSC a b
+clear :: HashTableSC a b -> HashTableSC a b
 clear t@(HashTableSC _ table) = empty (length table)
 
 size :: HashTableSC a b -> Int
@@ -188,6 +190,9 @@ printHT t@(HashTableSC pairs table) = linea ++ header ++ linea ++ contenido ++ l
 main :: IO ()
 main = do
   putStr (printHT t6)
+
+t8 :: HashTableSC Int String
+t8 = foldr (put) (empty 7) [(50,"M"),(700,"C"),(76,"D")]
 
 t1 :: HashTableSC String [Int]
 t1 = HashTableSC 1 (array (0,9) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[("Paco",[1,2])]),(8,[]),(9,[])])

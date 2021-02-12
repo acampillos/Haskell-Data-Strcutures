@@ -9,6 +9,7 @@ import Data.Set as Set
 import DataStructures.Graph as G
 import DataStructures.RedBlackTree as RBT
 import DataStructures.Deque as D
+import DataStructures.HashTable.HashTableSChaining as HTS
 
 {-import System.Console.ANSI
 
@@ -680,10 +681,6 @@ menuEjemplosConectividad = do
 
 ------------------------------
 -- MENU HASH TABLE -----------------------------------------------------------
---        HashTable = |pares contenidos| [indice bucket, [pares en el bucket]]
---
-data HashTable a b = HashTable Int (Array Int [(a, b)])
-  deriving (Show, Eq)
 hashTableF = putStrLn "HashTable = |pares contenidos| [indice bucket, [pares en el bucket]]\n\n\ndata HashTable a b = HashTable Int (Array Int [(a, b)])\n  deriving (Show, Eq)"
 
 menuHashTable = do
@@ -703,8 +700,14 @@ menuHashTable = do
     putStrLn "único bucket pero la mayoría de hash tables emplean una"
     putStrLn "función de hash imperfecta que puede causar colisiones."
     putStrLn ""
+    putStrLn "A continuación se haran pruebas de insert, delete y get"
+    putStrLn "para los siguientes tipos de Hashing, ya que la única"
+    putStrLn "diferencia está en el insert, debido a que al hacer el"
+    putStrLn "hashing de cada elemento, los pares caen en indices"
+    putStrLn "distintos."
+    putStrLn ""
     -- Ajuste del tamaño de la tabla (load factor)    
-    putStrLn "\n\t1. Separate chaining."
+    putStrLn "\t1. Separate chaining."
     putStrLn "\t2. Linear probing."
     putStrLn "\t3. Quadratic probing.\n"
     putStr "Elija una opción: "
@@ -722,6 +725,10 @@ menuHashTable = do
         putStrLn "No se ha seleccionado ninguna opción válida."
     return ()
 
+-- Submenus HT --------------------------------
+htsExperimento :: HashTableSC Int String
+htsExperimento = L.foldr (HTS.put) (HTS.empty 7) [(50,"M"),(700,"C"),(76,"D")]
+
 menuHTSeparateChaining = do
     limpiar
     putStrLn "En este método, cada cubo es independiente y en ellos se"
@@ -733,8 +740,30 @@ menuHTSeparateChaining = do
     putStrLn "del bucket correspondiente y O(n) para la búsqueda en la"
     putStrLn "lista (en nuestro caso listas enlazadas)."
     putStrLn ""
+    putStrLn "Para hacer las pruebas vamos a usar la siguiente HashTable."
+    putStrLn "Escribe un carácter para continuar."
+
+    o <- getLine
+
     putStrLn ""
-    
+    putStrLn "Salida (L.foldr (HTS.put) (HTS.empty 7) [(50,\"M\"),(700,\"C\"),(76,\"D\")]):"
+    putStrLn $ show $ htsExperimento
+    putStrLn ""
+    putStrLn "Que representamos como:"
+    putStrLn ""
+    putStrLn (printHT (htsExperimento))
+    putStrLn ""
+    putStrLn "La primera prueba va a ser con la función de insert a la"
+    putStrLn "que llamamos \"put\" y toma como valores de entrada un par"
+    putStrLn "de clave y valor, y una tabla hash."
+    putStrLn ""
+    putStrLn "Escribe un carácter para continuar."
+
+    o <- getLine
+
+    limpiar
+    putStrLn ""
+    putStrLn "Vamos a insertar en la tabla anterior el par (85,\"E\") y"
     return ()
 
 menuHTLinearProbing = do
@@ -744,6 +773,7 @@ menuHTLinearProbing = do
 menuHTQuadraticProbing = do
     limpiar
     return ()
+-------------------------------------------------
 
 -- MENU DE DEQUE ---------------------------------------------------------------
 dequeStr = putStrLn "data Deque a = Deque Int [a] Int [a]\n    deriving (Show)"
