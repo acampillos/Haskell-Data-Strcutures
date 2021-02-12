@@ -749,12 +749,129 @@ menuDeque = do
     putStrLn ""
     putStrLn "Podemos hacer las siguientes pruebas:"
     putStrLn ""
+    putStrLn "1. Inicialización de una Deque a partir de una lista."
+    putStrLn ""
+    putStrLn "2. Vemos como se añaden y eliminan elementos en el inicio"
+    putStrLn "   y el fin de la Deque."
+    putStrLn ""
+    putStrLn "3. Comprobando el rebalanceo."
+    putStrLn ""
+    putStrLn "Escribe el número de la prueba a la que se quiere entrar."
+
+    o <- getLine
+
+    if o == "1" then do
+        menuInicializaDeque
+    else if o == "2" then do
+        menuEliminacionesEInserciones
+    else if o == "3" then do
+        menuRebalanceo
+    else do
+        putChar '\n'
+        putStrLn "No se ha seleccionado ninguna opción válida."
+
+    return ()
+
+-- Submenus Deque ------------------
+
+menuInicializaDeque = do
+    limpiar
+    putStrLn "Podemos inicializar una Deque, con el constructor del tipo"
+    putStrLn "de dato, pero la forma mas segura es usando la función"
+    putStrLn "\"list2Deque\" transformando una lista dada en una Deque."
+    putStrLn ""
+    putStrLn "Escribe un caracter para ejecutar \"list2Deque [1,2,3,4,5,6,7]\""
+    
+    o <- getLine
+
+    putStrLn "Salida (list2Deque [1,2,3,4,5,6,7]):"
+    putStrLn $ show $ list2Deque [1,2,3,4,5,6,7]
+    putStrLn ""
+    putStrLn "Para volver al menú de Deque escribe 1"
+    putStrLn "Para volver al menú principal escribe 2"
+    putStrLn "Para salir escribe q"
+
+    o <- getLine
+
+    if o == "1" then do
+        menuDeque
+    else if o == "2" then do
+        nuevoMenu
+    else if o == "q" then do
+        limpiar
+        putChar '\n'
+    else do
+        putChar '\n'
+        putStrLn "No se ha seleccionado ninguna opción válida."
+    
+    return ()
+
+menuEliminacionesEInserciones = do
+    limpiar
+    putStrLn "La ventaja de la Deque frente a la lista normal, es que la"
+    putStrLn "complejidad de borrado e inserción de elementos al final"
+    putStrLn "es 1 al igual que al principio. Esto debido a la naturaleza"
+    putStrLn "de las linked-list."
+    putStrLn ""
+    putStrLn "Vamos a hacer las pruebas con la siguiente Deque:"
+    putStrLn ""
+    putStrLn $ show $ list2Deque [1,2,3,4,5]
+    let dequeTest = list2Deque [1,2,3,4,5]
+    putStrLn ""
+    putStrLn "Vamos a probar las dos funciones de inserción, la de insertar"
+    putStrLn "por delante \"cons\", y por detras \"snoc\"."
+    putStrLn ""
+    putStrLn "Salida (cons 10 dequeTest):"
+    putStrLn $ show $ cons 10 dequeTest
+    putStrLn ""
+    putStrLn "Salida (snoc 10 dequeTest):"
+    putStrLn $ show $ snoc 10 dequeTest
+    putStrLn ""
+    putStrLn "Nos queda por probar la eliminación de elementos, la función"
+    putStrLn "de eliminar el elemento del inicio es \"tailDeque\", y la de"
+    putStrLn "eliminar por detras es \"initDeque\"."
+    putStrLn ""
+    putStrLn "Escribe un carácter para ejecutar la prueba de las funciones."
+    
+    o <- getLine
+
+    putStrLn ""
+    putStrLn "Salida (tailDeque dequeTest)"
+    putStrLn $ show $ tailDeque dequeTest
+    putStrLn ""
+    putStrLn "Salida (initDeque dequeTest)"
+    putStrLn $ show $ initDeque dequeTest
     putStrLn ""
 
     o <- getLine
 
+    putStrLn "Estas son las funciones principales de las Deque."
+    putStrLn ""
+    putStrLn "Para volver al menú de Deque escribe 1."
+    putStrLn ""
+    putStrLn "Para volver al menú principal escribe 2."
+    putStrLn ""
+    putStrLn "Para salir escribe q"
+    
+    o <- getLine
+
+    if o == "1" then do
+        menuDeque
+    else if o == "2" then do
+        nuevoMenu
+    else if o == "q" then do
+        limpiar
+        putChar '\n'
+    else do
+        putChar '\n'
+        putStrLn "No se ha seleccionado ninguna opción válida."
+
     return ()
 
+menuRebalanceo = do
+    limpiar
+    putStrLn ""
+    return ()
 ---------------------------------------------------------------------------------
 
 menuAVL = do
