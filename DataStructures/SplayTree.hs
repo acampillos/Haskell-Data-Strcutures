@@ -5,7 +5,8 @@ module DataStructures.SplayTree(
     delete,
     maxST,
     minST,
-    contains
+    contains,
+    helpSplayTree
 ) where
 
 -- ÁRBOL BISELADO/SPLAY TREE:
@@ -28,6 +29,9 @@ data Direction = LH | RH
 -----------------------
 -- FUNCIONES
 -----------------------
+
+helpSplayTree :: IO ()
+helpSplayTree = putStrLn "\nsearch :: (Ord a) => a -> SplayTree a -> SplayTree a\n\ninsert :: (Ord a) => a -> SplayTree a -> SplayTree a\n\ndelete :: (Eq a, Ord a) => a -> SplayTree a -> SplayTree a\n\nmaxST :: (Eq a, Ord a) => SplayTree a -> Maybe a\n\nminST :: (Eq a, Ord a) => SplayTree a -> Maybe a\n\ncontains :: a -> SplayTree a -> Bool"
 
 path :: (Ord a) => a -> SplayTree a -> [(Direction, SplayTree a)] -> [(Direction, SplayTree a)]
 -- Obtiene el camino en el árbol hasta el valor dado. Si no existe, su último valor será la hoja donde se insertaría un nuevo nodo 
@@ -212,15 +216,18 @@ minST Leaf = Nothing
 minST (Node n Leaf _) = Just n
 minST (Node _ l _) = minST l
 
+isLeaf :: (Eq a, Ord a) => SplayTree a -> Bool
 isLeaf Leaf = True
 isLeaf (Node _ _ _) = False
 
+contains ::(Eq a, Ord a) => a -> SplayTree a -> Bool
 contains v Leaf = False
 contains v t@(Node x l r)
     | v < x = contains v l
     | v > x = contains v r
     | otherwise = True
 
+getValue :: (Eq a, Ord a) => SplayTree a -> a
 getValue Leaf = error "E"
 getValue (Node x l r) = x
 

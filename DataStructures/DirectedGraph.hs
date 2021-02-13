@@ -97,16 +97,6 @@ adjacents g v = Set.map dstVertex $ pathsFrom g v
 dfs :: (Eq a, Ord a) => DGraph a -> Vertex a -> [Vertex a]
 dfs g v = dfsAux g (Set.toList (adjacents g v)) [v]
 
-{-
-[1]         [2,3]       [1]
-[2]       [7,5,3]       [1,2]
-[7]         [5,3]       [1,2,7]
-[5]         [6,3]       [1,2,7,5]
-[6]           [3]       [1,2,7,5,6]
-[3]           [4]       [1,2,7,5,6,3]
-[4]            []       [1,2,7,5,6,3,4]
--}
-
 --                                   "PILA" Vertices
 --                          Grafo     a recorrer     recorridos      Sol
 dfsAux :: (Eq a, Ord a) => DGraph a -> [Vertex a] -> [Vertex a] -> [Vertex a]
@@ -133,11 +123,28 @@ bfsAux g (x:xs) ys = bfsAux g (xs++newPaths) (ys++[x])
 orderedPaths :: (Eq a, Ord a) => DGraph a -> [Path a]
 orderedPaths g = sort (Set.toList (pathSet g))
 
-data Tree a = Node a [Tree a]
-            | Leaf
-            deriving (Eq, Show)
 
-type Forest a = [Tree a]
+g, g' :: DGraph Int
+g = addListVertex [(V 1), (V 2), (V 3),(V 4),(V 5),(V 6),(V 7), (V 8), (V 9), (V 10),(V 11), (V 12),(V 13),(V 14)] (empty,empty)
+g' = addListPath [(P 1 (V 1) (V 2)),
+    (P 1 (V 1) (V 10)),
+        (P 1 (V 2) (V 3)),
+            (P 1 (V 2) (V 12)),
+                (P 1 (V 3) (V 4)),
+                    (P 1 (V 3) (V 12)),
+                        (P 1 (V 4) (V 11)),
+                            (P 1 (V 5) (V 6)),
+                                (P 1 (V 5) (V 9)),
+                                    (P 1 (V 5) (V 7)),
+                                        (P 1 (V 6) (V 8)),
+                                            (P 1 (V 6) (V 7)),
+                                                (P 1 (V 7) (V 8)),
+                                                    (P 1 (V 8) (V 9)),
+                                                        (P 1 (V 10) (V 11)),
+                                                            (P 1 (V 10) (V 12)),
+                                                                (P 1 (V 13) (V 14))] g
+
+
 
 -- Considerando el grafo dirigido
 {-

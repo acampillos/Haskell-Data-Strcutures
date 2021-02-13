@@ -42,7 +42,7 @@ limpiar = system "cls"
 -- EJEMPLOS GRAFOS ######################################################################################
 -- Carreteras minimas
 carreteras :: Graph String
-carreteras = fromTuple ([(V "Sevilla"),(V "Huelva"),(V "Cadiz"),(V "Malaga"),(V "Granada"),(V "Almeria"),(V "Cordoba"),(V "Jaen")],
+carreteras = fromTupleL ([(V "Sevilla"),(V "Huelva"),(V "Cadiz"),(V "Malaga"),(V "Granada"),(V "Almeria"),(V "Cordoba"),(V "Jaen")],
     [(P 92.8 (V "Sevilla") (V "Huelva")), (P 121.0 (V "Sevilla") (V "Cadiz")), (P 214.0 (V "Sevilla") (V "Malaga")),
         (P 141.0 (V "Sevilla") (V "Cordoba")), (P 234.0 (V "Cadiz") (V "Malaga")),(P 160.0 (V "Cordoba") (V "Malaga")),
             (P 108.0  (V "Cordoba") (V "Jaen")), (P 127.0 (V "Malaga") (V "Granada")),(P 93.8 (V "Jaen") (V "Granada")),
@@ -78,7 +78,7 @@ carreterasKruskalString = putStrLn "        92.8                  141.0         
 
 -- Laberinto
 grafo :: Graph Int
-grafo = fromTuple ([(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7),(V 8),(V 9)],
+grafo = fromTupleL ([(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7),(V 8),(V 9)],
     [(P 1 (V 1) (V 2)), (P 1 (V 1) (V 4)), (P 1 (V 2) (V 3)), (P 1 (V 2) (V 8)),
         (P 1 (V 4) (V 3)), (P 1 (V 4) (V 5)), (P 1 (V 5) (V 6)), (P 1 (V 3) (V 7)),
             (P 1 (V 7) (V 9))])
@@ -569,6 +569,13 @@ menuGrafo = do
     putStrLn ""
     putStrLn "Los grafos tienen la siguiente estructura:"
     strDefGrafo
+    putStrLn ""
+    putStrLn "Para inicializar un grafo se aconseja el uso de las funciones"
+    putStrLn "\"fromTupleL\" (que crea un grafo a partir de la tupla"
+    putStrLn "[Vertex a], [Path a]) y \"fromTupleS\" (que crea un grafo a"
+    putStrLn "partir de la tupla (Set (Vertex a), Set (Path a))). Esto es"
+    putStrLn "de este modo para evitar posibles errores al añadir aristas"
+    putStrLn "que estan conectadas a vertices que no pertenecen al grafo."
     putStrLn ""
     putStrLn "Algunas pruebas que podemos realizar con las funciones creadas: "
     putStrLn ""
@@ -1554,3 +1561,5 @@ help = do
     putStrLn "helpMaxHeap"
     putStrLn "helpMinHeaps"
     putStrLn "helpRBT"
+    putStrLn "helpGraph"
+    putStrLn "helpSplayTree"
