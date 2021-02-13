@@ -14,6 +14,7 @@ import DataStructures.HashTable.HashTableLProbing as HTL
 import DataStructures.HashTable.HashTableQProbing as HTQ
 import DataStructures.MinHeap as MinHeap
 import DataStructures.MaxHeap as MaxHeap
+import DataStructures.SplayTree as SplayTree
 
 {-import System.Console.ANSI
 
@@ -259,7 +260,7 @@ menuFuncionesBST = do
 
     putStrLn ""
     putStrLn "Salida de (contains 19 ejbst1):"
-    putStrLn $ show $ contains 19 ejbst1
+    putStrLn $ show $ BST.contains 19 ejbst1
     putStrLn ""
 
     putStrLn "Escribe un carácter para continuar."
@@ -396,6 +397,120 @@ menuRecorridoBST = do
         nuevoMenu
     else do
         putChar '\n'
+    return ()
+
+st1,st2 :: SplayTree Int
+st1 = SplayTree.Node 50 (SplayTree.Node 30 (SplayTree.Node 10 SplayTree.Leaf (SplayTree.Node 20 (SplayTree.Node 15 SplayTree.Leaf SplayTree.Leaf) SplayTree.Leaf)) (SplayTree.Node 40 SplayTree.Leaf SplayTree.Leaf)) (SplayTree.Node 60 SplayTree.Leaf (SplayTree.Node 90 (SplayTree.Node 70 SplayTree.Leaf SplayTree.Leaf) (SplayTree.Node 100 SplayTree.Leaf SplayTree.Leaf)))
+st2 = SplayTree.Node 80 (SplayTree.Node 60 (SplayTree.Node 50 (SplayTree.Node 30 (SplayTree.Node 10 SplayTree.Leaf (SplayTree.Node 20 (SplayTree.Node 15 SplayTree.Leaf SplayTree.Leaf) SplayTree.Leaf)) (SplayTree.Node 40 SplayTree.Leaf SplayTree.Leaf)) SplayTree.Leaf) (SplayTree.Node 70 SplayTree.Leaf SplayTree.Leaf)) (SplayTree.Node 90 SplayTree.Leaf (SplayTree.Node 100 SplayTree.Leaf SplayTree.Leaf))
+
+menuSplayTree = do 
+    limpiar
+    putStrLn "Menú Splay Tree:\n"
+    putStrLn "Árbol binario de búsqueda que permite acceder de forma más eficiente a nodos recién utilizados."
+    putStrLn "Hace que sus operaciones en un complejidad amortizada de O(logn)."
+    putStrLn "Se consigue mediante la operación de splay que reordena el árbol mediante rotaciones de forma que"
+    putStrLn "el elemento sobre el que se hace el splay se sitúa en la raíz del árbol."
+
+    putStrLn "Cuando se realiza una operación en el árbol biselado se aplica la operación de splay sobre el nodo"
+    putStrLn "afectado, de forma que en las operacioens de búsqueda, inserción o eliminación el nodo x buscado,"
+    putStrLn "añadido o su padre en el caso de la eliminación pasarán a ser la raíz del nuevo árbol. Además, "
+    putStrLn "debe mantener las propiedades de un BST ya que se trata de una variación de este que se auto-balancea.\n"
+
+    putStrLn "Sea nuestro árbol de prueba: "
+    print st1
+    putStrLn " \n        50\n        /  \\\n      30    60\n     /   \\    \\\n   10    40    90\n     \\        /  \\\n     20      70  100\n    /\n   15\n"
+{-
+         50
+        /  \
+      30    60
+     /   \    \
+   10    40    90
+     \        /  \
+     20      70  100
+    /
+   15
+-}
+    o <- getLine
+    limpiar
+
+    putStrLn "\nProcedemos a aplicar distintas operaciones sobre el mismo:\n"
+
+    putStrLn "search 80 st1"
+    print (search 80 st1)
+    putStrLn "\n         70\n        /  \\\n      50    90\n     /   \\    \\\n   30    60    100\n  /  \\\n10   40\n  \\\n  20\n  /\n15\n"
+{-
+         70
+        /  \
+      50    90
+     /   \    \
+   30    60    100
+  /  \
+10   40
+  \
+  20
+  /
+15
+-}
+
+    putStrLn "Al no encontrar el nodo en el árbol, se realiza la operación de splay sobre el que sería su padre.\n"
+
+    o <- getLine
+    limpiar
+
+    putStrLn "insert 80 st1"
+    print (SplayTree.insert 80 st1)
+    putStrLn "\n             80\n            /  \\\n          60    90\n         /   \\    \\\n       50    70    100\n      /\n    30\n   /  \\\n  10   40\n   \\\n    20\n   /\n  15\n"
+{-
+             80
+            /  \
+          60    90
+         /   \    \
+       50    70    100
+      /
+    30
+   /  \
+  10   40
+   \
+    20
+   /
+  15
+-}
+
+    putStrLn "Se hace la inserción como si de un BST se tratase y posteriormente se aplica splay sobre el nodo añadido."
+
+    putStr "Llamemos a este árbol st2\nst2 = "
+    print st2
+
+    o <- getLine
+    limpiar
+
+    putStrLn "\ndelete 30 st2"
+    print (SplayTree.delete 30 st2)
+    putStrLn "\n         50\n        /  \\\n      20    60\n     /   \\    \\\n   10    40    80\n     \\        /  \\\n      15     70   90\n                    \\\n                    100\n"
+
+    putStrLn "Podemos apreciar como se produce la eliminación del nodo 30, pasando a tomar su lugar"
+    putStrLn "el nodo 20 (decidimos tomar el mayor del hijo izquierdo para seguir el recorrido inorder)"
+    putStrLn "y se realiza la operación de splay sobre el nodo 50 (padre del nodo a eliminar)."
+{-
+         50
+        /  \
+      20    60
+     /   \    \
+   10    40    80
+     \        /  \
+      15     70   90
+                    \
+                    100
+-}
+
+    putStr "\nEscriba 'y' si desea volver al menú principal:"
+    o <- getLine
+
+    NO FUNCIONA NO SE PORQUE
+    if o=="y" then
+        nuevoMenu
+    else do
+        putStrLn "\nNo se ha seleccionado ninguna opción válida."
     return ()
 
 --------------------------------------
@@ -1391,7 +1506,7 @@ nuevoMenu = do
     putStrLn "3. Hash table"
     putStrLn "4. Max/Min Heap"
     putStrLn "5. Arbol de búsqueda binaria"
-    putStrLn "6. AVL"
+    putStrLn "6. Splay tree"
     putStrLn "7. Red-Black Tree"
     putStrLn "\n"
     putStr "Elija una opción: "
@@ -1402,13 +1517,13 @@ nuevoMenu = do
     else if o == "2" then do
         menuGrafo               ----- > Hecho
     else if o == "3" then do
-        menuHashTable           ----- > En prograso
+        menuHashTable           ----- > Hecho
     else if o == "4" then do
-        menuMaxMinHeap             ----- > Por hacer
+        menuMaxMinHeap             ----- > Hecho (revisar)
     else if o == "5" then do
         menuBST                 ----- > Hecho
     else if o == "6" then do
-        menuAVL
+        menuSplayTree
     else if o == "7" then do
         menuRBT                 ----- > Hecho 
     else do

@@ -1,3 +1,13 @@
+module DataStructures.SplayTree(
+    SplayTree(..),
+    search,
+    insert,
+    delete,
+    maxST,
+    minST,
+    contains
+) where
+
 -- ÁRBOL BISELADO/SPLAY TREE:
 -- Árbol binario de búsqueda que permite acceder de forma más eficiente a nodos recién utilizados.
 -- Hace que sus operaciones en un complejidad amortizada de O(logn).
@@ -37,8 +47,16 @@ path2tree :: (Ord a) => [(Direction,SplayTree a)] -> SplayTree a
 -- Devuelve:   Árbol reconstruido a partir del parámetro anterior.
 
 -- Casos posibles para la operación de splay sobre un nodo x:
+
 -- > El nodo x es la raíz: Devolvemos el árbol.
 path2tree ((_,n):[]) = n
+path2tree ((LH,x):(_,p):[]) = zig x p
+path2tree ((RH,x):(_,p):[]) = zag x p
+path2tree ((LH,x):(LH,p):(z,g):ps) = path2tree $ (z, zigzig x p g):ps
+path2tree ((RH,x):(RH,p):(z,g):ps) = path2tree $ (z, zagzag x p g):ps
+path2tree ((LH,x):(RH,p):(z,g):ps) = path2tree $ (z, zigzag x p g):ps
+path2tree ((RH,x):(LH,p):(z,g):ps) = path2tree $ (z, zagzig x p g):ps
+
 
 -- > Zig: El nodo x es hijo izquierdo de la raíz. Rotación a la derecha.
 -- > Zag: El nodo x es hijo derecho de la raíz. Rotación a la izquierda.
@@ -50,9 +68,6 @@ path2tree ((_,n):[]) = n
 --          T1  T2     Zag (Left Rotation)       T2   T3
 zig (Node x a b) (Node p _ c) = Node x a (Node p b c)
 zag (Node x a b) (Node p c _) = Node x (Node p c a) b
-
-path2tree ((LH,x):(_,p):[]) = zig x p
-path2tree ((RH,x):(_,p):[]) = zag x p
 
 
 -- > Zig-zig: El nodo x es hijo izquierdo y su padre es también hijo izquierdo.
@@ -80,9 +95,6 @@ path2tree ((RH,x):(_,p):[]) = zag x p
 zigzig (Node x a b) (Node p _ c) (Node g _ d) = Node x a (Node p b (Node g c d))
 zagzag (Node x a b) (Node p c _) (Node g d _) = Node x (Node p (Node g d c) a) b
 
-path2tree ((LH,x):(LH,p):(z,g):ps) = path2tree $ (z, zigzig x p g):ps
-path2tree ((RH,x):(RH,p):(z,g):ps) = path2tree $ (z, zagzag x p g):ps
-
 
 -- > Zig-zag: El nodo x es hijo derecho y su padre es hijo izquierdo.
 -- > Zag-zig: El nodo x es hijo izquierdo y su padre es hijo derecho.
@@ -107,8 +119,6 @@ path2tree ((RH,x):(RH,p):(z,g):ps) = path2tree $ (z, zagzag x p g):ps
 --      / \                           / \                
 --     T2  T3                        T3  T4
 
-path2tree ((LH,x):(RH,p):(z,g):ps) = path2tree $ (z, zigzag x p g):ps
-path2tree ((RH,x):(LH,p):(z,g):ps) = path2tree $ (z, zagzig x p g):ps
 
 zagzig (Node x b c) (Node p a _) (Node g _ d) = Node x (Node p a b) (Node g c d)
 zigzag (Node x b c) (Node p _ a) (Node g d _) = Node x (Node g d b) (Node p c a)
@@ -196,6 +206,11 @@ maxST :: (Eq a, Ord a) => SplayTree a -> Maybe a
 maxST Leaf = Nothing
 maxST (Node n _ Leaf) = Just n
 maxST (Node _ _ r) = maxST r
+
+minST :: (Eq a, Ord a) => SplayTree a -> Maybe a
+minST Leaf = Nothing
+minST (Node n Leaf _) = Just n
+minST (Node _ l _) = minST l
 
 isLeaf Leaf = True
 isLeaf (Node _ _ _) = False
