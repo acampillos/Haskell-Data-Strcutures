@@ -506,7 +506,7 @@ menuSplayTree = do
     putStr "\nEscriba 'y' si desea volver al menú principal:"
     o <- getLine
 
-    NO FUNCIONA NO SE PORQUE
+   -- NO FUNCIONA NO SE PORQUE
     if o=="y" then
         nuevoMenu
     else do
@@ -1500,7 +1500,15 @@ menuRBT = do
 
 nuevoMenu = do
     limpiar
+    putStrLn "El objetivo de este programa interactivo es tratar de aprender"
+    putStrLn "distintas estructuras de datos, mediante algunas pruebas de las"
+    putStrLn "funciones basicas implementadas, se busca facilitar la"
+    putStrLn "implementación de futuros programas ya que se ha tratado de"
+    putStrLn "preparar el código para poder ser reutilizado en multiples"
+    putStrLn "ocasiones."
+    putStrLn ""
     putStrLn "A continuación se presentan una serie de estructuras de datos \nde los cuales se pueden ver ejemplos de su uso."
+    putStrLn ""
     putStrLn "1. Deque"
     putStrLn "2. Grafos"
     putStrLn "3. Hash table"
@@ -1535,3 +1543,14 @@ nuevoMenu = do
 main = do
     hSetBuffering stdout NoBuffering
     nuevoMenu
+
+help :: IO ()
+help = do
+    putStrLn "A continuación se muestran las funciones de ayuda que sirven para"
+    putStrLn "consultar las funciones disponibles con cada estructura de datos."
+    putStrLn ""
+    putStrLn "helpBST"
+    putStrLn "helpDeque"
+    putStrLn "helpMaxHeap"
+    putStrLn "helpMinHeaps"
+    putStrLn "helpRBT"

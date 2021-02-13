@@ -8,7 +8,8 @@ module DataStructures.MaxHeap(
     deleteMax,
     elements,
     equals,
-    rank
+    rank,
+    helpMaxHeap
 ) where
 
 import Data.List
@@ -31,6 +32,9 @@ data MaxHeap a = Empty | Tree Int a (MaxHeap a) (MaxHeap a)
 -----------------------
 -- FUNCIONES
 -----------------------
+
+helpMaxHeap :: IO ()
+helpMaxHeap = putStrLn "\nempty :: Ord a => MaxHeap a\n\nisEmpty :: MaxHeap a -> Bool\n\ninsert :: (Ord a) => MaxHeap a -> a -> MaxHeap a\n\nmerge :: (Ord a) => MaxHeap a -> MaxHeap a -> MaxHeap a\n\nfindMax :: MaxHeap a -> a\n\ndeleteMax :: (Ord a) => MaxHeap a -> MaxHeap a\n\nelements :: MaxHeap a -> [a]\n\nequals :: Ord a => MaxHeap a -> MaxHeap a -> Bool\n\nrank :: MaxHeap a -> Int"
 
 empty :: Ord a => MaxHeap a
 empty = Empty

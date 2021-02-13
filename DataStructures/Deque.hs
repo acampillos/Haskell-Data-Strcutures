@@ -14,7 +14,8 @@ module DataStructures.Deque(
     printDeque,
     list2Deque,
     newDeque,
-    deque2List
+    deque2List,
+    helpDeque
 ) where
 
 -- COLA DOBLEMENTE TERMINADA/DOUBLE-ENDED QUEUE:
@@ -47,6 +48,9 @@ c = 4
 -----------------------
 -- FUNCIONES
 -----------------------
+
+helpDeque :: IO ()
+helpDeque = putStrLn "\nempty :: Deque a\n\nisEmpty :: Deque a -> Bool\n\nqueue :: Deque a -> Deque a\n\ncons :: Deque a -> a -> Deque a\n\nheadDeque :: Deque a -> a\n\ntailDeque :: Deque a -> Deque a\n\nsnoc :: Deque a -> a -> Deque a\n\nlastDeque :: Deque a -> a\n\ninitDeque :: Deque a -> Deque a\n\nprintDeque :: (Show a) => Deque a -> String\n\nlist2Deque :: [a] -> Deque a\n\nnewDeque :: [a] -> [a] -> Deque a\n\ndeque2List :: Deque a -> [a]"
 
 empty :: Deque a
 empty = Deque 0 [] 0 []
