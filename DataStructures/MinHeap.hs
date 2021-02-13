@@ -15,7 +15,7 @@ import Data.List
 
 -- MONTÍCULO BINARIO MÍNIMO / MIN BINARY HEAP:
 -- Son árboles binarios completos que cumplen la propiedad de que para cada padre en el árbol
--- sus hijos tienen un valor mayor que el de este. Implementa el ADT de una cola de prioridad.
+-- sus hijos tienen un valor mayor que el de este.
 
 -----------------------
 -- CONSTRUCTORES
