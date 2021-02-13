@@ -10,7 +10,10 @@ import DataStructures.Graph as G
 import DataStructures.RedBlackTree as RBT
 import DataStructures.Deque as D
 import DataStructures.HashTable.HashTableSChaining as HTS
+import DataStructures.HashTable.HashTableLProbing as HTL
 import DataStructures.HashTable.HashTableQProbing as HTQ
+import DataStructures.MinHeap as MinHeap
+import DataStructures.MaxHeap as MaxHeap
 
 {-import System.Console.ANSI
 
@@ -397,9 +400,49 @@ menuRecorridoBST = do
 
 --------------------------------------
 
-menuMaxHeap = do
+menuMaxMinHeap = do
     limpiar
+    putStrLn "Menú Max/Min heap:\n\n"
+    putStrLn "Son árboles binarios completos que cumplen una propiedad en función"
+    putStrLn "del tipo de montículo que sean: que para cada padre en el árbol sus hijos"
+    putStrLn "tienen un valor mayor que el de este o menor en el caso de ser uno mínimo.\n"
+    putStrLn "Las aplicaciones de ambas estructuras son similares aunque la que se utiliza"
+    putStrLn "es la min heap con ya que implementa el ADT de una cola de prioridad.\n"
+
+    putStrLn "Podemos utilizar como ejemplo la implementación del algoritmo de Dijkstra de"
+    putStrLn "una forma más eficiente por la obtención del camino con menor peso para cada nodo."
+    putStrLn "Así, probamos en el conjunto de aristas que conforman el grafo formado por las provincias"
+    putStrLn "de Andalucía. Pongamos que partimos de Sevilla, almacenamos todas las aristas salientes.\n"
+
+    let caminosSevilla = G.pathsFrom carreteras (V "Sevilla")
+    let minHeap = L.foldr (\p ac -> MinHeap.insert ac p) MinHeap.empty caminosSevilla
+    print (MinHeap.elements minHeap)
+
+    putStrLn "\nA fin de cuentas permite la ordenación de un conjunto de datos mediante operaciones"
+    putStrLn "más eficientemente que otras estructuras más simples.\n"
+
+    putStrLn "Otro ejemplo sería la obtención de la tarea más urgente de un conjunto de tareas a realizar."
+    putStrLn "Sea el conjunto de tareas:\n"
+
+    putStrLn "\t{(225, Fix bug 2), (150, Deploy model), (90, Refactor Controller.py), (110, Render index.html)}"
+
+    let maxHeap = L.foldr (\x ac -> MaxHeap.insert ac x) MaxHeap.empty [(225, "Fix bug 2"), (150, "Deploy model"), (90, "Refactor Controller.py"), (110, "Render index.html")]
+
+    putStrLn "\nEn un sistema de tickets de trabajo se podrían repartir dichas tareas en función de su urgencia,"
+    putStr "siendo la primera de ellas en este caso: "
+
+    let max_ = MaxHeap.findMax maxHeap
+    print max_
+
+    putStr "\nEscriba 'y' si desea volver al menú principal:"
+    o <- getLine
+
+    if o=="y" then
+        nuevoMenu
+    else do
+        putStrLn "\nNo se ha seleccionado ninguna opción válida."
     return ()
+
 
 -- MENU DE GRAFO ----------------------------------------------------------------------------
 
@@ -914,22 +957,29 @@ menuHTSeparateChaining = do
         putStrLn "Saliendo..."
     return ()
     
-htqExperimento :: HashTableQP Int String
-htqExperimento = L.foldr (HTQ.put) (HTQ.empty 7) [(50,"M"),(700,"C"),(76,"D")]
+htlExperimento :: HashTableLP Int String
+htlExperimento = L.foldr (HTL.put) (HTL.empty 7) [(50,"M"),(700,"C"),(76,"D")]
 
 menuHTLinearProbing = do
     limpiar
+    putStrLn "Trata de evitar las colisiones entre elementos que se insertan a la tabla" 
+    putStrLn "con posibles valores para la función de hash iguales probando primeramente la posición"
+    putStrLn "determinada por la función de hash y si esta está ocupada vamos probando en"
+    putStrLn "los siguientes buckets.\n"
+
+    putStrLn "hash(x) % |tabla|, (hash(x)+1) % |tabla|, (hash(x)+2) % |tabla|, ...\n"
+
     putStrLn "Como hemos dicho en el menú anterior, en este apartado"
     putStrLn "solo se hara una prueba con el metodo de insert para"
     putStrLn "ver el tratamiento de la colisión."
     putStrLn ""
     putStrLn "El ejemplo sobre el que vamos a probar es el siguiente:"
     putStrLn ""
-    putStrLn $ show $ htqExperimento
+    putStrLn $ show $ htlExperimento
     putStrLn ""
     putStrLn "Con el siguiente aspecto de tabla:"
     putStrLn ""
-    putStrLn (HTQ.printHT (htqExperimento))
+    putStrLn (HTL.printHT (htlExperimento))
     putStrLn ""
     putStrLn "Ahora procedemos a insertar el elemento (85,\"E\") en"
     putStrLn "la tabla."
@@ -938,14 +988,77 @@ menuHTLinearProbing = do
     o <- getLine
 
     putStrLn ""
-    putStrLn "Salida (HTQ.put (85,\"E\") htqExperimento):"
-    putStrLn $ show $ HTQ.put (85,"E") htqExperimento
+    putStrLn "Salida (HTL.put (85,\"E\") htLExperimento):"
+    putStrLn $ HTL.printHT $ HTL.put (85,"E") htlExperimento
     putStrLn ""
 
+    putStrLn "Se puede observar que el elemento insertado toma la siguiente posición "
+    putStrLn "disponible a partir de su hash original.\n"
+
+    putStrLn "Para volver al menu de HashTable escribe 1."
+    putStrLn "Para volver al menu principal escribe 2."
+    putStrLn "Para salir escribe q"
+
+    t <- getLine
+
+    if t == "1" then do
+        menuHashTable
+    else if t == "2" then do
+        nuevoMenu
+    else do
+        putChar '\n'  
+        putStrLn "Saliendo..."
     return ()
+
+htqExperimento :: HashTableQP Int String
+htqExperimento = L.foldr (HTQ.put) (HTQ.empty 7) [(50,"M"),(76,"D"),(85,"E")]
 
 menuHTQuadraticProbing = do
     limpiar
+    putStrLn "Trata de evitar las colisiones entre elementos que se insertan a la tabla con"
+    putStrLn "posibles valores para la función de hash iguales probando primeramente la posición"
+    putStrLn "determinada por la función de hash y si esta está ocupada vamos probando en"
+    putStrLn "los siguientes (i^2)-ésimos buckets.\n"
+
+    putStrLn "hash(x) % |tabla|, (hash(x)+1*1) % |tabla|, (hash(x)+2*2) % |tabla|, ...\n"
+
+    putStrLn "El ejemplo sobre el que vamos a probar es el siguiente:\n"
+
+    putStrLn $ show $ htqExperimento
+
+    putStrLn "\nCon el siguiente aspecto de tabla:\n"
+
+    putStrLn (HTQ.printHT (htqExperimento))
+
+    putStrLn "\nAhora procedemos a insertar el elemento (92,\"Z\") en"
+    putStrLn "la tabla."
+    putStrLn "Escribe un carácter para continuar:"
+
+    o <- getLine
+
+    putStrLn ""
+    putStrLn "Salida (HTL.put (85,\"E\") htLExperimento):"
+    putStrLn $ HTQ.printHT $ HTQ.put (92,"Z") htqExperimento
+    putStrLn ""
+
+    putStrLn "Se puede observar que el elemento insertado toma la siguiente posición "
+    putStrLn "disponible a partir de su hash original utilizando un incremento en el"
+    putStrLn "en el calculo de la siguiente posición igual al cuadrado del índice.\n"
+
+    putStrLn "Para volver al menu de HashTable escribe 1."
+    putStrLn "Para volver al menu principal escribe 2."
+    putStrLn "Para salir escribe q"
+
+    t <- getLine
+
+    if t == "1" then do
+        menuHashTable
+    else if t == "2" then do
+        nuevoMenu
+    else do
+        putChar '\n'  
+        putStrLn "Saliendo..."
+
     return ()
 -------------------------------------------------
 
@@ -1291,7 +1404,7 @@ nuevoMenu = do
     else if o == "3" then do
         menuHashTable           ----- > En prograso
     else if o == "4" then do
-        menuMaxHeap             ----- > Por hacer
+        menuMaxMinHeap             ----- > Por hacer
     else if o == "5" then do
         menuBST                 ----- > Hecho
     else if o == "6" then do

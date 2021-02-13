@@ -15,6 +15,7 @@ module DataStructures.Graph(
     srcVertex,
     dstVertex,
     pathsOf,
+    pathsFrom,
     adjacents,
     addListVertex,
     addListPath,
@@ -25,8 +26,7 @@ module DataStructures.Graph(
     conexo,
     conectividad,
     kruskal
-)
-where
+) where
 
 import Data.Set as Set
 import Data.List as L
