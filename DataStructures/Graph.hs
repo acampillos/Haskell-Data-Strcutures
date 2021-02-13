@@ -1,28 +1,28 @@
 module DataStructures.Graph(
     Graph(..),
     Vertex(..),
-    Path(..),
+    Edge(..),
     newGraph,
     addVertex,
     vertexSet,
-    pathSet,
+    edgeSet,
     containsVertex,
-    containsPath,
+    containsEdge,
     vertexNum,
-    pathsNum,
-    addPath,
+    edgesNum,
+    addEdge,
     srcVertex,
     dstVertex,
-    pathsOf,
-    pathsFrom,
+    edgesOf,
+    edgesFrom,
     adjacents,
     addListVertex,
-    addListPath,
+    addListEdge,
     fromTupleL,
     fromTupleS,
     dfs,
     bfs,
-    orderedPaths,
+    orderedEdges,
     conexo,
     conectividad,
     kruskal,
@@ -36,18 +36,18 @@ import Data.List as L
 -- donde V es un conjunto de vertices y E un conjunto de aristas.
 
 -- Graph a = (V a, E a)
-type Graph a = (Set (Vertex a), Set (Path a))
+type Graph a = (Set (Vertex a), Set (Edge a))
 
 data Vertex a = V a
     deriving (Show, Eq, Ord)
 
 -- Cada arista contiene el peso, y los vertices que une
-data Path a = P Float (Vertex a) (Vertex a)
+data Edge a = P Float (Vertex a) (Vertex a)
     deriving (Show, Eq,Ord)
 
 
 helpGraph :: IO ()
-helpGraph = putStrLn "\nnewGraph :: (Eq a, Ord a, Show a) => Graph a\n\naddVertex :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Graph a\n\nvertexSet :: (Eq a, Ord a, Show a) => Graph a -> Set (Vertex a)\n\npathSet :: (Eq a, Ord a, Show a) => Graph a -> Set (Path a)\n\ncontainsVertex :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Bool\n\ncontainsPath :: (Eq a, Ord a, Show a) => Graph a -> Path a -> Bool\n\nvertexNum :: (Eq a, Ord a, Show a) => Graph a -> Int\n\npathsNum ::  (Eq a, Ord a, Show a) => Graph a -> Int\n\naddPath :: (Eq a, Ord a, Show a) => Graph a -> Path a -> Graph a\n\nsrcVertex :: (Eq a, Ord a, Show a) => Path a -> Vertex a\n\ndstVertex :: (Eq a, Ord a, Show a) => Path a -> Vertex a\n\npathsOf :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Path a)\n\npathsFrom :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Path a)\n\npathsTo :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Path a)\n\ngetWeight :: (Eq a, Ord a, Show a) => Path a -> Float\n\ngetSource :: (Eq a, Ord a, Show a) => Path a -> Vertex a\n\ngetDest :: (Eq a, Ord a, Show a) => Path a -> Vertex a\n\nadjacents :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Vertex a)\n\naddListVertex :: (Eq a, Ord a, Show a) => [Vertex a] -> Graph a -> Graph a\n\naddListPath :: (Eq a, Ord a, Show a) => [Path a] -> Graph a -> Graph a\n\nfromTuple :: (Eq a, Ord a, Show a) => ([Vertex a],[Path a]) -> Graph a\n\ndfs :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> [Vertex a]\n\nbfs :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> [Vertex a]\n\norderedPaths :: (Eq a, Ord a, Show a) => Graph a -> [Path a]\n\nconexo :: (Eq a, Ord a, Show a) => Graph a -> Bool\n\nconectividad :: (Eq a, Ord a, Show a) => Graph a -> Int\n\nkruskal :: (Eq a, Ord a, Show a) => (Eq a, Ord a, Show a) => Graph a -> Graph a "
+helpGraph = putStrLn "\nnewGraph :: (Eq a, Ord a, Show a) => Graph a\n\naddVertex :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Graph a\n\nvertexSet :: (Eq a, Ord a, Show a) => Graph a -> Set (Vertex a)\n\nEdgeSet :: (Eq a, Ord a, Show a) => Graph a -> Set (Edge a)\n\ncontainsVertex :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Bool\n\ncontainsEdge :: (Eq a, Ord a, Show a) => Graph a -> Edge a -> Bool\n\nvertexNum :: (Eq a, Ord a, Show a) => Graph a -> Int\n\nEdgesNum ::  (Eq a, Ord a, Show a) => Graph a -> Int\n\naddEdge :: (Eq a, Ord a, Show a) => Graph a -> Edge a -> Graph a\n\nsrcVertex :: (Eq a, Ord a, Show a) => Edge a -> Vertex a\n\ndstVertex :: (Eq a, Ord a, Show a) => Edge a -> Vertex a\n\nEdgesOf :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Edge a)\n\nEdgesFrom :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Edge a)\n\nEdgesTo :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Edge a)\n\ngetWeight :: (Eq a, Ord a, Show a) => Edge a -> Float\n\ngetSource :: (Eq a, Ord a, Show a) => Edge a -> Vertex a\n\ngetDest :: (Eq a, Ord a, Show a) => Edge a -> Vertex a\n\nadjacents :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Vertex a)\n\naddListVertex :: (Eq a, Ord a, Show a) => [Vertex a] -> Graph a -> Graph a\n\naddListEdge :: (Eq a, Ord a, Show a) => [Edge a] -> Graph a -> Graph a\n\nfromTuple :: (Eq a, Ord a, Show a) => ([Vertex a],[Edge a]) -> Graph a\n\ndfs :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> [Vertex a]\n\nbfs :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> [Vertex a]\n\norderedEdges :: (Eq a, Ord a, Show a) => Graph a -> [Edge a]\n\nconexo :: (Eq a, Ord a, Show a) => Graph a -> Bool\n\nconectividad :: (Eq a, Ord a, Show a) => Graph a -> Int\n\nkruskal :: (Eq a, Ord a, Show a) => (Eq a, Ord a, Show a) => Graph a -> Graph a "
 
 newGraph :: (Eq a, Ord a, Show a) => Graph a
 -- Crea un grafo vacio
@@ -73,13 +73,13 @@ vertexSet :: (Eq a, Ord a, Show a) => Graph a -> Set (Vertex a)
 --      s (Set(Vertex a)): Conjunto de vertices del grafo
 vertexSet g = (fst g)
 
-pathSet :: (Eq a, Ord a, Show a) => Graph a -> Set (Path a)
+edgeSet :: (Eq a, Ord a, Show a) => Graph a -> Set (Edge a)
 -- Conjunto de aristas
 -- Entradas: grafo
 --      grafo (Graph a): El grafo del que queremos el conjunto de aristas
 -- Salidas: s
---      s (Set(Path a)): Conjunto de aristas del grafo
-pathSet g = (snd g)
+--      s (Set(Edge a)): Conjunto de aristas del grafo
+edgeSet g = (snd g)
 
 containsVertex :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Bool
 -- Comprueba si el grafo contiene un vertice dado
@@ -90,14 +90,14 @@ containsVertex :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Bool
 --      p (Bool): True en caso de v estar contenida en g, False en otro caso
 containsVertex g v = Set.size (fst g) == Set.size (Set.insert v (fst g))
 
-containsPath :: (Eq a, Ord a, Show a) => Graph a -> Path a -> Bool
+containsEdge :: (Eq a, Ord a, Show a) => Graph a -> Edge a -> Bool
 -- Comprueba si el grafo contiene una arista dada
 -- Entradas: g -> v
 --      g (Graph a): Grafo del que queremos comprobar si contiene a p
---      p (Path a): Vertice sobre el que nos preguntamos si es contenido por g
+--      p (Edge a): Vertice sobre el que nos preguntamos si es contenido por g
 -- Salidas: s
 --      s (Bool): True en caso de p estar contenida en g, False en otro caso
-containsPath g p = Set.size (snd g) == Set.size (Set.insert p (snd g))
+containsEdge g p = Set.size (snd g) == Set.size (Set.insert p (snd g))
 
 vertexNum :: (Eq a, Ord a, Show a) => Graph a -> Int
 -- Consigue el numero de vertices del grafo
@@ -107,93 +107,94 @@ vertexNum :: (Eq a, Ord a, Show a) => Graph a -> Int
 --      n (Int): Numero de vertices del grafo
 vertexNum g = length $ vertexSet g
 
-pathsNum ::  (Eq a, Ord a, Show a) => Graph a -> Int
+edgesNum ::  (Eq a, Ord a, Show a) => Graph a -> Int
 -- Consigue el numero de aristas del grafo
 -- Entradas: g
 --      g (Graph a): Grafo del que queremos saber el numero de aristas
 -- Salidas: n
 --      n (Int): Numero de aristas del grafo
-pathsNum g = length $ pathSet g
+edgesNum g = length $ edgeSet g
 
-addPath :: (Eq a, Ord a, Show a) => Graph a -> Path a -> Graph a
+addEdge :: (Eq a, Ord a, Show a) => Graph a -> Edge a -> Graph a
 -- Añade una arista al grafo
 -- Entradas: grafo -> v
 --      grafo (Graph a): Grafo al que se añade la arista
---      v (Path a): Arista a añadir
+--      v (Edge a): Arista a añadir
 --  Salidas: insertado
 --      insertado (Graph a): Un grafo con la arista insertado
-addPath g@(bstV,bstP) p@(P _ v1 v2)
+addEdge g@(bstV,bstP) p@(P _ v1 v2)
     | not (containsVertex g v1) && not (containsVertex g v2) = 
         error $ concat [" --> No existe ninguno de los vertices de la arista <-- ", (show v1), " ", (show v2)]
     | not (containsVertex g v1) = error $ concat [" --> No existe el primer vertice de la arista <-- ", (show v1)]
     | not (containsVertex g v2) = error $ concat [" --> No existe el segundo vertice de la arista <-- ", (show v2)]
-    | containsPath g p = g
+    | containsEdge g p = g
     | otherwise = (bstV, Set.insert p bstP)
 
 
-srcVertex :: (Eq a, Ord a, Show a) => Path a -> Vertex a
+srcVertex :: (Eq a, Ord a, Show a) => Edge a -> Vertex a
 -- Vertice fuente de una arista
 -- Entradas: p
---      p (Path a): Arista sobre la que queremos saber su vertice fuente
+--      p (Edge a): Arista sobre la que queremos saber su vertice fuente
 -- Salidas: v
 --      v (Vertex a): Vertice fuente de p
 srcVertex (P _ v _) = v
 
-dstVertex :: (Eq a, Ord a, Show a) => Path a -> Vertex a
+dstVertex :: (Eq a, Ord a, Show a) => Edge a -> Vertex a
 -- Vertice destino de una arista
 -- Entradas: p
---      p (Path a): Arista sobre la que queremos saber su vertice destino
+--      p (Edge a): Arista sobre la que queremos saber su vertice destino
 -- Salidas: v
 --      v (Vertex a): Vertice destino de p
 dstVertex (P _ _ v) = v
 
 
-pathsOf :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Path a)
+edgesOf :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Edge a)
 -- Conjunto de aristas que salen de v o llegan a v
 -- Entradas: g -> v
 --      g (Graph a): Grafo en el que buscamos
 --      v (Vertex a): Vertice del que queremos sus aristas
 -- Salidas: s
---      s (Set (Path a)): Conjunto de aristas relacionadas con v
-pathsOf g v = Set.filter (\x -> srcVertex x == v || dstVertex x == v) (snd g)
+--      s (Set (Edge a)): Conjunto de aristas relacionadas con v
+edgesOf g v = Set.filter (\x -> srcVertex x == v || dstVertex x == v) (snd g)
 
 
-pathsFrom :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Path a)
+edgesFrom :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Edge a)
 -- Conjunto de aristas que salen de v
 -- Entradas: g -> v
 --      g (Graph a): Grafo en el que buscamos
 --      v (Vertex a): Vertice del que queremos sus aristas de las cuales es vertice fuente
 -- Salidas: s
---      s (Set (Path a)): Conjunto de aristas de las cuales v es vertice fuente
-pathsFrom g v = Set.filter (\x -> srcVertex x == v) (snd g)
+--      s (Set (Edge a)): Conjunto de aristas de las cuales v es vertice fuente
+edgesFrom g v = Set.filter (\x -> srcVertex x == v) (snd g)
 
 -- Lista de aristas que llegan al vertice v
-pathsTo :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Path a)
+edgesTo :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Edge a)
 -- Conjunto de aristas que llegan a v
 -- Entradas: g -> v
 --      g (Graph a): Grafo en el que buscamos
 --      v (Vertex a): Vertice del que queremos sus aristas de las cuales es vertice destino
 -- Salidas: s
---      s (Set (Path a)): Conjunto de aristas de las cuales v es vertice destino
-pathsTo g v = Set.filter (\x -> dstVertex x == v) (snd g)
+--      s (Set (Edge a)): Conjunto de aristas de las cuales v es vertice destino
+edgesTo g v = Set.filter (\x -> dstVertex x == v) (snd g)
 
-getWeight :: (Eq a, Ord a, Show a) => Path a -> Float
+getWeight :: (Eq a, Ord a, Show a) => Edge a -> Float
 -- Obtener el peso de una arista
 -- Entradas: p
---      p (Path a): Arista sobre la que nos preguntamos su peso
+--      p (Edge a): Arista sobre la que nos preguntamos su peso
 -- Salidas: w
 --      w (Float): Peso de la arista
 getWeight (P w _ _) = w
 
 -- Lista de vertices adyacentes a uno dado
 adjacents :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Set (Vertex a)
--- Obtener el conjunto de vertices adyacentes a uno dado en un grafo
+-- Obtener el conjunto de vertices adyacentes a uno dado en un grafo, dos vertices
+-- son adyacentes si existe una arista que los une.
 -- Entradas: g -> v
 --      g (Graph a): Grafo en el que buscamos
 --      v (Vertex a): Vertice del cual buscamos sus vertices adyacentes
 -- Salidas: s
 --      s (Set (Vertex a)): Conjunto de vertices que son adyacentes a v
-adjacents g v = Set.map dstVertex (pathsFrom g v) `Set.union` Set.map srcVertex (pathsTo g v)
+adjacents g v = Set.map dstVertex (edgesFrom g v) `Set.union` Set.map srcVertex (edgesTo g v)
 
 
 addListVertex :: (Eq a, Ord a, Show a) => [Vertex a] -> Graph a -> Graph a
@@ -206,33 +207,33 @@ addListVertex :: (Eq a, Ord a, Show a) => [Vertex a] -> Graph a -> Graph a
 addListVertex xs g = L.foldl addVertex g xs
 
 -- Añadir todas las aristas de una lista
-addListPath :: (Eq a, Ord a, Show a) => [Path a] -> Graph a -> Graph a
+addListEdge :: (Eq a, Ord a, Show a) => [Edge a] -> Graph a -> Graph a
 -- Añadir todos las aristas de una lista a un grafo
 -- Entradas: xs -> g
 --      xs ([Vertex a]): Lista de aristas a añadir en el grafo
 --      g (Graph a): Grafo donde queremos añadir las aristas
 -- Salidas: grafo
 --      grafo (Graph a): Grafo con los nuevas aristas añadidos
-addListPath xs g = L.foldl addPath g xs
+addListEdge xs g = L.foldl addEdge g xs
 
 
-fromTupleL :: (Eq a, Ord a, Show a) => ([Vertex a],[Path a]) -> Graph a
+fromTupleL :: (Eq a, Ord a, Show a) => ([Vertex a],[Edge a]) -> Graph a
 -- Nuevo grafo a partir de un par de listas de vertices y aristas
--- Entradas: (vert, path)
+-- Entradas: (vert, edge)
 --      vert ([Vertex a]): Lista de vertices a añadir
---      path ([Path a]): Lista de aristas a añadir
+--      edge ([Edge a]): Lista de aristas a añadir
 -- Salidas: grafo
 --      grafo (Graph a): El grado descrito
-fromTupleL (vert, path) = addListPath path (Set.fromList vert, empty)
+fromTupleL (vert, edge) = addListEdge edge (Set.fromList vert, empty)
 
-fromTupleS :: (Eq a, Ord a, Show a) => (Set (Vertex a),Set (Path a)) -> Graph a
+fromTupleS :: (Eq a, Ord a, Show a) => (Set (Vertex a),Set (Edge a)) -> Graph a
 -- Nuevo grafo a partir de un par de conjuntos de vertices y aristas
--- Entradas: (vert, path)
+-- Entradas: (vert, edge)
 --      vert (Set (Vertex a)): Conjunto de vertices a añadir
---      path (Set (Path a)): Conjunto de aristas a añadir
+--      edge (Set (Edge a)): Conjunto de aristas a añadir
 -- Salidas: grafo
 --      grafo (Graph a): El grado descrito
-fromTupleS (vert, path) = Set.foldl addPath (vert,empty) path
+fromTupleS (vert, edge) = Set.foldl addEdge (vert,empty) edge
 
 -- Recorrido en profundidad
 dfs :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> [Vertex a]
@@ -261,10 +262,10 @@ Actual      Pila        Recorrido
 --                          Grafo     a recorrer     recorridos      Sol
 dfsAux :: (Eq a, Ord a, Show a) => Graph a -> [Vertex a] -> [Vertex a] -> [Vertex a]
 dfsAux g [] ys = ys
-dfsAux g (x:xs) ys = if elem x ys then dfsAux g xs ys else dfsAux g (newPaths++xs) (ys++[x]) -- Hay que tener cuidado por si se ha añadido ya
+dfsAux g (x:xs) ys = if elem x ys then dfsAux g xs ys else dfsAux g (newEdges++xs) (ys++[x]) -- Hay que tener cuidado por si se ha añadido ya
     where
         adjToX = (adjacents g x)
-        newPaths = Set.toList $ Set.difference adjToX (Set.fromList (ys++[x]))
+        newEdges = Set.toList $ Set.difference adjToX (Set.fromList (ys++[x]))
 
 -- Siendo x el vertice por el que se va, en cada llamada recursiva, se añade a la pila los adyacentes a x
 -- exceptuando los que ya han sido recorridos (incluyendo x) y se añade x a los recorridos.
@@ -283,18 +284,18 @@ bfs g v = bfsAux g (Set.toList (adjacents g v)) [v]
 
 bfsAux :: (Eq a, Ord a, Show a) => Graph a -> [Vertex a] -> [Vertex a] -> [Vertex a]
 bfsAux g [] ys = ys
-bfsAux g (x:xs) ys = if elem x ys then bfsAux g xs ys else bfsAux g (xs++newPaths) (ys++[x]) 
+bfsAux g (x:xs) ys = if elem x ys then bfsAux g xs ys else bfsAux g (xs++newEdges) (ys++[x]) 
     where
         adjToX = (adjacents g x)
-        newPaths = Set.toList $ Set.difference adjToX (Set.fromList (ys++[x]))
+        newEdges = Set.toList $ Set.difference adjToX (Set.fromList (ys++[x]))
 
-orderedPaths :: (Eq a, Ord a, Show a) => Graph a -> [Path a]
+orderedEdges :: (Eq a, Ord a, Show a) => Graph a -> [Edge a]
 -- Lista de aristas del grafo ordenadas por peso
 -- Entradas: g
 --      g (Graph a): Grafo del que se quieren las aristas ordenadas
 -- Salidas: xs
---      xs ([Path a]): Lista de aristas ordenadas por peso
-orderedPaths g = sort (Set.toList (pathSet g))
+--      xs ([Edge a]): Lista de aristas ordenadas por peso
+orderedEdges g = sort (Set.toList (edgeSet g))
 
 
 conexo :: (Eq a, Ord a, Show a) => Graph a -> Bool
@@ -330,25 +331,25 @@ kruskal :: (Eq a, Ord a, Show a) => (Eq a, Ord a, Show a) => Graph a -> Graph a
 --      g (Graph a): El grafo del que queremos el arbol recubridor de minimos pesos
 -- Salidas: arbol
 --      arbol (Graph a): Arbol recubridor de pesos minimos en formato de arbol
-kruskal g@(vertex,_) = kruskal' (orderedPaths g) (vertex,empty) (vertexNum g) (conectividad g)
+kruskal g@(vertex,_) = kruskal' (orderedEdges g) (vertex,empty) (vertexNum g) (conectividad g)
 
 --aristas que quedan-> arbol de salida-> componenetesConexas-> componentesConexas del original-> conjunto de vertices
-kruskal' :: (Eq a, Ord a, Show a) => [Path a] -> Graph a -> Int -> Int -> Graph a
+kruskal' :: (Eq a, Ord a, Show a) => [Edge a] -> Graph a -> Int -> Int -> Graph a
 kruskal' [] treeSol compConexas _ = treeSol
-kruskal' (p:pathsList) treeSol compConexas compConexasOriginal
+kruskal' (p:edgesList) treeSol compConexas compConexasOriginal
     -- Caso donde ya se tienen las mismas componentes conexas que al inicio
     | compConexas == compConexasOriginal = treeSol
     -- Caso donde el numero de componentes conexas tras agregar la arista es el mismo
-    | compConexas == conectividad agregandoArista = kruskal' pathsList treeSol compConexas compConexasOriginal
+    | compConexas == conectividad agregandoArista = kruskal' edgesList treeSol compConexas compConexasOriginal
     -- En otro caso se deja agragada la nueva arista
-    | otherwise = kruskal' pathsList agregandoArista (compConexas-1) compConexasOriginal
+    | otherwise = kruskal' edgesList agregandoArista (compConexas-1) compConexasOriginal
         where
-            agregandoArista = (addPath treeSol p)
+            agregandoArista = (addEdge treeSol p)
 
 
 g, g' :: Graph Int
 g = addListVertex [(V 1), (V 2), (V 3),(V 4),(V 5),(V 6),(V 7), (V 8), (V 9), (V 10),(V 11), (V 12),(V 13),(V 14)] (empty,empty)
-g' = addListPath [(P 1 (V 1) (V 2)),
+g' = addListEdge [(P 1 (V 1) (V 2)),
     (P 1 (V 1) (V 10)),
         (P 1 (V 2) (V 3)),
             (P 1 (V 2) (V 12)),
@@ -367,15 +368,15 @@ g' = addListPath [(P 1 (V 1) (V 2)),
                                                                 (P 1 (V 13) (V 14))] g
 {-
 --                  El grafo, vertice de salida, vertice de destino
-dijkstra :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Vertex a -> [Path a]
-dijkstra g@(vertex,path) vSrc vDst = getShortestPath (dijkstra' (,empty) path) vSrc vDst
+dijkstra :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Vertex a -> [Edge a]
+dijkstra g@(vertex,Edge) vSrc vDst = getShortestEdge (dijkstra' (,empty) Edge) vSrc vDst
     where 
-        getShortestPath g vSrc vDst
+        getShortestEdge g vSrc vDst
             | 
 
 --                  (Grafo con el vertices anteriores, distancia recorrida desde origen, Maybe vertice anterior)
 dijkstra' :: (Eq a, Ord a, Show a) => Graph (a, Int, Maybe a) -> Vertex a -> Vertex a -> Graph (a, Int, Maybe a)
-dijkstra' g@(vertex,path) vSrc vDst
+dijkstra' g@(vertex,Edge) vSrc vDst
 -}
 
 
@@ -421,17 +422,17 @@ dijkstra' g dnodes unchecked =
 
 -- given a Dnode to update, the current Dnode, the Nodes connected to current 
 -- and current's edges, return a (possibly) updated Dnode
-update :: DNode a -> DNode a -> [Vertex a] -> [Path a] -> DNode a
+update :: DNode a -> DNode a -> [Vertex a] -> [Edge a] -> DNode a
 update dn@(n, (nd, p)) (c, (cd, _)) cnodes edges =
   let wt = weightFor n edges
   in  if n `notElem` cnodes then dn
       else if cd+wt < nd then (n, (cd+wt, c)) else dn
 
--- given a Dijkstra solution and a destination node, return the path to it.
-pathToNode :: [DNode a] -> Vertex a -> [Vertex a]
-pathToNode dnodes dest = 
+-- given a Dijkstra solution and a destination node, return the Edge to it.
+EdgeToNode :: [DNode a] -> Vertex a -> [Vertex a]
+EdgeToNode dnodes dest = 
   let dn@(n, (d, p)) = dnodeForNode dnodes dest
-  in if n == p then [n] else pathToNode dnodes p ++ [n]
+  in if n == p then [n] else EdgeToNode dnodes p ++ [n]
 
 
 ------------------------
@@ -452,15 +453,15 @@ fromList es =
 -}
 
 -- Given a weighted graph and a node, return the edges incident on the node
-edgesFor :: Graph a -> Vertex a -> [Path a]
+edgesFor :: Graph a -> Vertex a -> [Edge a]
 edgesFor g n = snd . head . L.filter (\(nd, _) -> nd == n) $ g
 
 -- Given a node and a list of edges, one of which is incident on the node, return the weight
-weightFor :: Vertex a -> [Path a] -> Float
+weightFor :: Vertex a -> [Edge a] -> Float
 weightFor n = weight . head . L.filter (\e -> n == node e)
 
 -- Given a list of edges, return their nodes
-connectedNodes :: [Path a] -> [Vertex a]
+connectedNodes :: [Edge a] -> [Vertex a]
 connectedNodes = L.map node
 
 dnodeForNode :: [DNode a] -> Vertex a -> DNode a
