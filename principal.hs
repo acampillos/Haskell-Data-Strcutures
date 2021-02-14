@@ -735,6 +735,7 @@ menuRecorrido = do
     putStrLn "(bfs), dfs trata de recorrer el grafo de modo que por"
     putStrLn "cada nodo, se trata de llegar a mayor profundidad" 
     putStrLn "(usando una pila), en cambio bfs recorre el grafo" 
+
     putStrLn "abarcando primero cada nodo adyacente al nodo en el" 
     putStrLn "que se encuentra actualmente (usando una cola)."
     putStrLn ""
@@ -1458,9 +1459,12 @@ menuRebalanceo = do
 
     return ()
 ---------------------------------------------------------------------------------
-
+-- MENU DE AVL
 menuAVL = do
     limpiar
+    putStrLn "El menú de AVL no ha dado tiempo a realizarlo, pero"
+    putStrLn "se puede encontrar su implementación en el código"
+    putStrLn "fuente."
     return ()
 
 
@@ -1605,24 +1609,27 @@ nuevoMenu = do
     putStrLn "5. Arbol de búsqueda binaria"
     putStrLn "6. Splay tree"
     putStrLn "7. Red-Black Tree"
+    putStrLn "8. AVL"
     putStrLn "\n"
     putStr "Elija una opción: "
     o <- getLine
     
     if o == "1" then do
-        menuDeque               ----- > Hecho
+        menuDeque            
     else if o == "2" then do
-        menuGrafo               ----- > Hecho
+        menuGrafo              
     else if o == "3" then do
-        menuHashTable           ----- > Hecho
+        menuHashTable          
     else if o == "4" then do
-        menuMaxMinHeap             ----- > Hecho (revisar)
+        menuMaxMinHeap            
     else if o == "5" then do
-        menuBST                 ----- > Hecho
+        menuBST                 
     else if o == "6" then do
         menuSplayTree
     else if o == "7" then do
-        menuRBT                 ----- > Hecho 
+        menuRBT                 
+    else if o == "8" then do
+        menuAVL
     else do
         putChar '\n'
         putStrLn "No se ha seleccionado ninguna opción válida."
