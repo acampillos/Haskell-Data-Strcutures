@@ -8,7 +8,8 @@ module DataStructures.MinHeap(
     deleteMin,
     elements,
     equals,
-    rank
+    rank,
+    helpMinHeap
 ) where
 
 import Data.List
@@ -31,6 +32,10 @@ data MinHeap a = Empty | Tree Int a (MinHeap a) (MinHeap a)
 -----------------------
 -- FUNCIONES
 -----------------------
+
+helpMinHeap :: IO ()
+helpMinHeap = putStrLn "\nempty :: Ord a => MinHeap a\n\nisEmpty :: MinHeap a -> Bool\n\ninsert :: (Ord a) => MinHeap a -> a -> MinHeap a\n\nmerge :: (Ord a) => MinHeap a -> MinHeap a -> MinHeap a\n\nfindMax :: MinHeap a -> a\n\ndeleteMax :: (Ord a) => MinHeap a -> MinHeap a\n\nelements :: MinHeap a -> [a]\n\nequals :: Ord a => MinHeap a -> MinHeap a -> Bool\n\nrank :: MinHeap a -> Int"
+
 
 empty :: Ord a => MinHeap a
 empty = Empty
