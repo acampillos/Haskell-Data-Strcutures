@@ -22,8 +22,8 @@ module DataStructures.HashTable.HashTableSChaining(
     helpHTS
 ) where
 
-import Data.Array (array, Array, (//), (!))
-import qualified Data.List as List (find, length, delete)
+import Data.Array
+import qualified Data.List as List
 import Data.Hashable
 import Data.Maybe
 
@@ -67,11 +67,6 @@ isEmpty :: (Eq a, Eq b) => HashTableSC a b -> Bool
 isEmpty t@(HashTableSC _ table) = t == empty (length table)
 
 
--- // double table size if 50% full
--- (n >= m/2)
-
---foldr [("Marcos",664894942),("Maria",654876472)]
-
 put :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableSC a b -> HashTableSC a b
 -- Inserta el par (a, b) en la tabla.
 -- Parámetros: Par clave-valor
@@ -105,9 +100,6 @@ getValue key (HashTableSC _ table) = List.find (\(k,v) -> k == key) bucket    --
 
 replace :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableSC a b -> HashTableSC a b
 replace (k, v) t = put (k, v) t
-
--- // halves size of array if it's 12.5% full or less
--- (n > 0 && n <= m/8) 
 
 removeKey :: (Hashable a, Eq a, Eq b) => a -> HashTableSC a b -> HashTableSC a b
 -- Elimina el par asociado a la clave en la tabla.

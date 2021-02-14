@@ -22,9 +22,8 @@ module DataStructures.HashTable.HashTableQProbing(
     helpHTQ
 ) where
 
-
-import Data.Array (array, Array, (//), (!))
-import qualified Data.List as List (find, length, delete)
+import Data.Array
+import qualified Data.List as List
 import Data.Hashable
 import Data.Maybe
 
