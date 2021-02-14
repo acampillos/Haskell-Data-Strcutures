@@ -140,7 +140,7 @@ putAll t1 t2 = foldr (\(k,v) ac -> put (k,v) ac) t1 entrySet
 
 hashSChaining :: Hashable a => Int -> a -> Int
 -- Calcula la función de hash a partir de n (longitud de la tabla)
-hashSChaining n = (`mod` n) . hash
+hashSChaining n v = mod (hash v) n
 
 resize :: (Hashable a, Eq a, Eq b) => Int -> HashTableSC a b -> HashTableSC a b
 -- Cambia el tamaño de la tabla insertando todos los elementos en una vacía con la capacidad indicada
@@ -172,8 +172,6 @@ clear t@(HashTableSC _ table) = empty (length table)
 
 size :: HashTableSC a b -> Int
 size t@(HashTableSC _ table) = length table
-
--- merge?
 
 
 printHT :: (Show a, Show b) => HashTableSC a b -> String

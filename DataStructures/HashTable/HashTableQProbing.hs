@@ -141,7 +141,7 @@ putAll t1 t2 = foldr (\(k,v) ac -> put (k,v) ac) t1 entrySet
 
 hashSChaining :: Hashable a => Int -> a -> Int
 -- Calcula la función de hash a partir de n (longitud de la tabla)
-hashSChaining n = (`mod` n) . hash
+hashSChaining n v = mod (hash v) n
 
 hashQProbing :: Hashable a => HashTableQP a b -> a -> Int
 -- Calcula el índice del siguiente bucket vacío a partir del hash del elemento recibido y el tamaño de la tabla.
@@ -184,7 +184,6 @@ clear t@(HashTableQP _ arr) = empty (length arr)
 size :: HashTableQP a b -> Int
 size t@(HashTableQP _ arr) = length arr
 
--- merge?
 
 printHT :: (Show a, Show b) => HashTableQP a b -> String
 printHT t@(HashTableQP pairs table) = linea ++ header ++ linea ++ contenido ++ linea
