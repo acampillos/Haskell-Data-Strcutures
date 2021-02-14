@@ -14,7 +14,14 @@ module DataStructures.BinarySearchTree(
     inorder,
     preorder,
     postorder,
-    helpBST
+    helpBST,
+    ejbt1,
+    ejbt2,
+    ejbt3,
+    ejbt4,
+    ejbt5,
+    ejbt6,
+    ejbt7 
 ) where
 
 import Data.Maybe
@@ -289,30 +296,13 @@ bst2list :: (Eq a, Ord a) => BSTree a -> [a]
 bst2list t = preorder t
 
 
-
-{-inorder2bst :: (Eq a, Ord a) => [a] -> BSTree a
-inorder2bst xs = undefined
-
-t :: BSTree Int
-t = N (N (N H H 4) (N H H 5) 2) (N H H 3) 1
-
-pre,post,ino :: [Int]
-pre = [1,2,4,5,3]
---post = [4,5,2,3,1]
-post = [3,9,14,10,8]
-ino = [4,2,5,1,3]
-
-preorder2bst :: (Eq a, Ord a) => [a] -> BSTree a
-preorder2bst (x:y:z:xs) = undefined
-
-postorder2bst :: [Int] -> BSTree Int
-postorder2bst xs = postorder2bst' xs ((length xs)-1) (minBound :: Int) (maxBound :: Int)
-
-postorder2bst' xs i l u
-    | i > 0 = if key < u && key > l
-                then if i>1
-                        then N (postorder2bst' (take (i-1) xs) (i-2) key u) (postorder2bst' (take (i-1) xs) (i-2) l key) key
-                     else N (postorder2bst' (take (i-1) xs) (i-1) key u) (postorder2bst' (take (i-1) xs) (i-1) l key) key
-               else N H H (xs!!i)
-    | otherwise = N H H (xs!!i)
-    where key = if i > 0 then (xs!!i) else error "A"-}
+-- Ejemplos BST
+ejbt1,ejbt2,ejbt3,ejbt4,ejbt5,ejbt6,ejbt7 :: BSTree Int
+ejbt1 = foldr insert H [50,40,60,70,80]
+ejbt2 = (N (N (H) (H) 5) (N (N (N (H) (H) 9) (N (H) (H) 13) 12) (N (H) (N (H) (H) 23) 19) 15) 8)
+ejbt3 = (N (N (H) (H) 40) (N (N (H) (H) 60) (N (H) (H) 80) 70) 50)
+-- Prueba para ver que no es SBT
+ejbt4 = (N (N (H) (H) 5) (N (N (N (H) (H) 9) (N (H) (H) 13) 12) (N (H) (N (H) (H) 23) 19) 15) 2000) 
+ejbt5 = (N (H) (H) 4)
+ejbt6 = (H)
+ejbt7 = (N (N (N (H) (H) 1) (N (N (N (H) (H) 122) (N (H) (H) 126) 125) (N (N (N (H) (H) 170) (N (H) (H) 174) 173) (N (H) (N (H) (H) 180) 176) 175) 150) 100) (N (H) (H) 400) 200)

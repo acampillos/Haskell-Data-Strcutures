@@ -26,7 +26,12 @@ module DataStructures.Graph(
     conexo,
     conectividad,
     kruskal,
-    helpGraph
+    helpGraph,
+    gTest1,
+    gTest2,
+    gTest3,
+    gTest4,
+    gTest5
 ) where
 
 import Data.Set as Set
@@ -346,10 +351,74 @@ kruskal' (p:edgesList) treeSol compConexas compConexasOriginal
         where
             agregandoArista = (addEdge treeSol p)
 
+-- Ejemplos de grafos
 
-g, g' :: Graph Int
-g = addListVertex [(V 1), (V 2), (V 3),(V 4),(V 5),(V 6),(V 7), (V 8), (V 9), (V 10),(V 11), (V 12),(V 13),(V 14)] (empty,empty)
-g' = addListEdge [(P 1 (V 1) (V 2)),
+gTest1,gTest2,gTest3,gTest4, gTest5 :: Graph Int
+gTest1 = (Set.fromList [(V 1),(V 2),(V 3),(V 4)], Set.fromList
+     [(P 1 (V 1) (V 2)),(P 3 (V 4) (V 2)),(P 2 (V 1) (V 3)),(P 1 (V 3) (V 4))])
+{-
+            1
+    1  ---------->  2
+    |              / \
+   2|               |
+    |              3|
+   \ /      1       |
+    3  ---------->  4
+-}
+gTest2 = (Set.fromList [(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7)], 
+    Set.fromList [(P 1 (V 5) (V 6)),(P 2 (V 2) (V 7)), (P 4 (V 2) (V 5)),(P 3 (V 1) (V 2)),
+        (P 0 (V 4) (V 2)),(P 1 (V 1) (V 3)),(P 1 (V 3) (V 4))])
+{-
+                    7
+                   / \
+                    |
+                   2|
+           3        |       4
+    1  ---------->  2  -----------> 5
+    |              / \              |
+   1|               |              1|
+    |              0|               |
+   \ /      1       |              \ /
+    3  ---------->  4               6
+-}
+
+
+gTest3 = (Set.fromList [(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7),(V 8),(V 9),(V 10),(V 11)], Set.fromList [(P 1 (V 5) (V 6)),
+    (P 2 (V 2) (V 7)),
+        (P 4 (V 2) (V 5)),
+            (P 3 (V 1) (V 2)),
+                (P 0 (V 4) (V 2)),
+                    (P 1 (V 1) (V 3)),
+                        (P 1 (V 3) (V 4)),
+                            (P 1.5 (V 1) (V 7)),
+                                (P 1 (V 5) (V 8)),
+                                    (P 0 (V 8) (V 9)),
+                                        (P 1 (V 11) (V 9)),
+                                            (P 2 (V 10) (V 11)),
+                                                (P 0 (V 10) (V 4))])
+
+
+{-
+          __ -----> 7
+     1.5/          / \
+      /             |
+    /              2|
+    |       3       |       4               1
+    1  ---------->  2  -----------> 5 ------------> 8
+    |              / \              |               |
+   1|               |              1|               |0
+    |              0|               |               |
+   \ /      1       |              \ /             \ /
+    3  ---------->  4               6               9
+                   / \                             / \
+                    |                               |
+                    |0.5                            |1
+                    |               2               |
+                    10 ---------------------------> 11
+-}
+
+gTest4 = addListVertex [(V 1), (V 2), (V 3),(V 4),(V 5),(V 6),(V 7), (V 8), (V 9), (V 10),(V 11), (V 12),(V 13),(V 14)] (empty,empty)
+gTest5 = addListEdge [(P 1 (V 1) (V 2)),
     (P 1 (V 1) (V 10)),
         (P 1 (V 2) (V 3)),
             (P 1 (V 2) (V 12)),
@@ -365,105 +434,4 @@ g' = addListEdge [(P 1 (V 1) (V 2)),
                                                     (P 1 (V 8) (V 9)),
                                                         (P 1 (V 10) (V 11)),
                                                             (P 1 (V 10) (V 12)),
-                                                                (P 1 (V 13) (V 14))] g
-{-
---                  El grafo, vertice de salida, vertice de destino
-dijkstra :: (Eq a, Ord a, Show a) => Graph a -> Vertex a -> Vertex a -> [Edge a]
-dijkstra g@(vertex,Edge) vSrc vDst = getShortestEdge (dijkstra' (,empty) Edge) vSrc vDst
-    where 
-        getShortestEdge g vSrc vDst
-            | 
-
---                  (Grafo con el vertices anteriores, distancia recorrida desde origen, Maybe vertice anterior)
-dijkstra' :: (Eq a, Ord a, Show a) => Graph (a, Int, Maybe a) -> Vertex a -> Vertex a -> Graph (a, Int, Maybe a)
-dijkstra' g@(vertex,Edge) vSrc vDst
--}
-
-
-{-
---    El vertice del grafo anterior, (La distancia desde el orignen, Vertice anterior)
-type DNode a = (Vertex a, (Float, Vertex a))
-
--- Given a graph and a start node
-dijkstra :: Graph a -> Vertex a -> [DNode a]
-dijkstra g start = 
-  let dnodes = initD g start
-      unchecked = L.map fst dnodes
-  in  dijkstra' g dnodes unchecked
-
-  -- Given a graph and a start node, construct an initial list of Dnodes
-initD :: Graph a -> Vertex a -> [DNode a]
-initD g start =
-  let initDist (n, es) = 
-        if n == start 
-        then 0 
-        else if start `elem` connectedNodes es
-             then weightFor start es
-             else 1.0/0.0
-  in L.map (\pr@(n, _) -> (n, ((initDist pr), start))) g
-
--- Dijkstra's algorithm (recursive)
--- get a list of Dnodes that haven't been checked yet
--- select the one with minimal distance and add it to the checked list. Call it current.
--- update each Dnode that connects to current by comparing 
--- the Dnode's current distance to the sum: (weight of the connecting edge + current's distance)
--- the algorithm terminates when all nodes have been checked.
-dijkstra' :: Graph a -> [DNode a] -> [Vertex a] -> [DNode a]
-dijkstra' g dnodes [] = dnodes
-dijkstra' g dnodes unchecked = 
-  let dunchecked = L.filter (\dn -> (fst dn) `elem` unchecked) dnodes
-      current = head . sortBy (\(_,(d1,_)) (_,(d2,_)) -> compare d1 d2) $ dunchecked
-      c = fst current
-      unchecked' = L.delete c unchecked
-      edges = edgesFor g c
-      cnodes = intersect (connectedNodes edges) unchecked'
-      dnodes' = L.map (\dn -> update dn current cnodes edges) dnodes
-  in dijkstra' g dnodes' unchecked' 
-
--- given a Dnode to update, the current Dnode, the Nodes connected to current 
--- and current's edges, return a (possibly) updated Dnode
-update :: DNode a -> DNode a -> [Vertex a] -> [Edge a] -> DNode a
-update dn@(n, (nd, p)) (c, (cd, _)) cnodes edges =
-  let wt = weightFor n edges
-  in  if n `notElem` cnodes then dn
-      else if cd+wt < nd then (n, (cd+wt, c)) else dn
-
--- given a Dijkstra solution and a destination node, return the Edge to it.
-EdgeToNode :: [DNode a] -> Vertex a -> [Vertex a]
-EdgeToNode dnodes dest = 
-  let dn@(n, (d, p)) = dnodeForNode dnodes dest
-  in if n == p then [n] else EdgeToNode dnodes p ++ [n]
-
-
-------------------------
-
-appendReversed :: [((String, String), Float)] -> [((String, String), Float)]
-appendReversed es = es ++ L.map (\((n1,n2),w) -> ((n2,n1),w)) es
-
-{-
--- Takes a list of pairs where the first element is a two-member list 
--- of nodes in any order and the second element is the weight for the edge connecting them.
-fromList :: [((String, String), Float)] -> Graph a
-fromList es =
-  let nodes = nub . L.map (fst . fst) $ es
-      edgesFor es node = 
-        let connected = L.filter (\((n,_),_) -> node == n) $ es
-        in L.map (\((_,n),wt) -> Edge n wt) connected 
-  in L.map (\n -> (n, edgesFor es n)) nodes
--}
-
--- Given a weighted graph and a node, return the edges incident on the node
-edgesFor :: Graph a -> Vertex a -> [Edge a]
-edgesFor g n = snd . head . L.filter (\(nd, _) -> nd == n) $ g
-
--- Given a node and a list of edges, one of which is incident on the node, return the weight
-weightFor :: Vertex a -> [Edge a] -> Float
-weightFor n = weight . head . L.filter (\e -> n == node e)
-
--- Given a list of edges, return their nodes
-connectedNodes :: [Edge a] -> [Vertex a]
-connectedNodes = L.map node
-
-dnodeForNode :: [DNode a] -> Vertex a -> DNode a
-dnodeForNode dnodes n = head . L.filter (\(x, _) -> x == n) $ dnodes
--}
+                                                                (P 1 (V 13) (V 14))] gTest4

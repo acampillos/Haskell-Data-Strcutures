@@ -19,7 +19,12 @@ module DataStructures.DirectedGraph(
     dfs,
     bfs,
     orderedEdges,
-    helpDGraph
+    helpDGraph,
+    gTest1,
+    gTest2,
+    gTest3,
+    gTest4,
+    gTest5
 )
 where
 
@@ -259,10 +264,73 @@ bfsAux g (x:xs) ys = if elem x ys then bfsAux g xs ys else bfsAux g (xs++newEdge
 orderedEdges :: (Eq a, Ord a) => DGraph a -> [Edge a]
 orderedEdges g = sort (Set.toList (edgeSet g))
 
+-- Ejemplos de grafos dirigidos
+gTest1,gTest2,gTest3,gTest4, gTest5 :: DGraph Int
+gTest1 = (Set.fromList [(V 1),(V 2),(V 3),(V 4)], Set.fromList
+     [(P 1 (V 1) (V 2)),(P 3 (V 4) (V 2)),(P 2 (V 1) (V 3)),(P 1 (V 3) (V 4))])
+{-
+            1
+    1  ---------->  2
+    |              / \
+   2|               |
+    |              3|
+   \ /      1       |
+    3  ---------->  4
+-}
+gTest2 = (Set.fromList [(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7)], 
+    Set.fromList [(P 1 (V 5) (V 6)),(P 2 (V 2) (V 7)), (P 4 (V 2) (V 5)),(P 3 (V 1) (V 2)),
+        (P 0 (V 4) (V 2)),(P 1 (V 1) (V 3)),(P 1 (V 3) (V 4))])
+{-
+                    7
+                   / \
+                    |
+                   2|
+           3        |       4
+    1  ---------->  2  -----------> 5
+    |              / \              |
+   1|               |              1|
+    |              0|               |
+   \ /      1       |              \ /
+    3  ---------->  4               6
+-}
 
-g, g' :: DGraph Int
-g = addListVertex [(V 1), (V 2), (V 3),(V 4),(V 5),(V 6),(V 7), (V 8), (V 9), (V 10),(V 11), (V 12),(V 13),(V 14)] (empty,empty)
-g' = addListEdge [(P 1 (V 1) (V 2)),
+
+gTest3 = (Set.fromList [(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7),(V 8),(V 9),(V 10),(V 11)], Set.fromList [(P 1 (V 5) (V 6)),
+    (P 2 (V 2) (V 7)),
+        (P 4 (V 2) (V 5)),
+            (P 3 (V 1) (V 2)),
+                (P 0 (V 4) (V 2)),
+                    (P 1 (V 1) (V 3)),
+                        (P 1 (V 3) (V 4)),
+                            (P 1.5 (V 1) (V 7)),
+                                (P 1 (V 5) (V 8)),
+                                    (P 0 (V 8) (V 9)),
+                                        (P 1 (V 11) (V 9)),
+                                            (P 2 (V 10) (V 11)),
+                                                (P 0 (V 10) (V 4))])
+
+
+{-
+          __ -----> 7
+     1.5/          / \
+      /             |
+    /              2|
+    |       3       |       4               1
+    1  ---------->  2  -----------> 5 ------------> 8
+    |              / \              |               |
+   1|               |              1|               |0
+    |              0|               |               |
+   \ /      1       |              \ /             \ /
+    3  ---------->  4               6               9
+                   / \                             / \
+                    |                               |
+                    |0.5                            |1
+                    |               2               |
+                    10 ---------------------------> 11
+-}
+
+gTest4 = addListVertex [(V 1), (V 2), (V 3),(V 4),(V 5),(V 6),(V 7), (V 8), (V 9), (V 10),(V 11), (V 12),(V 13),(V 14)] (empty,empty)
+gTest5 = addListEdge [(P 1 (V 1) (V 2)),
     (P 1 (V 1) (V 10)),
         (P 1 (V 2) (V 3)),
             (P 1 (V 2) (V 12)),
@@ -278,35 +346,4 @@ g' = addListEdge [(P 1 (V 1) (V 2)),
                                                     (P 1 (V 8) (V 9)),
                                                         (P 1 (V 10) (V 11)),
                                                             (P 1 (V 10) (V 12)),
-                                                                (P 1 (V 13) (V 14))] g
-
-
-
--- Considerando el grafo dirigido
-{-
-kruskal :: (Eq a, Ord a) => DGraph a -> Forest a
---                                        
-kruskal g = kruskal' 
-    g                   -- Grafo de entrada
-    (orderedEdges g)    -- aristas ordenadas por peso
-    []                  -- bosque solucion
-    0                   -- indice del bosque (Indica por que arbol va)
-    (vertexSet g)       -- vertices por poner
-
--- kruskal' :: (Eq a, Ord a) => DGraph a -> (Set (Edge a)) -> Forest a -> Int -> (Set (Vertex a)) -> Forest a
-{-
-kruskal :: (Eq a, Ord a) => Grafo a -> [(p,v,v)]
-kruskal g = kruskal’ cola           -- Cola de prioridad
-        (tabla [(x,x) | x <- nodos g])  -- Tabla de raices
-        []                              -- Árbol de expansión
-        ((length (nodos g)) - 1)        -- Aristas por
-                                    -- colocar
-    where cola = sort [(p,x,y) | (x,y,p) <- aristas g]
-
-kruskal’ ((p,x,y):as) t ae n
-    | n==0 = ae
-    | actualizado = kruskal’ as t’ ((p,x,y):ae) (n-1)
-    | otherwise = kruskal’ as t ae n
-    where (actualizado,t’) = buscaActualiza (x,y) t
--}
--}
+                                                                (P 1 (V 13) (V 14))] gTest4

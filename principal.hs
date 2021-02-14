@@ -34,7 +34,9 @@ cleanerForOs = system "if actualOs == \"mingw32\" then let limpiar = system \"cl
 --limpiar = system "cls"
 limpiar = system "limpiar"
 -}
+
 limpiar = system "cls"
+
 --limpiar = system "clear"
 
 -- EJEMPLOS
@@ -1229,7 +1231,7 @@ menuHTQuadraticProbing = do
     o <- getLine
 
     putStrLn ""
-    putStrLn "Salida (HTL.put (85,\"E\") htLExperimento):"
+    putStrLn "Salida (HTQ.put (92,\"Z\") htqExperimento):"
     putStrLn $ HTQ.printHT $ HTQ.put (92,"Z") htqExperimento
     putStrLn ""
 
@@ -1570,8 +1572,11 @@ menuRBT = do
 
     if t == "1" then do
         nuevoMenu
+    else if t == "q" then do
+        limpiar
+        putStrLn "Saliendo..."
     else do
-        nuevoMenu   -- AQUI HAY QUE CAMBIAR ESTO
+        nuevoMenu 
 
     o <- getLine
 
@@ -1589,7 +1594,8 @@ nuevoMenu = do
     putStrLn "preparar el código para poder ser reutilizado en multiples"
     putStrLn "ocasiones."
     putStrLn ""
-    putStrLn "Antes de continuar se recuerda la existencia de la función help."
+    putStrLn "Antes de continuar se recuerda la existencia de la función help"
+    putStrLn "en caso de estar ejecutando desde una consola de haskell."
     putStrLn "A continuación se presentan una serie de estructuras de datos \nde los cuales se pueden ver ejemplos de su uso."
     putStrLn ""
     putStrLn "1. Deque"
