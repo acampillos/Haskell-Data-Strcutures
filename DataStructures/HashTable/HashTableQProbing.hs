@@ -18,7 +18,8 @@ module DataStructures.HashTable.HashTableQProbing(
     getNumPairs,
     clear,
     size,
-    printHT
+    printHT,
+    helpHTQ
 ) where
 
 
@@ -55,6 +56,9 @@ data HashTableQP a b = HashTableQP Int (Array Int [(a, b)])
 -----------------------
 -- FUNCIONES
 -----------------------
+
+helpHTQ :: IO ()
+helpHTQ = putStrLn "\ngetTable :: HashTableQP a b -> Array Int [(a,b)]\n\nempty :: Int -> HashTableQP a b\n\nisEmpty :: (Eq a, Eq b) => HashTableQP a b -> Bool\n\nput :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableQP a b -> HashTableQP a b\n\ngetValue :: (Hashable k, Eq k) => k -> HashTableQP k v -> Maybe (k, v)\n\nreplace :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableQP a b -> HashTableQP a b\n\nremoveKey :: (Hashable a, Eq a, Eq b) => a -> HashTableQP a b -> HashTableQP a b\n\nputAll :: (Hashable a, Eq a, Eq b) => HashTableQP a b -> HashTableQP a b -> HashTableQP a b\n\nhashSChaining :: Hashable a => Int -> a -> Int\n\nresize :: (Hashable a, Eq a, Eq b) => Int -> HashTableQP a b -> HashTableQP a b\n\nentries :: HashTableQP a b -> [(a,b)]\n\nkeys :: HashTableQP a b -> [a]\n\nvalues :: HashTableQP a b -> [b]\n\ncontainsKey :: (Hashable a, Eq a) => a -> HashTableQP a b-> Bool\n\ngetNumPairs :: HashTableQP a b -> Int\n\nclear :: Eq a => HashTableQP a b -> HashTableQP a b\n\nsize :: HashTableQP a b -> Int\n\nprintHT :: (Show a, Show b) => HashTableQP a b -> String"
 
 getTable :: HashTableQP a b -> Array Int [(a,b)]
 getTable (HashTableQP _ arr) = arr

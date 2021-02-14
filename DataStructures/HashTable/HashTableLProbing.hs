@@ -18,7 +18,8 @@ module DataStructures.HashTable.HashTableLProbing(
     getNumPairs,
     clear,
     size,
-    printHT
+    printHT,
+    helpHTL
 ) where
 
 import Data.Array (array, Array, (//), (!))
@@ -55,6 +56,9 @@ data HashTableLP a b = HashTableLP Int (Array Int [(a, b)])
 -----------------------
 -- FUNCIONES
 -----------------------
+
+helpHTL :: IO ()
+helpHTL = putStrLn "\ngetTable :: HashTableLP a b -> Array Int [(a,b)]\n\nempty :: Int -> HashTableLP a b\n\nisEmpty :: (Eq a, Eq b) => HashTableLP a b -> Bool\n\nput :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableLP a b -> HashTableLP a b\n\ngetValue :: (Hashable k, Eq k) => k -> HashTableLP k v -> Maybe (k, v)\n\nreplace :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableLP a b -> HashTableLP a b\n\nremoveKey :: (Hashable a, Eq a, Eq b) => a -> HashTableLP a b -> HashTableLP a b\n\nputAll :: (Hashable a, Eq a, Eq b) => HashTableLP a b -> HashTableLP a b -> HashTableLP a b\n\nhashSChaining :: Hashable a => Int -> a -> Int\n\nresize :: (Hashable a, Eq a, Eq b) => Int -> HashTableLP a b -> HashTableLP a b\n\nentries :: HashTableLP a b -> [(a,b)]\n\nkeys :: HashTableLP a b -> [a]\n\nvalues :: HashTableLP a b -> [b]\n\ncontainsKey :: (Hashable a, Eq a) => a -> HashTableLP a b-> Bool\n\ngetNumPairs :: HashTableLP a b -> Int\n\nclear :: Eq a => HashTableLP a b -> HashTableLP a b\n\nsize :: HashTableLP a b -> Int\n\nprintHT :: (Show a, Show b) => HashTableLP a b -> String"
 
 getTable :: HashTableLP a b -> Array Int [(a,b)]
 getTable (HashTableLP _ arr) = arr

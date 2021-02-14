@@ -7,6 +7,7 @@ import Data.List as L
 import DataStructures.BinarySearchTree as BST
 import Data.Set as Set
 import DataStructures.Graph as G
+import DataStructures.DirectedGraph as DG
 import DataStructures.RedBlackTree as RBT
 import DataStructures.Deque as D
 import DataStructures.HashTable.HashTableSChaining as HTS
@@ -33,7 +34,6 @@ cleanerForOs = system "if actualOs == \"mingw32\" then let limpiar = system \"cl
 --limpiar = system "cls"
 limpiar = system "limpiar"
 -}
-
 limpiar = system "cls"
 --limpiar = system "clear"
 
@@ -42,12 +42,12 @@ limpiar = system "cls"
 -- EJEMPLOS GRAFOS ######################################################################################
 -- Carreteras minimas
 carreteras :: Graph String
-carreteras = fromTupleL ([(V "Sevilla"),(V "Huelva"),(V "Cadiz"),(V "Malaga"),(V "Granada"),(V "Almeria"),(V "Cordoba"),(V "Jaen")],
-    [(P 92.8 (V "Sevilla") (V "Huelva")), (P 121.0 (V "Sevilla") (V "Cadiz")), (P 214.0 (V "Sevilla") (V "Malaga")),
-        (P 141.0 (V "Sevilla") (V "Cordoba")), (P 234.0 (V "Cadiz") (V "Malaga")),(P 160.0 (V "Cordoba") (V "Malaga")),
-            (P 108.0  (V "Cordoba") (V "Jaen")), (P 127.0 (V "Malaga") (V "Granada")),(P 93.8 (V "Jaen") (V "Granada")),
-                (P 167.0 (V "Granada") (V "Almeria"))])
-
+carreteras = G.fromTupleL ([(G.V "Sevilla"),(G.V "Huelva"),(G.V "Cadiz"),(G.V "Malaga"),(G.V "Granada"),(G.V "Almeria"),(G.V "Cordoba"),(G.V "Jaen")],
+    [(G.P 92.8 (G.V "Sevilla") (G.V "Huelva")), (G.P 121.0 (G.V "Sevilla") (G.V "Cadiz")), (G.P 214.0 (G.V "Sevilla") (G.V "Malaga")),
+        (G.P 141.0 (G.V "Sevilla") (G.V "Cordoba")), (G.P 234.0 (G.V "Cadiz") (G.V "Malaga")),(G.P 160.0 (G.V "Cordoba") (G.V "Malaga")),
+            (G.P 108.0  (G.V "Cordoba") (G.V "Jaen")), (G.P 127.0 (G.V "Malaga") (G.V "Granada")),(G.P 93.8 (G.V "Jaen") (G.V "Granada")),
+                (G.P 167.0 (G.V "Granada") (G.V "Almeria"))])
+carreterasStringFH :: String
 carreterasStringFH = "carreteras :: Graph String\ncarreteras = fromTuple ([(V \"Sevilla\"),(V \"Huelva\"),(V \"Cadiz\")\n,(V \"Malaga\"),(V \"Granada\"),(V \"Almeria\"),(V \"Cordoba\"),(V \"Jaen\")],\n[(P 92.8 (V \"Sevilla\") (V \"Huelva\")), (P 121.0 (V \"Sevilla\") (V \"Cadiz\")), (P 214.0 (V \"Sevilla\") (V \"Malaga\")),\n        (P 141.0 (V \"Sevilla\") (V \"Cordoba\")), (P 234.0 (V \"Cadiz\") (V \"Malaga\")),(P 160.0 (V \"Cordoba\") (V \"Malaga\")),\n            (P 108.0  (V \"Cordoba\") (V \"Jaen\")), (P 127.0 (V \"Malaga\") (V \"Granada\")),(P 93.8 (V \"Jaen\") (V \"Granada\")),\n                (P 167.0 (V \"Granada\") (V \"Almeria\"))])"
 
 {-
@@ -60,7 +60,7 @@ carreterasStringFH = "carreteras :: Graph String\ncarreteras = fromTuple ([(V \"
                       Cadiz ---------- Malaga ----------- Granada ---------------- Almeria
                                 234
 -}
-
+carreterasString :: IO ()
 carreterasString = putStrLn "         92.8                  141.0                 108\n    +-------------- Sevilla ---------- Cordoba ----------- Jaen\n    |                   | \\               |                 |\n Huelva             121 |  \\  214         | 160             | 93.8\n                        |   -----\\        |                 |\n                        |         \\____   |         127     |           167\n                      Cadiz ---------- Malaga ----------- Granada ---------------- Almeria\n                                234"
 
 -- Tras aplicar kruskal
@@ -74,17 +74,19 @@ carreterasString = putStrLn "         92.8                  141.0               
                       Cadiz            Malaga ----------- Granada ---------------- Almeria
                                 
 -}
+carreterasKruskalString :: IO ()
 carreterasKruskalString = putStrLn "        92.8                  141.0                 108\n    +-------------- Sevilla ---------- Cordoba ----------- Jaen\n    |                   |                                   |\n Huelva             121 |                                   | 93.8\n                        |                                   |\n                        |                           127     |           167\n                      Cadiz            Malaga ----------- Granada ---------------- Almeria"
 
 -- Laberinto
 grafo :: Graph Int
-grafo = fromTupleL ([(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7),(V 8),(V 9)],
-    [(P 1 (V 1) (V 2)), (P 1 (V 1) (V 4)), (P 1 (V 2) (V 3)), (P 1 (V 2) (V 8)),
-        (P 1 (V 4) (V 3)), (P 1 (V 4) (V 5)), (P 1 (V 5) (V 6)), (P 1 (V 3) (V 7)),
-            (P 1 (V 7) (V 9))])
+grafo = G.fromTupleL ([(G.V 1),(G.V 2),(G.V 3),(G.V 4),(G.V 5),(G.V 6),(G.V 7),(G.V 8),(G.V 9)],
+    [(G.P 1 (G.V 1) (G.V 2)), (G.P 1 (G.V 1) (G.V 4)), (G.P 1 (G.V 2) (G.V 3)), (G.P 1 (G.V 2) (G.V 8)),
+        (G.P 1 (G.V 4) (G.V 3)), (G.P 1 (G.V 4) (G.V 5)), (G.P 1 (G.V 5) (G.V 6)), (G.P 1 (G.V 3) (G.V 7)),
+            (G.P 1 (G.V 7) (G.V 9))])
 
+grafoStringFH :: String 
 grafoStringFH = "grafo = fromTuple ([(V 1),(V 2),(V 3),(V 4),(V 5),(V 6),(V 7),(V 8),(V 9)],\n    [(P 1 (V 1) (V 2)), (P 1 (V 1) (V 4)), (P 1 (V 2) (V 3)), (P 1 (V 2) (V 8)),\n        (P 1 (V 4) (V 3)), (P 1 (V 4) (V 5)), (P 1 (V 5) (V 6)), (P 1 (V 3) (V 7)),\n            (P 1 (V 7) (V 9))])"
-
+grafoString :: IO ()
 grafoString = putStrLn "    1 --------- 2 --------- 8\n    |           |\n    |           |\n    4 --------- 3 --------- 7\n    |                       |\n    |                       |\n    5 --------- 6           9"
 
 {-
@@ -98,15 +100,17 @@ Empieza en 1 y acaba en 9
     5 --------- 6           9
 
 -}
-
-solDFSGrafo = dfs grafo (V 1)
-solBFSGrafo = bfs grafo (V 1)
+solBFSGrafo,solDFSGrafo :: [G.Vertex Int]
+solDFSGrafo = G.dfs grafo (G.V 1)
+solBFSGrafo = G.bfs grafo (G.V 1)
 
 -- EJEMPLOS BST #############################################################################################
 ejbst1 :: BSTree Int
 ejbst1 = (BST.N (BST.N (H) (H) 5) (BST.N (BST.N (BST.N (H) (H) 9) (BST.N (H) (H) 13) 12) (BST.N (H) (BST.N (H) (H) 23) 19) 15) 8)
 
+ejbst1StrF :: IO ()
 ejbst1StrF = putStrLn "ejbst1 = (BST.N (BST.N (H) (H) 5) (BST.N (BST.N (BST.N (H) (H) 9) (BST.N (H) (H) 13) 12) (BST.N (H) (BST.N (H) (H) 23) 19) 15) 8)"
+ejbst1Str :: IO ()
 ejbst1Str = putStrLn "            8\n          /   \\\n         5     15\n              /   \\\n             12     19\n           /   \\   /   \\\n          9    13  H     23\n        /   \\\n       H     H"
 {-
             8
@@ -119,6 +123,7 @@ ejbst1Str = putStrLn "            8\n          /   \\\n         5     15\n      
         /   \
        H     H
 -}
+ejbst1InsertStr :: IO ()
 ejbst1InsertStr = putStrLn "            8\n          /   \\\n         5     15\n              /   \\\n             12     19\n           /   \\   /   \\\n          9    13  H     23\n        /   \\           /   \\\n       H     H         H    2000\n                            /   \\\n                           H     H"
 {-
             8
@@ -133,6 +138,7 @@ ejbst1InsertStr = putStrLn "            8\n          /   \\\n         5     15\n
                             /   \
                            H     H
 -}
+ejbst1DeleteStr :: IO ()
 ejbst1DeleteStr = putStrLn "            8\n          /   \\\n         5     15\n              /   \\\n             12     23\n           /   \\   /   \\\n          9    13  H    H\n        /   \\\n       H     H"
 {-
             8
@@ -147,8 +153,11 @@ ejbst1DeleteStr = putStrLn "            8\n          /   \\\n         5     15\n
 -}
 
 -- EJEMPLO RBT #######################################################################################
+ejrbt1 :: RBTree Int
 ejrbt1 = (RBT.N B 7 (RBT.N B 3 (L) (L)) (RBT.N R 18 (RBT.N B 10 (RBT.N R 8 (L) (L)) (RBT.N R 11 (L) (L))) (RBT.N B 22 (L) (RBT.N R 26 (L) (L)))))
+ejrbt1StrF :: IO ()
 ejrbt1StrF = putStrLn "ejrbt1 = (RBT.N B 7 (RBT.N B 3 (L) (L)) (RBT.N R 18 (RBT.N B 10 (RBT.N R 8 (L) (L)) (RBT.N R 11 (L) (L))) (RBT.N B 22 (L) (RBT.N R 26 (L) (L)))))"
+ejrbt1Str :: IO ()
 ejrbt1Str = putStrLn "             B7\n           /    \\\n        B3       R18 \n       / \\      /    \\\n      L   L   B10     B22\n             /  \\     /   \\\n           R8   R11  L    R26\n           / \\            / \\\n          L   L           L  L"
 {-
              B7
@@ -161,6 +170,7 @@ ejrbt1Str = putStrLn "             B7\n           /    \\\n        B3       R18 
            / \            / \
           L   L           L  L
 -}
+ejrbt1InsertStr :: IO ()
 ejrbt1InsertStr = putStrLn "             B18\n           /     \\\n        B7        R26 \n       /  \\       /  \\\n      B3  B10   B22   B200\n          /  \\\n         R8  R11"
 {-
              B18
@@ -171,6 +181,7 @@ ejrbt1InsertStr = putStrLn "             B18\n           /     \\\n        B7   
           /  \
          R8  R11
 -}
+ejrbt1DeleteStr :: IO ()
 ejrbt1DeleteStr = putStrLn "             B18\n           /     \\\n        R8        B22 \n       /  \\       /  \\\n      B3  B10     L   R26\n          /  \\\n         L   R11\n            /  \\\n            L   L"
 {-
              B18
@@ -190,8 +201,10 @@ data BSTree a = N (BSTree a) (BSTree a) a
               | H
               deriving (Show, Eq)
 -}
+bstStr :: IO ()
 bstStr = putStrLn "data BSTree a = N (BSTree a) (BSTree a) a\n              | H\n              deriving (Show, Eq)"
 
+menuBST :: IO ()
 menuBST = do
     limpiar
     putStrLn "Menú Arbol de Búsqueda Binaria:\n"
@@ -230,7 +243,7 @@ menuBST = do
     return ()
 
 -- Submenus de BST -------------------
-
+menuFuncionesBST :: IO ()
 menuFuncionesBST = do
     limpiar
     putStrLn "Ejemplo:"
@@ -331,7 +344,7 @@ menuFuncionesBST = do
         putChar '\n'
     return ()
 
-
+menuRecorridoBST :: IO ()
 menuRecorridoBST = do
     limpiar
     putStrLn "Todos los árboles se pueden recorrer de las siguientes"
@@ -403,6 +416,7 @@ st1,st2 :: SplayTree Int
 st1 = SplayTree.Node 50 (SplayTree.Node 30 (SplayTree.Node 10 SplayTree.Leaf (SplayTree.Node 20 (SplayTree.Node 15 SplayTree.Leaf SplayTree.Leaf) SplayTree.Leaf)) (SplayTree.Node 40 SplayTree.Leaf SplayTree.Leaf)) (SplayTree.Node 60 SplayTree.Leaf (SplayTree.Node 90 (SplayTree.Node 70 SplayTree.Leaf SplayTree.Leaf) (SplayTree.Node 100 SplayTree.Leaf SplayTree.Leaf)))
 st2 = SplayTree.Node 80 (SplayTree.Node 60 (SplayTree.Node 50 (SplayTree.Node 30 (SplayTree.Node 10 SplayTree.Leaf (SplayTree.Node 20 (SplayTree.Node 15 SplayTree.Leaf SplayTree.Leaf) SplayTree.Leaf)) (SplayTree.Node 40 SplayTree.Leaf SplayTree.Leaf)) SplayTree.Leaf) (SplayTree.Node 70 SplayTree.Leaf SplayTree.Leaf)) (SplayTree.Node 90 SplayTree.Leaf (SplayTree.Node 100 SplayTree.Leaf SplayTree.Leaf))
 
+menuSplayTree :: IO ()
 menuSplayTree = do 
     limpiar
     putStrLn "Menú Splay Tree:\n"
@@ -514,7 +528,7 @@ menuSplayTree = do
     return ()
 
 --------------------------------------
-
+menuMaxMinHeap :: IO ()
 menuMaxMinHeap = do
     limpiar
     putStrLn "Menú Max/Min heap:\n\n"
@@ -529,7 +543,7 @@ menuMaxMinHeap = do
     putStrLn "Así, probamos en el conjunto de aristas que conforman el grafo formado por las provincias"
     putStrLn "de Andalucía. Pongamos que partimos de Sevilla, almacenamos todas las aristas salientes.\n"
 
-    let caminosSevilla = G.pathsFrom carreteras (V "Sevilla")
+    let caminosSevilla = G.edgesFrom carreteras (G.V "Sevilla")
     let minHeap = L.foldr (\p ac -> MinHeap.insert ac p) MinHeap.empty caminosSevilla
     print (MinHeap.elements minHeap)
 
@@ -560,9 +574,10 @@ menuMaxMinHeap = do
 
 
 -- MENU DE GRAFO ----------------------------------------------------------------------------
+strDefGrafo :: IO ()
+strDefGrafo = putStrLn "type Graph a = (Set (Vertex a), Set (Edge a))\n\ndata Vertex a = V a\n    deriving (Show, Eq, Ord)\n\n--                w        src       dst\ndata Edge a = P Float (Vertex a) (Vertex a)\n    deriving (Show, Eq,Ord)"
 
-strDefGrafo = putStrLn "type Graph a = (Set (Vertex a), Set (Path a))\n\ndata Vertex a = V a\n    deriving (Show, Eq, Ord)\n\n--                w        src       dst\ndata Path a = P Float (Vertex a) (Vertex a)\n    deriving (Show, Eq,Ord)"
-
+menuGrafo :: IO ()
 menuGrafo = do
     limpiar
     putStrLn "Menú de grafos:\n"
@@ -572,8 +587,8 @@ menuGrafo = do
     putStrLn ""
     putStrLn "Para inicializar un grafo se aconseja el uso de las funciones"
     putStrLn "\"fromTupleL\" (que crea un grafo a partir de la tupla"
-    putStrLn "[Vertex a], [Path a]) y \"fromTupleS\" (que crea un grafo a"
-    putStrLn "partir de la tupla (Set (Vertex a), Set (Path a))). Esto es"
+    putStrLn "[Vertex a], [Edge a]) y \"fromTupleS\" (que crea un grafo a"
+    putStrLn "partir de la tupla (Set (Vertex a), Set (Edge a))). Esto es"
     putStrLn "de este modo para evitar posibles errores al añadir aristas"
     putStrLn "que estan conectadas a vertices que no pertenecen al grafo."
     putStrLn ""
@@ -587,6 +602,8 @@ menuGrafo = do
     putStrLn ""
     putStrLn "3. Podemos hacer pruebas con la conectividad."
     putStrLn ""
+    putStrLn "4. Hay grafos dirigidos."
+    putStrLn ""
     putStrLn "Escribe el número de la prueba a la que se quiere entrar."
 
     o <- getLine
@@ -597,12 +614,50 @@ menuGrafo = do
         menuRecorrido
     else if o == "3" then do
         menuConectividad
+    else if o == "4" then do
+        menuGrafoDirigido
     else do
         putChar '\n'
         putStrLn "No se ha seleccionado ninguna opción válida."
     return ()
 
 ----Submenus grafos ---------
+menuGrafoDirigido :: IO ()
+menuGrafoDirigido = do
+    limpiar
+
+    putStrLn "La diferencia entre los grafos dirigidos y los no dirigidos"
+    putStrLn "puede resumirse en la definición de adyacencia."
+    putStrLn ""
+    putStrLn "Los grafos NO dirigidos tienen por vertices adyacente todos"
+    putStrLn "aquellos que comparten arista. En cambio, en los grafos"
+    putStrLn "dirigidos, un vértice \'a\' tiene a otro \'b\' como adyacente,"
+    putStrLn "cuando existe una arista que tiene como vértice fuente a \'a\'"
+    putStrLn "y como vértice destino a \'b\'."
+    putStrLn ""
+    putStrLn "Para volver al menu de grafos escribe 1"
+    putStrLn ""
+    putStrLn "Para volver al menu de inicio escribe 2"
+    putStrLn ""
+    putStrLn "Para salir escribe q, escribe otra cosa para salir."
+    putStrLn ""
+
+    o <- getLine
+
+    if o == "q" then do
+        limpiar
+        putStrLn "Saliendo..."
+    else if o == "1" then do
+        menuGrafo
+    else if o == "2" then do
+        nuevoMenu
+    else do
+        putChar '\n'
+        putStrLn "No se ha seleccionado ninguna opción válida."
+
+    return ()
+
+
 menuCosteMinimo :: IO ()
 menuCosteMinimo = do
     limpiar
@@ -664,6 +719,7 @@ menuCosteMinimo = do
         menuGrafo
     return ()
 
+menuRecorrido :: IO ()
 menuRecorrido = do
     limpiar 
     grafoString
@@ -703,34 +759,41 @@ menuRecorrido = do
         menuGrafo
     return ()
 
+menuSalidaBFSDFS :: IO ()
 menuSalidaBFSDFS = do
     limpiar
     grafoString
     putStrLn ""
     putStrLn "Salida dfs"
-    putStrLn (show (dfs grafo (V 1)))
+    putStrLn (show (G.dfs grafo (G.V 1)))
     putStrLn "Salida bfs"
-    putStrLn (show (bfs grafo (V 1)))
+    putStrLn (show (G.bfs grafo (G.V 1)))
     putStrLn ""
     putStrLn "Ambas listas representan de forma secuencial el vertice que ha"
     putStrLn "sido visitado en cada iteración (llamada recursiva) del algoritmo"
     putStrLn ""
-    putStrLn "Para salir escribe q, escribe otra cosa para volver al inicio."
+    putStrLn "Para volver al menu de grafos escribe 1"
+    putStrLn ""
+    putStrLn "Para volver al menu de inicio escribe 2"
+    putStrLn ""
+    putStrLn "Para salir escribe q, escribe otra cosa para salir."
     putStrLn ""
 
     o <- getLine
 
     if o == "q" then do
         limpiar
-
-        -- Hacer que pueda probar con sus propios grafos
-
+        putStrLn "Saliendo..."
+    else if o == "1" then do
+        menuGrafo
     else if o == "2" then do
-        limpiar
+        nuevoMenu
     else do
-        limpiar
+        putChar '\n'
+        putStrLn "No se ha seleccionado ninguna opción válida."
     return ()
 
+menuConectividad :: IO ()
 menuConectividad = do
     limpiar
     putStrLn "Se han implementado funciones que tratan la conectividad de los"
@@ -753,7 +816,7 @@ menuConectividad = do
     return ()
 
 --menuEjemplosConectividad = limpiar
-
+menuEjemplosConectividad :: IO ()
 menuEjemplosConectividad = do
     limpiar
     putStrLn "Podemos comprobar que el siguiente grafo de ejemplo es conexo"
@@ -763,12 +826,12 @@ menuEjemplosConectividad = do
     putStrLn ""
     grafoString
     putStrLn ""
-    putStrLn "Escribe un caracter para ejecutar \"conexo grafo\"."
+    putStrLn "Escribe un caracter para ejecutar \"G.conexo grafo\"."
     
     o <- getLine
 
     putStrLn "Salida:"
-    putStrLn (show (conexo grafo))
+    putStrLn (show (G.conexo grafo))
 
     putStrLn ""
     putStrLn "Escribe un caracter para ejecutar \"conectividad grafo\""
@@ -777,7 +840,7 @@ menuEjemplosConectividad = do
 
     putStrLn ""
     putStrLn "Salida:"
-    putStrLn (show (conectividad grafo))
+    putStrLn (show (G.conectividad grafo))
     putStrLn ""
     putStrLn "Como vemos, el grafo tiene una componente conexa, lo cual nos"
     putStrLn "indica que en efecto el grafo es conexo."
@@ -790,20 +853,20 @@ menuEjemplosConectividad = do
     putStrLn "de vértices del grafo, tras esto se mostrara la neuva salida"
     putStrLn "de llamar a las funciones \"conectividad\" y \"conexo\":"
     putStrLn "" 
-    putStrLn "let grafo' = addVertex grafo (V 100)"
+    putStrLn "let grafo' = G.addVertex grafo (G.V 100)"
     putStrLn "vertexSet grafo'"
 
     o <- getLine
 
     putStrLn ""
-    let grafo' = addVertex grafo (V 100)
-    putStrLn (show (vertexSet grafo'))
+    let grafo' = G.addVertex grafo (G.V 100)
+    putStrLn (show (G.vertexSet grafo'))
     putStrLn ""
-    putStrLn "conexo grafo'"
-    putStrLn (show (conexo grafo'))
+    putStrLn "G.conexo grafo'"
+    putStrLn (show (G.conexo grafo'))
     putStrLn ""
-    putStrLn "conectividad grafo'"
-    putStrLn (show (conectividad grafo'))
+    putStrLn "G.conectividad grafo'"
+    putStrLn (show (G.conectividad grafo'))
 
     o <- getLine
 
@@ -817,18 +880,18 @@ menuEjemplosConectividad = do
     putStrLn "comprobarlo."
     putStrLn ""
 
-    putStrLn "adjacents grafo' (V 100)"
+    putStrLn "G.adjacents grafo' (G.V 100)"
     putStrLn ""
-    putStrLn "adjacents grafo' (V 1)"
+    putStrLn "G.adjacents grafo' (G.V 1)"
     putStrLn ""
 
     o <- getLine
 
     putStrLn "Salida (adjacents grafo' (V 100)):"
-    putStrLn (show (adjacents grafo' (V 100)))
+    putStrLn (show (G.adjacents grafo' (G.V 100)))
     putStrLn ""
     putStrLn "Salida (adjacents grafo' (V 1)):"
-    putStrLn (show (adjacents grafo' (V 1)))
+    putStrLn (show (G.adjacents grafo' (G.V 1)))
     putStrLn ""
     putStrLn "Para volver al menu de grafos escribe 1."
     putStrLn "Para volver al menu principal escribe 2."
@@ -847,8 +910,10 @@ menuEjemplosConectividad = do
 
 ------------------------------
 -- MENU HASH TABLE -----------------------------------------------------------
+hashTableF :: IO ()
 hashTableF = putStrLn "HashTable = |pares contenidos| [indice bucket, [pares en el bucket]]\n\n\ndata HashTable a b = HashTable Int (Array Int [(a, b)])\n  deriving (Show, Eq)"
 
+menuHashTable :: IO ()
 menuHashTable = do
     limpiar
     putStrLn "Menú de HashTable"
@@ -902,6 +967,8 @@ menuHashTable = do
     return ()
 
 -- Submenus HT --------------------------------
+
+menuExplicacionReajuste :: IO ()
 menuExplicacionReajuste = do
     limpiar 
     putStrLn "Para todas las implementaciones de los distintos"
@@ -978,6 +1045,7 @@ menuExplicacionReajuste = do
 htsExperimento :: HashTableSC Int String
 htsExperimento = L.foldr (HTS.put) (HTS.empty 7) [(50,"M"),(700,"C"),(76,"D")]
 
+menuHTSeparateChaining :: IO ()
 menuHTSeparateChaining = do
     limpiar
     putStrLn "En este método, cada cubo es independiente y en ellos se"
@@ -1044,7 +1112,7 @@ menuHTSeparateChaining = do
     putStrLn "carácter."
     putStrLn ""
     putStrLn "Salida (removeKey 85 htsExperimento):"
---    putStrLn $ HTS.removeKey 85 $ HTS.put (85,"E") htsExperimento <--- SOLUCIONAR
+    putStrLn $ show $ HTS.removeKey 85 $ HTS.put (85,"E") htsExperimento
     putStrLn ""
     putStrLn "Y este sería el aspecto de la tabla:"
     putStrLn ""
@@ -1082,6 +1150,7 @@ menuHTSeparateChaining = do
 htlExperimento :: HashTableLP Int String
 htlExperimento = L.foldr (HTL.put) (HTL.empty 7) [(50,"M"),(700,"C"),(76,"D")]
 
+menuHTLinearProbing :: IO ()
 menuHTLinearProbing = do
     limpiar
     putStrLn "Trata de evitar las colisiones entre elementos que se insertan a la tabla" 
@@ -1135,6 +1204,7 @@ menuHTLinearProbing = do
 htqExperimento :: HashTableQP Int String
 htqExperimento = L.foldr (HTQ.put) (HTQ.empty 7) [(50,"M"),(76,"D"),(85,"E")]
 
+menuHTQuadraticProbing :: IO ()
 menuHTQuadraticProbing = do
     limpiar
     putStrLn "Trata de evitar las colisiones entre elementos que se insertan a la tabla con"
@@ -1185,8 +1255,10 @@ menuHTQuadraticProbing = do
 -------------------------------------------------
 
 -- MENU DE DEQUE ---------------------------------------------------------------
+dequeStr :: IO ()
 dequeStr = putStrLn "data Deque a = Deque Int [a] Int [a]\n    deriving (Show)"
 
+menuDeque :: IO ()
 menuDeque = do
     limpiar
     putStrLn "Menu de Deque\n"
@@ -1234,7 +1306,7 @@ menuDeque = do
     return ()
 
 -- Submenus Deque ------------------
-
+menuInicializaDeque :: IO ()
 menuInicializaDeque = do
     limpiar
     putStrLn "Podemos inicializar una Deque, con el constructor del tipo"
@@ -1267,6 +1339,7 @@ menuInicializaDeque = do
     
     return ()
 
+menuEliminacionesEInserciones :: IO ()
 menuEliminacionesEInserciones = do
     limpiar
     putStrLn "La ventaja de la Deque frente a la lista normal, es que la"
@@ -1331,6 +1404,7 @@ menuEliminacionesEInserciones = do
 
     return ()
 
+menuRebalanceo :: IO ()
 menuRebalanceo = do
     limpiar
     putStrLn "Para que la Deque siga siendo eficiente en cualquier caso"
@@ -1389,9 +1463,10 @@ menuAVL = do
 
 
 -- MENU DE RED BLACK TREE -----------------------------------------------------
-
+rbtStrF :: IO ()
 rbtStrF = putStrLn "data Color = R | B deriving (Show, Eq)\ndata RBTree a = N Color a (RBTree a) (RBTree a)\n              | L\n              deriving (Show, Eq)"
 
+menuRBT :: IO ()
 menuRBT = do
     limpiar
     putStrLn "Menú de Red-Black Tree:\n"
@@ -1504,7 +1579,7 @@ menuRBT = do
     return ()
 
 -------------------------------------------------------------------------------
-
+nuevoMenu :: IO ()
 nuevoMenu = do
     limpiar
     putStrLn "El objetivo de este programa interactivo es tratar de aprender"
@@ -1514,6 +1589,7 @@ nuevoMenu = do
     putStrLn "preparar el código para poder ser reutilizado en multiples"
     putStrLn "ocasiones."
     putStrLn ""
+    putStrLn "Antes de continuar se recuerda la existencia de la función help."
     putStrLn "A continuación se presentan una serie de estructuras de datos \nde los cuales se pueden ver ejemplos de su uso."
     putStrLn ""
     putStrLn "1. Deque"
@@ -1563,3 +1639,7 @@ help = do
     putStrLn "helpRBT"
     putStrLn "helpGraph"
     putStrLn "helpSplayTree"
+    putStrLn "helpDGraph"
+    putStrLn "helpHTS"
+    putStrLn "helpHTL"
+    putStrLn "helpHTQ"

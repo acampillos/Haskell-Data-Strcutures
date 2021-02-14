@@ -18,7 +18,8 @@ module DataStructures.HashTable.HashTableSChaining(
     getNumPairs,
     clear,
     size,
-    printHT
+    printHT,
+    helpHTS
 ) where
 
 import Data.Array (array, Array, (//), (!))
@@ -52,6 +53,9 @@ data HashTableSC a b = HashTableSC Int (Array Int [(a, b)])
 -----------------------
 -- FUNCIONES
 -----------------------
+
+helpHTS :: IO ()
+helpHTS = putStrLn "\ngetTable :: HashTableSC a b -> Array Int [(a,b)]\n\nempty :: Int -> HashTableSC a b\n\nisEmpty :: (Eq a, Eq b) => HashTableSC a b -> Bool\n\nput :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableSC a b -> HashTableSC a b\n\ngetValue :: (Hashable k, Eq k) => k -> HashTableSC k v -> Maybe (k, v)\n\nreplace :: (Hashable a, Eq a, Eq b) => (a, b) -> HashTableSC a b -> HashTableSC a b\n\nremoveKey :: (Hashable a, Eq a, Eq b) => a -> HashTableSC a b -> HashTableSC a b\n\nputAll :: (Hashable a, Eq a, Eq b) => HashTableSC a b -> HashTableSC a b -> HashTableSC a b\n\nhashSChaining :: Hashable a => Int -> a -> Int\n\nresize :: (Hashable a, Eq a, Eq b) => Int -> HashTableSC a b -> HashTableSC a b\n\nentries :: HashTableSC a b -> [(a,b)]\n\nkeys :: HashTableSC a b -> [a]\n\nvalues :: HashTableSC a b -> [b]\n\ncontainsKey :: (Hashable a, Eq a) => a -> HashTableSC a b-> Bool\n\ngetNumPairs :: HashTableSC a b -> Int\n\nclear :: Eq a => HashTableSC a b -> HashTableSC a b\n\nsize :: HashTableSC a b -> Int\n\nprintHT :: (Show a, Show b) => HashTableSC a b -> String"
 
 getTable :: HashTableSC a b -> Array Int [(a,b)]
 getTable (HashTableSC _ table) = table

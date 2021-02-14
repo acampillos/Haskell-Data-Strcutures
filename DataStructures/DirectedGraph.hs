@@ -18,7 +18,8 @@ module DataStructures.DirectedGraph(
     adjacents,
     dfs,
     bfs,
-    orderedEdges
+    orderedEdges,
+    helpDGraph
 )
 where
 
@@ -39,6 +40,8 @@ data Vertex a = V a
 data Edge a = P Float (Vertex a) (Vertex a)
     deriving (Show, Eq,Ord)
 
+helpDGraph :: IO ()
+helpDGraph = putStrLn "\nnewGraph :: (Eq a, Ord a) => DGraph a\n\naddVertex :: (Eq a, Ord a) => DGraph a -> Vertex a -> DGraph a\n\nvertexSet :: (Eq a, Ord a) => DGraph a -> Set (Vertex a)\n\nedgeSet :: (Eq a, Ord a) => DGraph a -> Set (Edge a)\n\ncontainsVertex :: (Eq a, Ord a) => DGraph a -> Vertex a -> Bool\n\ncontainsEdge :: (Eq a, Ord a) => DGraph a -> Edge a -> Bool\n\nvertexNum :: (Eq a, Ord a) => DGraph a -> Int\n\nedgesNum ::  (Eq a, Ord a) => DGraph a -> Int\n\naddEdge :: (Eq a, Ord a) => DGraph a -> Edge a -> DGraph a\n\nsrcVertex :: (Eq a, Ord a) => Edge a -> Vertex a\n\ndstVertex :: (Eq a, Ord a) => Edge a -> Vertex a\n\nedgesFrom :: (Eq a, Ord a) => DGraph a -> Vertex a -> Set (Edge a)\n\nedgesTo :: (Eq a, Ord a) => DGraph a -> Vertex a -> Set (Edge a)\n\nadjacents :: (Eq a, Ord a) => DGraph a -> Vertex a -> Set (Vertex a)\n\naddListVertex :: (Eq a, Ord a, Show a) => [Vertex a] -> DGraph a -> DGraph a\n\naddListEdge :: (Eq a, Ord a, Show a) => [Edge a] -> DGraph a -> DGraph a\n\nfromTupleS :: (Eq a, Ord a, Show a) => (Set (Vertex a),Set (Edge a)) -> DGraph a\n\nfromTupleL :: (Eq a, Ord a, Show a) => ([Vertex a],[Edge a]) -> DGraph a\n\ndfs :: (Eq a, Ord a) => DGraph a -> Vertex a -> [Vertex a]\n\nbfs :: (Eq a, Ord a) => DGraph a -> Vertex a -> [Vertex a]\n\norderedEdges :: (Eq a, Ord a) => DGraph a -> [Edge a]"
 
 newGraph :: (Eq a, Ord a) => DGraph a
 -- Crea un grafo dirigido vacio
