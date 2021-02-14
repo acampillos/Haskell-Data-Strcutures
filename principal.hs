@@ -378,24 +378,24 @@ menuRecorridoBST = do
 
     o <- getLine
 
-    putStrLn "inorder ejbst1"
-    putStrLn $ show $ inorder ejbst1
+    putStrLn "BST.inorder ejbst1"
+    putStrLn $ show $ BST.inorder ejbst1
     putStrLn ""
     putStrLn "Escribe un carácter para ver el recorrido preorder del arbol."
     putStrLn ""
 
     o <- getLine
 
-    putStrLn "preorder ejbst1"
-    putStrLn $ show $ preorder ejbst1
+    putStrLn "BST.preorder ejbst1"
+    putStrLn $ show $ BST.preorder ejbst1
     putStrLn ""
     putStrLn "Escribe un carácter para ver el recorrido postorder del arbol."
     putStrLn ""
 
     o <- getLine
 
-    putStrLn "postorder ejbst1"
-    putStrLn $ show $ postorder ejbst1
+    putStrLn "BST.postorder ejbst1"
+    putStrLn $ show $ BST.postorder ejbst1
     putStrLn ""
 
     putStrLn "Para volver al menú de BST escribe 1"
