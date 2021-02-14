@@ -191,29 +191,14 @@ printHT t@(HashTableSC pairs table) = linea ++ header ++ linea ++ contenido ++ l
                                  where nc = length cadena
                                        difRight = rightPad - nc
 
-main :: IO ()
-main = do
-  putStr (printHT t6)
-
-t8 :: HashTableSC Int String
-t8 = foldr (put) (empty 7) [(50,"M"),(700,"C"),(76,"D")]
+-- Ejemplos
 
 t1 :: HashTableSC String [Int]
 t1 = HashTableSC 1 (array (0,9) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[("Paco",[1,2])]),(8,[]),(9,[])])
 -- test doubling size by inserting pair
-t2 :: HashTableSC Int Int
+t2, t3 :: HashTableSC Int Int
 t2 = HashTableSC 3 (array (0,5) [(0,[(1,0)]),(1,[(2,0)]),(2,[(3,0)]),(3,[]),(4,[]),(5,[])])
 -- test halving sive by removing pair
-t3 :: HashTableSC Int Int
 t3 = HashTableSC 1 (array (0,9) [(0,[(1,0)]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[])])
-
-t4 :: HashTableSC Int Int
-t4 = HashTableSC 0 (array (0,11) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[]),(10,[]),(11,[])])
-
-t5 :: HashTableSC Int Int
-t5 = HashTableSC 3 (array (0,5) [(0,[(1,0),(1,0),(1,0),(1,0),(1,0),(1,0),(1,0),(1,0)]),(1,[(2,0)]),(2,[(3,0)]),(3,[]),(4,[]),(5,[])])
-
-t6 :: HashTableSC Int String
-t6 = HashTableSC 0 (array (0,11) [(0,[(1,"Alvaro Campillos Delgado Perez Espejo Benitez"), (2,"Pepe PAco Pedro Benito MAnuel"),
-  (3,"Antonio Antonio Antonio Antonio Antonio Antonio Antonio Antonio ")]),(1,[]),(2,[]),(3,[(1,"Alvaro Campillos Delgado Perez Espejo Benitez"), (2,"Pepe PAco Pedro Benito MAnuel"),
-  (3,"Antonio Antonio Antonio Antonio Antonio Antonio Antonio Antonio ")]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[]),(10,[]),(11,[])])
+t4 :: HashTableSC String String
+t4 = HashTableSC 4 (array (0,9) [(0,[("Juan","Benitez")]),(1,[("Pedro","Almagro")]),(2,[]),(3,[("Tomas","Galera")]),(4,[]),(5,[("Antonio","Losada")]),(6,[]),(7,[]),(8,[]),(9,[])])

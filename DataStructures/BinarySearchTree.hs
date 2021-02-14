@@ -14,14 +14,7 @@ module DataStructures.BinarySearchTree(
     inorder,
     preorder,
     postorder,
-    helpBST,
-    ejbt1,
-    ejbt2,
-    ejbt3,
-    ejbt4,
-    ejbt5,
-    ejbt6,
-    ejbt7 
+    helpBST
 ) where
 
 import Data.Maybe

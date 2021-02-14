@@ -132,11 +132,6 @@ initDeque (Deque 0 [] 0 []) = error "Empty queue"
 initDeque (Deque sf [x] 0 []) = empty
 initDeque (Deque sf f sr r) = queue (Deque sf f (sr-1) (Prelude.tail r))
 
-printDeque :: (Show a) => Deque a -> String
-printDeque (Deque sf f sr r) = show (f ++ (reverse r))
-
---- Experimental ----------------------------
-
 list2Deque :: [a] -> Deque a
 list2Deque l = newDeque f (reverse r)
     where (f,r) = splitAt (((length l) + 1) `div` 2) l
@@ -147,8 +142,13 @@ newDeque f r = queue (Deque (length f) f (length r) r)
 deque2List :: Deque a -> [a]
 deque2List (Deque _ f _ r) = f ++ (reverse r)
 
+printDeque :: (Show a) => Deque a -> String
+printDeque (Deque sf f sr r) = show (f ++ (reverse r))
 
-q1, q2, q3 :: Deque Int
+-- Ejemplos
+
+q1, q2, q3, q4 :: Deque Int
 q1 = Deque 3 [1,2,3] 2 [4,5]
 q2 = Deque 7 [1,2,3,4,5,6,7] 1 [8]
-q3 = undefined
+q3 = Deque 4 [7,12,2,9] 2 [11,3]
+q4 = Deque 2 [4,3] 6 [9,4,14,3,6,43]

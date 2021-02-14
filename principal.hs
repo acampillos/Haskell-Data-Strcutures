@@ -1462,9 +1462,30 @@ menuRebalanceo = do
 -- MENU DE AVL
 menuAVL = do
     limpiar
-    putStrLn "El menú de AVL no ha dado tiempo a realizarlo, pero"
-    putStrLn "se puede encontrar su implementación en el código"
-    putStrLn "fuente."
+
+    putStrLn "Árbol binario de búsqueda en la que la diferencia entre las alturas de sus dos"
+    putStrLn "hijos no pueden diferir en más de uno. Permite la búsqueda, inserción y eliminación"
+    putStrLn "en O(logn) como complejidad esperada y como peor caso.\n"
+
+    putStrLn "No ha dado tiempo a la creación de un menú para el árbol AVL,"
+    putStrLn "por lo que para investigar acerca de las funciones correspondientes se"
+    putStrLn "recomienda ir al código del archivo AVLTree.hs."
+
+    putStrLn "Para volver al menú principal escribe 1."
+    putStrLn ""
+    putStrLn "Para salir escribe q"
+    
+    o <- getLine
+
+    if o == "1" then do
+        nuevoMenu
+    else if o == "q" then do
+        limpiar
+        putChar '\n'
+    else do
+        putChar '\n'
+        putStrLn "No se ha seleccionado ninguna opción válida."
+    
     return ()
 
 

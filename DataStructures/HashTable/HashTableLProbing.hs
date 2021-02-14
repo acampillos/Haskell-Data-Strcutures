@@ -207,11 +207,14 @@ printHT t@(HashTableLP pairs table) = linea ++ header ++ linea ++ contenido ++ l
                                  where nc = length cadena
                                        difRight = rightPad - nc
 
+-- Ejemplos
+
 t1 :: HashTableLP String [Int]
 t1 = HashTableLP 1 (array (0,9) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[("Paco",[1,2])]),(8,[]),(9,[])])
 -- test doubling size by inserting pair
-t2 :: HashTableLP Int Int
+t2, t3 :: HashTableLP Int Int
 t2 = HashTableLP 3 (array (0,5) [(0,[(1,0)]),(1,[(2,0)]),(2,[(3,0)]),(3,[]),(4,[]),(5,[])])
 -- test halving sive by removing pair
-t3 :: HashTableLP Int Int
 t3 = HashTableLP 1 (array (0,9) [(0,[(1,0)]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[])])
+t4 :: HashTableLP String String
+t4 = HashTableLP 4 (array (0,9) [(0,[("Juan","Benitez")]),(1,[("Pedro","Almagro")]),(2,[]),(3,[("Tomas","Galera")]),(4,[]),(5,[("Antonio","Losada")]),(6,[]),(7,[]),(8,[]),(9,[])])

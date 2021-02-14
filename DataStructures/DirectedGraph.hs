@@ -19,12 +19,7 @@ module DataStructures.DirectedGraph(
     dfs,
     bfs,
     orderedEdges,
-    helpDGraph,
-    gTest1,
-    gTest2,
-    gTest3,
-    gTest4,
-    gTest5
+    helpDGraph
 )
 where
 

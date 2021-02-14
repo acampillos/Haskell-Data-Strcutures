@@ -3,9 +3,13 @@ module DataStructures.SplayTree(
     search,
     insert,
     delete,
+    getValue,
     maxST,
     minST,
     contains,
+    inorder,
+    postorder,
+    preorder,
     helpSplayTree
 ) where
 
@@ -228,18 +232,32 @@ contains v t@(Node x l r)
     | otherwise = True
 
 getValue :: (Eq a, Ord a) => SplayTree a -> a
-getValue Leaf = error "E"
+getValue Leaf = error "Leaves dont have values"
 getValue (Node x l r) = x
 
+equals :: (Ord a) => SplayTree a -> SplayTree a -> Bool
+equals Leaf Leaf = True
+equals t1@(Node x l1 r1) t2@(Node y l2 r2) =
+    x==y && equals l1 l2 && equals r1 r2
 
-t :: SplayTree Int
-t = Node 100 (Node 50 (Node 40 (Node 30 (Node 20 Leaf Leaf) Leaf) Leaf) Leaf) (Node 200 Leaf Leaf) 
+-- RECORRIDOS
 
-t2 :: SplayTree Int
+inorder :: SplayTree a -> [a]
+inorder Leaf = []
+inorder (Node x l r) = (inorder l) ++ [x] ++ (inorder r)
+
+preorder :: SplayTree a -> [a]
+preorder Leaf = []
+preorder (Node x l r) = [x] ++ (preorder l) ++ (preorder r)
+
+postorder :: SplayTree a -> [a]
+postorder Leaf = []
+postorder (Node x l r) = (postorder l) ++ (postorder r) ++ [x]
+
+-- Ejemplos
+
+t1, t2, t3, t4 :: SplayTree Int
+t1 = Node 100 (Node 50 (Node 40 (Node 30 (Node 20 Leaf Leaf) Leaf) Leaf) Leaf) (Node 200 Leaf Leaf) 
 t2 = Node 50 (Node 30 (Node 10 Leaf (Node 20 (Node 15 Leaf Leaf) Leaf)) (Node 40 Leaf Leaf)) (Node 60 Leaf (Node 90 (Node 70 Leaf Leaf) (Node 100 Leaf Leaf)))
-
-t3 :: SplayTree Int
 t3 = Node 80 (Node 60 (Node 50 (Node 30 (Node 10 Leaf (Node 20 (Node 15 Leaf Leaf) Leaf)) (Node 40 Leaf Leaf)) Leaf) (Node 70 Leaf Leaf)) (Node 90 Leaf (Node 100 Leaf Leaf))
-
-t4 :: SplayTree Int
 t4 = Node 80 (Node 60 (Node 50 (Node 20 (Node 10 Leaf (Node 15 Leaf Leaf)) (Node 40 Leaf Leaf)) Leaf) (Node 70 Leaf Leaf)) (Node 90 Leaf (Node 100 Leaf Leaf))

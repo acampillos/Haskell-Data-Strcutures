@@ -202,11 +202,14 @@ printHT t@(HashTableQP pairs table) = linea ++ header ++ linea ++ contenido ++ l
                                        difRight = rightPad - nc
 
 
+-- Ejemplos
+
 t1 :: HashTableQP String [Int]
 t1 = HashTableQP 1 (array (0,9) [(0,[]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[("Paco",[1,2])]),(8,[]),(9,[])])
 -- test doubling size by inserting pair
-t2 :: HashTableQP Int Int
+t2, t3 :: HashTableQP Int Int
 t2 = HashTableQP 3 (array (0,5) [(0,[(1,0)]),(1,[(2,0)]),(2,[(3,0)]),(3,[]),(4,[]),(5,[])])
 -- test halving sive by removing pair
-t3 :: HashTableQP Int Int
 t3 = HashTableQP 1 (array (0,9) [(0,[(1,0)]),(1,[]),(2,[]),(3,[]),(4,[]),(5,[]),(6,[]),(7,[]),(8,[]),(9,[])])
+t4 :: HashTableQP String String
+t4 = HashTableQP 4 (array (0,9) [(0,[("Juan","Benitez")]),(1,[("Pedro","Almagro")]),(2,[]),(3,[("Tomas","Galera")]),(4,[]),(5,[("Antonio","Losada")]),(6,[]),(7,[]),(8,[]),(9,[])])

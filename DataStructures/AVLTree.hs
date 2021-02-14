@@ -1,206 +1,285 @@
-{--- avl2list
--- list2avl
--- minAVL
--- maxAVL
--- delete
--- merge
-
-import Control.Applicative ((<|>))
-
-data Tree a
-  = Leaf
-  | Node
-      Int
-      (Tree a)
-      a
-      (Tree a)
-  deriving (Show, Eq)
- 
-t2 :: Tree Int
-t2 = Node 4 (Node 2 Leaf 17 (Node 1 Leaf 32 Leaf)) 44 (Node 3 (Node 2 (Node 1 Leaf 48 Leaf) 50 (Node 1 Leaf 54 Leaf)) 62 (Node 2 Leaf 78 (Node 1 Leaf 88 Leaf)))
-
-t :: Tree Int
-t = Node 4 (Node 3 (Node 2 (Node 1 Leaf 8 Leaf) 9 (Node 1 Leaf 11 Leaf)) 13 (Node 1 Leaf 21 Leaf)) 33 (Node 2 Leaf 53 (Node 1 Leaf 61 Leaf))
-
-foldTree :: Ord a => [a] -> Tree a
-foldTree = foldr insert Leaf
- 
-height :: Tree a -> Int
-height Leaf = -1
-height (Node h _ _ _) = h
- 
-depth :: Tree a -> Tree a -> Int
-depth a b = succ (max (height a) (height b))
- 
-insert :: Ord a => a -> Tree a -> Tree a
-insert v Leaf = Node 1 Leaf v Leaf
-insert v t@(Node n left v_ right)
-  | v_ < v = rotate $ Node n left v_ (insert v right)
-  | v_ > v = rotate $ Node n (insert v left) v_ right
-  | otherwise = t
- 
-max_ :: Ord a => Tree a -> Maybe a
-max_ Leaf = Nothing
-max_ (Node _ _ v right) =
-  case right of
-    Leaf -> Just v
-    _ -> max_ right
- 
-delete :: Ord a => a -> Tree a -> Tree a
-delete _ Leaf = Leaf
-delete x (Node h left v right)
-  | x == v =
-    maybe left (rotate . (Node h left <*> (`delete` right))) (max_ right)
-  | x > v = rotate $ Node h left v (delete x right)
-  | x < v = rotate $ Node h (delete x left) v right
- 
-rotate :: Tree a -> Tree a
-rotate Leaf = Leaf
-rotate (Node h (Node lh ll lv lr) v r)
-  -- Left Left.
-  | lh - height r > 1 && height ll - height lr > 0 =
-    Node lh ll lv (Node (depth r lr) lr v r)
-rotate (Node h l v (Node rh rl rv rr))
-  -- Right Right.
-  | rh - height l > 1 && height rr - height rl > 0 =
-    Node rh (Node (depth l rl) l v rl) rv rr
-rotate (Node h (Node lh ll lv (Node rh rl rv rr)) v r)
-  -- Left Right.
-  | lh - height r > 1 =
-    Node h (Node (rh + 1) (Node (lh - 1) ll lv rl) rv rr) v r
-rotate (Node h l v (Node rh (Node lh ll lv lr) rv rr))
-  -- Right Left.
-  | rh - height l > 1 =
-    Node h l v (Node (lh + 1) ll lv (Node (rh - 1) lr rv rr))
-rotate (Node h l v r) =
-  -- Re-weighting.
-  let (l_, r_) = (rotate l, rotate r)
-   in Node (depth l_ r_) l_ v r_
- 
-draw :: Show a => Tree a -> String
-draw t = '\n' : draw_ t 0 <> "\n"
-  where
-    draw_ Leaf _ = []
-    draw_ (Node h l v r) d = draw_ r (d + 1) <> node <> draw_ l (d + 1)
-      where
-        node = padding d <> show (v, h) <> "\n"
-        padding n = replicate (n * 4) ' '-}
+module DataStructures.AVLTree(
+  AVL(..),
+  insert,
+  contains,
+  value,
+  height,
+  given,
+  depth,
+  depthOf,
+  maxAVL,
+  minAVL,
+  getBalance,
+  equals,
+  inorder,
+  postorder,
+  preorder
+) where
 
 
+-- ÁRBOL AVL:
+-- Árbol binario de búsqueda en la que la diferencia entre las alturas de sus dos
+-- hijos no pueden diferir en más de uno. Permite la búsqueda, inserción y eliminación
+-- en O(logn) como complejidad esperada y como peor caso.
 
+-----------------------
+-- CONSTRUCTORES
+-----------------------
+-- Mantenemos en la estructura un entero que representará la altura del nodo, la cuál
+-- ultilizaremos para mantener el balance en el árbol.
 data AVL a = Leaf | Node Int a (AVL a) (AVL a)
   deriving (Show, Eq)
 
+-- Dirección tomada en el recorrido del árbol
+-- Incluimos la raíz puesto que puede que se necesite rotar el
+-- árbol utilizándola como pivote
 data Direction = LH | RH | ROOT
     deriving (Eq, Show)
 
+-----------------------
+-- FUNCIONES
+-----------------------
+
+value :: AVL a -> a
+-- Obtiene el valor del nodo raiz del arbol
+-- Entradas: arbol
+--      arbol (AVL): Arbol de cuyo nodo raiz se quiere sacar el valor
+-- Salidas: valor
+--      valor (Maybe a): Si el arbol es una hoja, obtiene Nothing, obtiene un Just valor en otro caso
+value Leaf = error "Leaves dont have value"
+value (Node h x l r) = x
+
+isLeaf :: AVL a -> Bool
+-- Comprueba si el arbol es una hoja
+-- Entradas: arbol
+--      arbol (AVL): Arbol del que se quiere comprobar si es una hoja
+-- Salidas: propiedad
+--      propiedad (Bool): False en lugar de no ser una hoja, True en otro caso
+isLeaf Leaf = True
+isLeaf (Node h x l r) = False
+
+height :: AVL a -> Int
+-- Obtiene la altura almacenada en el nodo
+-- Entradas: arbol del que se quiere obtener la altura
+-- Salidas:  Altura como entero almacenado en el nodo
+height Leaf = -1
+height (Node h x l r) = h
+
+left :: AVL a -> AVL a
+left Leaf = error "Leaves dont have child nodes"
+left (Node h x l r) = l
+
+right :: AVL a -> AVL a
+right Leaf = error "Leaves dont have child nodes"
+right (Node h x l r) = r
+
+given :: (Eq a, Ord a) => (a -> Bool) -> AVL a -> [a]
+-- Obtiene una lista con los valores de los nodos en el árbol que cumplen el predicado dado.
+given _ Leaf = []
+given p (Node h x l r) = if p x then x : (given p l ++ given p r) else (given p l ++ given p r)
+
+equals :: (Ord a) => AVL a -> AVL a -> Bool
+-- Compara dos árboles comprobando que coincidan sus valores y alturas a lo largo
+-- de sus estrutruras, que también han de ser iguales
+equals Leaf Leaf = True
+equals t1@(Node h1 x l1 r1) t2@(Node h2 y l2 r2) =
+  h1==h2 && x==y && equals l1 l2 && equals r1 r2 
+
+depth :: AVL a -> Int
+depth Leaf = 0
+depth (Node h x l r) = 1 + max (depth l) (depth r)
+
+depthOf :: (Ord a, Eq a) => a -> AVL a -> Int
+-- Obtiene la profundidad de un valor en un árbol.
+-- Si no está contenido, devuelve -1.
+depthOf _ Leaf = -1
+depthOf v (Node h x l r)
+  | v==x = 0
+  | otherwise = if v<x then 1 + (depthOf v l) else 1 + (depthOf v r)
+
+contains :: (Ord a, Eq a) => a -> AVL a -> Bool
+contains _ Leaf = False
+contains v (Node h x l r) = v==x || contains v l || contains v r
+
+minAVL :: (Eq a, Ord a) => AVL a -> Maybe a
+-- Elemento mínimo del árbol
+minAVL Leaf = Nothing
+minAVL (Node _ n Leaf r) = Just n
+minAVL (Node _ _ l _) = minAVL l
+
+maxAVL :: (Eq a, Ord a) => AVL a -> Maybe a
+-- Elemento máximo del árbol
+maxAVL Leaf = Nothing
+maxAVL (Node _ n _ Leaf) = Just n
+maxAVL (Node _ _ _ r) = maxAVL r
+
+setHeight :: AVL a -> AVL a
+-- Reajusta la altura de un árbol a partir de la altura de sus hijos.
+setHeight Leaf = Leaf
+setHeight (Node h x l r) = Node (1 + max hl hr) x l r
+  where hl = height l
+        hr = height r
+
+getBalance :: AVL a -> Int
+-- Calcula la diferencia entre las alturas de los hijos de un nodo
+-- Lo utilizamos para el rebalanceo del árbol.
+getBalance Leaf = 0
+getBalance (Node h x l r) = abs(height l - height r)
+
 path :: (Ord a) => a -> AVL a -> [(Direction, AVL a)] -> [(Direction, AVL a)]
+-- Obtiene el camino en el árbol hasta el valor dado. Si no existe, su último valor será la hoja donde se insertaría un nuevo nodo 
+-- Parámetros: Valor hasta el que queremos obtener el camino
+--             Árbol en el que realizamos la búsqueda
+--             Acumulador dónde guardamos la dirección que tomamos en cada nodo junto al subárbol en el que nos introducimos
+-- Devuelve:   Lista con la con las direcciones tomadas y los subárboles correspondientes, desde la raíz al nodo con el valor.
 path a Leaf ps = ps
 path a (Node h x l r) ps
     | a < x = path a l ((LH, l):ps)     -- Tomamos la rama izquierda
     | a > x = path a r ((RH, r):ps)     -- Tomamos la rama derecha
     | otherwise = ps                    -- Hemos alcanzado el valor a
 
---path2tree :: (Ord a) => [(Direction, AVL a)] -> AVL a
---path2tree ((_,n):[]) = n
---path2tree ((LH,x):(_,p):[]) = zig x p
---path2tree ((RH,x):(_,p):[]) = zag x p
---path2tree ((LH,x):(LH,p):(z,g):ps) = path2tree $ (z, zigzig x p g):ps
---path2tree ((RH,x):(RH,p):(z,g):ps) = path2tree $ (z, zagzag x p g):ps
---path2tree ((LH,x):(RH,p):(z,g):ps) = path2tree $ (z, zigzag x p g):ps
---path2tree ((RH,x):(LH,p):(z,g):ps) = path2tree $ (z, zagzig x p g):ps
 
---zig (Node h1 x a b) (Node h2 p _ c) = Node (h1-1) x a (Node (h2+1) p b c)
---zag (Node h1 x a b) (Node h2 p c _) = Node (h2-1) x (Node (h1+1) p c a) b
+-- Casos de desbalanceos que ocurren en el AVL y las rotaciones necesarias para balancearlo
+-- (estos casos utilizan 2 tipos de rotaciones que combinamos entre sí):
 
--- Las alturas que cambian son las de los nodos que 
---zig (Node h1 x a b) (Node h2 p _ c) = Node h1 x a (Node (h2-2) p b c)
-----zag (Node h1 x a b) (Node h2 p c _) = Node h2 x (Node (h1-2) p c a) b
---zag (Node h1 x a b) (Node h2 p c _) = Node h1 x (Node (h2-2) p c a) b
+--  > Left left case: El camino desde el primer nodo desbalanceado hasta el nodo
+--      insertado toma desde el desbalanceado la dirección izquierda y en su hijo también.
 
-zig (Node h1 x a b) (Node h2 p _ c) = 
-  if h1==0 
-    then Node (h1+1) x a (Node ((height c)+1) p b c)
-  else 
-    Node h1 x a (Node ((height c)+1) p b c)
-zag (Node h1 x a b) (Node h2 p c _) = 
-  if h1==0
-    then Node (h1+1) x (Node ((height c)+1) p c a) b
-  else
-    Node h1 x (Node ((height c)+1) p c a) b
+--               z                                      y 
+--              / \                                   /   \
+--             y   T4      Right Rotate (z)          x      z
+--            / \           ------------>          /  \    /  \ 
+--           x   T3                               T1  T2  T3  T4
+--          / \
+--        T1   T2
 
 
+--  > Right right case: El camino desde el primer nodo desbalanceado hasta el nodo
+--      insertado toma desde el desbalanceado la dirección izquierda y en su hijo también.
 
-rotate :: (Ord a) => a -> AVL a -> AVL a
-rotate a t = path2tree' (path a t [(ROOT, t)])
+--            z                                y
+--           /  \                            /   \ 
+--          T1   y      Left Rotate(z)      z      x
+--              /  \     ------------>     / \    / \
+--             T2   x                     T1  T2 T3  T4
+--                 / \
+--               T3  T4
 
-path2tree' :: (Ord a) => [(Direction, AVL a)] -> AVL a
--- si dse dan rotaciones en la propia raiz hay que quitarle 1 a su altura
-path2tree' ((LH, x):(ROOT, p):[])
-  | getBalance merged > 1 = zig x p
+
+--  > Left right case: El camino desde el primer nodo desbalanceado hasta el nodo
+--      insertado toma desde el desbalanceado la dirección izquierda y en su hijo derecha.
+
+--             z                               z                             x
+--            / \                            /   \                          /  \ 
+--           y   T4     Left Rotate (y)     x    T4   Right Rotate(z)     y      z
+--          / \          ------------>     /  \        ------------>     / \    / \
+--        T1   x                          y    T3                      T1  T2 T3  T4
+--            / \                        / \
+--          T2   T3                    T1   T2
+
+--  > Right left case: El camino desde el primer nodo desbalanceado hasta el nodo
+--      insertado toma desde el desbalanceado la dirección derecha y en su hijo izquierda.
+
+--             z                              z                               x
+--            / \                            / \                             /  \ 
+--          T1   y     Right Rotate(z)     T1   x      Left Rotate(z)      z      y
+--              / \     ------------>         /  \      ------------>     / \    / \
+--             x   T4                        T2   y                     T1  T2  T3  T4
+--            / \                                /  \
+--          T2   T3                             T3   T4
+
+
+-- En ambas funciones de las dos rotaciones rotamos el nodo izquierdo que recibimos 
+-- sobre el derecho, solo varía la dirección de la rotación
+rotateRight :: (Ord a) => AVL a -> AVL a -> AVL a
+rotateRight (Node h1 x a b) (Node h2 p _ c)
+  -- Si el nodo a rotar se trata de un nodo sin hijos debemos aumentar su altura en 1
+  -- Las alturas del resto de elementos (T1, T2, T3, T4)
+  | h1==0 = Node (h1+1) x a (Node ((height c)+1) p b c)
+  | otherwise = Node h1 x a (Node ((height c)+1) p b c)
+
+rotateLeft :: (Ord a) => AVL a -> AVL a -> AVL a
+rotateLeft (Node h1 x a b) (Node h2 p c _)
+  -- Si el nodo a rotar se trata de un nodo sin hijos debemos aumentar su altura en 1
+  -- Las alturas del resto de elementos (T1, T2, T3, T4)
+  | h1==0 = Node (h1+1) x (Node ((height c)+1) p c a) b
+  | otherwise = Node h1 x (Node ((height c)+1) p c a) b
+
+path2tree :: (Ord a) => [(Direction, AVL a)] -> AVL a
+-- Reconstruye el árbol correspondiente a partir de una lista de direcciones tomadas en un árbol y los subárboles que le corresponden a cada dirección tomada.
+-- Parámetros: Lista con las direcciones tomadas en un árbol y los subárboles que le corresponden a cada decisión.
+-- Devuelve:   Árbol reconstruido a partir del parámetro anterior.
+
+
+-- Si el desbalance se produce en la raíz del árbol debemos realizar una rotación
+-- entre el subárbol anterior al árbol completo en el camino hasta el nodo.
+
+-- En las variables merged unificamos el último subárbol antes de la raíz con 
+-- el árbol completo teniendo en cuenta la dirección que se toma desde la raíz.
+path2tree ((LH, x):(ROOT, p):[])
+  | getBalance merged > 1 = rotateRight x p
   | otherwise = merged
   where merged = Node ((height x)+1) (value p) x (right p)
-path2tree' ((RH, x):(ROOT, p):[])
-  | getBalance merged > 1 = zag x p
+path2tree ((RH, x):(ROOT, p):[])
+  | getBalance merged > 1 = rotateLeft x p
   | otherwise = merged
   where merged = Node ((height x)+1) (value p) (left p) x
 
-path2tree' ((_,p):[]) = setHeight p
-path2tree' ((LH,x):(LH,p):ps)
-  | abs(height x - height (right p)) > 1 = path2tree' ((LH, zig x p):ps)
-  | otherwise = path2tree' ((LH,setHeight p):ps)
-path2tree' ((RH,x):(RH,p):ps)
-  | abs(height x - height (right p)) > 1 = path2tree' ((RH, zag x p):ps)
-  | otherwise = path2tree' ((RH,setHeight p):ps)
+-- Si llegamos a la primera dirección en el camino durante el descenso en el árbol
+-- devolvemos el árbol con sus alturas ajustadas.
+path2tree ((_,p):[]) = setHeight p
 
-{-path2tree' ((RH,x):(LH,p):(z,g):ps)
-  | getBalance g > 1 = path2tree' ((z, zig (zag x p) g):ps)
-  | otherwise = path2tree' ((z,setHeight g):ps)
+-- Comprobamos en el recorrido inverso del camino si nos encontramos ante algunos de los 
+-- casos de desbalanceo comentados anteriormente. Si no se encuentra desbalanceado devolveremos
+-- el árbol comprendido por su padre con su altura ajustada puesto que no se habrá producido
+-- ninguna rotación entre el subárbol y el el árbol formado por su padre.
 
-path2tree' ((LH,x):(RH,p):(z,g):ps)
-  | getBalance g > 1 = path2tree' ((z, zag (zig x p) g):ps)
-  | otherwise = path2tree' ((z,setHeight g):ps)-}
+-- Si se ha producido alguna rotación en el subárbol estará comprendida en otro caso que
+-- sustituirá al que sería el árbol con el padre como raíz en el camino que quede por recorrer.
 
--- z e y son iguales por el caso que es, en el 1o es LH y en el 2o RH
-path2tree' ((RH,x):(LH,p):(z,g):(y,q):ps)
-  | getBalance g > 1 = let rotated = zig (zag x p) g in path2tree' ((y, Node ((height rotated)+1) (value q) (setHeight rotated) (right q)):ps)
-  | otherwise = path2tree' ((z,setHeight g):ps)
+--  > Left left case:
+path2tree ((LH,x):(LH,p):ps)
+  | abs(height x - height (right p)) > 1 = path2tree ((LH, rotateRight x p):ps)
+  | otherwise = path2tree ((LH,setHeight p):ps)
 
-path2tree' ((LH,x):(RH,p):(z,g):(y,q):ps)
-  | getBalance g > 1 = let rotated = zag (zig x p) g in path2tree' ((y, Node ((height rotated)+1) (value q) (left q) (setHeight rotated)):ps)
-  | otherwise = path2tree' ((z,setHeight g):ps)
+--  > Right right case:
+path2tree ((RH,x):(RH,p):ps)
+  | abs(height x - height (right p)) > 1 = path2tree ((RH, rotateLeft x p):ps)
+  | otherwise = path2tree ((RH,setHeight p):ps)
 
-setHeight :: AVL a -> AVL a
-setHeight Leaf = Leaf
-setHeight (Node h x l r) = Node (1 + max hl hr) x l r
-  where hl = height l
-        hr = height r
+-- Para los dos siguientes casos comprobamos si se produce un cambio de dirección
+-- en el camino desde la raíz y si tiene lugar miramos si existe un desbalance 
+-- en el nodo abuelo desde el nodo donde se produce el primer cambio de dirección.
 
-isLeaf :: AVL a -> Bool
-isLeaf Leaf = True
-isLeaf (Node h x l r) = False
+-- El árbol doblemente rotado pasa a ser el hijo izquierdo o derecho (según el caso) 
+-- de un nuevo nodo que tendrá como valor el del padre del primer nodo desbalanceado
+-- y cuya altura será la altura del nodo. La dirección tomada será la misma que la que
+-- tomaría en el árbol original en dicho nodo.
 
-value :: AVL a -> a
-value Leaf = error "E"
-value (Node h x l r) = x
+--  > Right left case:
+path2tree ((RH,x):(LH,p):(z,g):(y, Node h v l r):ps)
+  | getBalance g > 1 = let rotated = rotateRight (rotateLeft x p) g in 
+                        let rotated' = setHeight rotated in 
+                          path2tree ((y, Node (1 + max (height r) (height rotated')) v rotated' r):ps)
+  | otherwise = path2tree ((z,setHeight g):ps)
 
-height :: AVL a -> Int
-height Leaf = -1
-height (Node h x l r) = h
+--  > Left right case:
+path2tree ((LH,x):(RH,p):(z,g):(y, Node h v l r):ps)
+  | getBalance g > 1 = let rotated = rotateLeft (rotateRight x p) g in 
+                        let rotated' = setHeight rotated in 
+                          path2tree ((y, Node (1 + max (height l) (height rotated')) v l rotated'):ps)
+  | otherwise = path2tree ((z,setHeight g):ps)
 
-left :: AVL a -> AVL a
-left Leaf = error "E"
-left (Node h x l r) = l
 
-right :: AVL a -> AVL a
-right Leaf = error "E"
-right (Node h x l r) = r
-
-getBalance :: AVL a -> Int
-getBalance Leaf = 0
-getBalance (Node h x l r) = abs(height l - height r)
+rotate :: (Ord a) => a -> AVL a -> AVL a
+-- Realiza las rotaciones necesarias en el árbol recibido a partir del camino hasta el nodo con valor a en el mismo.
+-- Parámetros: Valor del nodo hasta el que llegamos
+--             Árbol
+-- Devuelve:   Árbol balanceado
+rotate a t = path2tree (path a t [(ROOT, t)])
 
 insert :: (Ord a) => a -> AVL a -> AVL a
+-- Inserta el nodo y balancea el árbol con el nodo insertado si es necesario
 insert v Leaf = Node 0 v Leaf Leaf
 insert v t@(Node h x l r) = rotate v inserted
   where inserted = insert' v t
@@ -214,62 +293,35 @@ insert' v (Node h x l r)
     | v > x = Node (h+1) x l (insert' v r)
     | otherwise = Node h x l r
 
+-- RECORRIDOS
 
-delete :: (Eq a, Ord a) => a -> AVL a -> AVL a
-delete _ Leaf = error "E"
-delete v t@(Node h x l r) = rotate m deleted
-  where deleted = delete' v t
-        Just m = minAVL t
+inorder :: AVL a -> [a]
+inorder Leaf = []
+inorder (Node h x l r) = (inorder l) ++ [x] ++ (inorder r)
 
-delete' :: (Eq a, Ord a) => a -> AVL a -> AVL a
-delete' _ Leaf = error "E"
-delete' v (Node h x l r)
-    | v == x && (isLeaf l) && (isLeaf r) = Leaf
-    | v == x && (isLeaf l) = r
-    | v == x && (isLeaf r) = l
-    | v == x = setHeight (Node h minimo l (delete' minimo r))
-    | v < x = setHeight (Node h x (delete' v l) r)
-    | v > x = setHeight (Node h x l (delete' v r))
-    where
-        Just minimo = minAVL r
+preorder :: AVL a -> [a]
+preorder Leaf = []
+preorder (Node h x l r) = [x] ++ (preorder l) ++ (preorder r)
 
-minAVL :: (Eq a, Ord a) => AVL a -> Maybe a
-minAVL Leaf = Nothing
-minAVL (Node _ n Leaf r) = Just n
-minAVL (Node _ _ l _) = minAVL l
-
-maxAVL :: (Eq a, Ord a) => AVL a -> Maybe a
-maxAVL Leaf = Nothing
-maxAVL (Node _ n _ Leaf) = Just n
-maxAVL (Node _ _ _ r) = maxAVL r
+postorder :: AVL a -> [a]
+postorder Leaf = []
+postorder (Node h x l r) = (postorder l) ++ (postorder r) ++ [x]
 
 
-ej1, ej2, ej2izq, ej2izq', ej3, ej3', ej4, ej4', ej5, ej5', ej6, ej7, ej8, ej9 :: AVL Int
--- INSERTS
--- left left
-ej1 = Node 3 13 (Node 2 10 (Node 1 5 (Node 0 4 Leaf Leaf) (Node 0 8 Leaf Leaf)) (Node 0 11 Leaf Leaf)) (Node 1 15 Leaf (Node 0 16 Leaf Leaf))
-ej2 = Node 4 13 (Node 3 10 (Node 2 5 (Node 1 4 (Node 0 3 Leaf Leaf) Leaf) (Node 0 8 Leaf Leaf)) (Node 0 11 Leaf Leaf)) (Node 1 15 Leaf (Node 0 16 Leaf Leaf))
-ej2izq = Node 2 5 (Node 1 4 (Node 0 3 Leaf Leaf) Leaf) (Node 0 8 Leaf Leaf)
-ej2izq' = Node 3 10 (Node 2 5 (Node 1 4 (Node 0 3 Leaf Leaf) Leaf) (Node 0 8 Leaf Leaf)) (Node 0 11 Leaf Leaf)
+-- Ejemplos
 
--- right right
-ej3 = Node 2 30 (Node 0 5 Leaf Leaf) (Node 1 35 (Node 0 32 Leaf Leaf) (Node 0 40 Leaf Leaf))
-ej3' = Node 3 30 (Node 0 5 Leaf Leaf) (Node 2 35 (Node 0 32 Leaf Leaf) (Node 1 40 Leaf (Node 0 45 Leaf Leaf)))
+avl1, avl2, avl3, avl4 :: AVL Int
+-- INSERTS (que producen rebalanceo)
+-- left left - insert 3
+avl1 = Node 3 13 (Node 2 10 (Node 1 5 (Node 0 4 Leaf Leaf) (Node 0 8 Leaf Leaf)) (Node 0 11 Leaf Leaf)) (Node 1 15 Leaf (Node 0 16 Leaf Leaf))
 
--- left right
-ej4 = Node 3 13 (Node 2 10 (Node 1 5 (Node 0 4 Leaf Leaf) (Node 0 6 Leaf Leaf)) (Node 0 11 Leaf Leaf)) (Node 1 15 Leaf (Node 0 16 Leaf Leaf))
-ej4' = Node 4 13 (Node 3 10 (Node 2 5 (Node 0 4 Leaf Leaf) (Node 1 6 Leaf (Node 0 7 Leaf Leaf))) (Node 0 11 Leaf Leaf)) (Node 1 15 Leaf (Node 0 16 Leaf Leaf))
+-- right right - insert 45
+avl2 = Node 2 30 (Node 0 5 Leaf Leaf) (Node 1 35 (Node 0 32 Leaf Leaf) (Node 0 40 Leaf Leaf))
 
--- right left
-ej5 = Node 3 5 (Node 2 2 (Node 0 1 Leaf Leaf) (Node 1 4 (Node 0 3 Leaf Leaf) Leaf)) (Node 2 7 (Node 0 6 Leaf Leaf) (Node 1 9 Leaf (Node 0 16 Leaf Leaf)))
-ej5' = Node 4 5 (Node 2 2 (Node 0 1 Leaf Leaf) (Node 1 4 (Node 0 3 Leaf Leaf) Leaf)) (Node 3 7 (Node 0 6 Leaf Leaf) (Node 2 9 Leaf (Node 1 16 (Node 0 15 Leaf Leaf) Leaf)))
+-- left right - insert 7
+avl3 = Node 3 13 (Node 2 10 (Node 1 5 (Node 0 4 Leaf Leaf) (Node 0 6 Leaf Leaf)) (Node 0 11 Leaf Leaf)) (Node 1 15 Leaf (Node 0 16 Leaf Leaf))
 
--- DELETE
--- delete 32 - no va
-ej6 = Node 3 44 (Node 1 17 Leaf (Node 0 32 Leaf Leaf)) (Node 2 62 (Node 1 50 (Node 0 48 Leaf Leaf) (Node 0 54 Leaf Leaf)) (Node 1 78 Leaf (Node 0 88 Leaf Leaf)))
--- delete 30 - si
-ej7 = Node 2 20 (Node 1 10 (Node 0 5 Leaf Leaf) (Node 0 15 Leaf Leaf)) (Node 0 30 Leaf Leaf)
--- delete 55 - si
-ej8 = Node 3 50 (Node 2 40 (Node 1 30 (Node 0 10 Leaf Leaf) Leaf) (Node 0 45 Leaf Leaf)) (Node 1 60 (Node 0 55 Leaf Leaf) Leaf)
--- delete 60 - no y ademas hace cosas raras
-ej9 = Node 2 50 (Node 1 40 Leaf (Node 0 45 Leaf Leaf)) (Node 0 60 Leaf Leaf)
+-- right left - insert 15
+avl4 = Node 3 5 (Node 2 2 (Node 0 1 Leaf Leaf) (Node 1 4 (Node 0 3 Leaf Leaf) Leaf)) (Node 2 7 (Node 0 6 Leaf Leaf) (Node 1 9 Leaf (Node 0 16 Leaf Leaf)))
+
+

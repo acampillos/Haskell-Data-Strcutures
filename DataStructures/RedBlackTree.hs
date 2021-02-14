@@ -16,19 +16,7 @@ module DataStructures.RedBlackTree(
     insertRBT,
     getColor,
     deleteRBT,
-    helpRBT,
-    ejbrt1,
-    ejbrt2,
-    ejbrt3,
-    ejbrt4,
-    ejbrt5,
-    ejbrt6,
-    ejbrt7,
-    ejbrt8,
-    ejbrt9,
-    ejbrt10,
-    ejbrt11,
-    ejbrt12
+    helpRBT
 ) where
 
 -- Red-Black Tree es una estructura de datos basada en un arbol binario
@@ -440,6 +428,7 @@ ejbrt3 = foldr insertRBT (L) [7,3,18,10,8,11,22,26]
 ejbrt4 = foldr insertRBT (L) [1,2,4,5,3]
 ejbrt5 = foldr insertRBT (L) [8,9,10,13,11]
 ejbrt6 = (N B 6 ejbrt8 ejbrt9)
+
 -- Ejemplos de RBT no valido
 -- No tiene todos los caminos hasta las hojas con misma cantidad de negros
 ejbrt7 = (N B 7 (N B 3 (L) (L)) (N R 18 (N B 10 (N R 8 (L) (L)) (N R 11 (L) (L))) (N B 22 (L) (N R 26 (N B 25 (L) (L)) (L)))))

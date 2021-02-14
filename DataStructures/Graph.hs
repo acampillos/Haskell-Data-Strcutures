@@ -26,12 +26,7 @@ module DataStructures.Graph(
     conexo,
     conectividad,
     kruskal,
-    helpGraph,
-    gTest1,
-    gTest2,
-    gTest3,
-    gTest4,
-    gTest5
+    helpGraph
 ) where
 
 import Data.Set as Set

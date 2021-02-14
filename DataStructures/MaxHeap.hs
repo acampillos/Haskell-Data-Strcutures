@@ -104,6 +104,8 @@ rank :: MaxHeap a -> Int
 rank Empty = 0
 rank (Tree r _ _ _) = r
 
+-- Ejemplos
+
 t1, t2 :: MaxHeap Int
 t1 = Tree 2 10 (Tree 1 5 (Tree 1 2 Empty Empty) Empty) (Tree 1 6 Empty Empty)
 t2 = Tree 2 12 (Tree 1 7 Empty Empty) (Tree 1 9 Empty Empty)
