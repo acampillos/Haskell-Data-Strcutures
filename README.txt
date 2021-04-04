@@ -1,7 +1,17 @@
-Ya que el objetivo de nuestro trabajo es realizar una guía interactiva sobre las
-estructuras de datos que hemos implementado, los ejemplos vienen incluidos directamente
-en el main. Aún así dentro de los distintos módulos se pueden encontrar ejemplos.
+# Haskell Data Structures
 
-El comando para compilar es el siguiente:
+Simple data structures implemented in Haskell for Declarative Programming course project.
 
-ghc .\principal.hs -o principal
+## Implemented Data Structures
+
+- [Hash tables](https://github.com/acampillos/PD/tree/master/DataStructures/HashTable) (separate chaining, linear and quadratic probing)
+- [AVL tree](https://github.com/acampillos/PD/blob/master/DataStructures/AVLTree.hs) (insertion only)
+- [Binary Search Tree](https://github.com/acampillos/PD/blob/master/DataStructures/BinarySearchTree.hs)
+- [Deque] (https://github.com/acampillos/PD/blob/master/DataStructures/Deque.hs)
+- [Directed graph] (https://github.com/acampillos/PD/blob/master/DataStructures/DirectedGraph.hs)
+- [Graph] (https://github.com/acampillos/PD/blob/master/DataStructures/Graph.hs)
+- [Max heap] (https://github.com/acampillos/PD/blob/master/DataStructures/MaxHeap.hs)
+- [Min heap] (https://github.com/acampillos/PD/blob/master/DataStructures/MinHeap.hs)
+- [Red-black tree] (https://github.com/acampillos/PD/blob/master/DataStructures/RedBlackTree.hs)
+- [Splay tree] (https://github.com/acampillos/PD/blob/master/DataStructures/SplayTree.hs)
+- [Van Emde Boas tree] (https://github.com/acampillos/PD/blob/master/DataStructures/VEB.hs)
